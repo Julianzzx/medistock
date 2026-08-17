@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Perfil | Usuario</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="/Imagenes/Logo.png"/>
+</head>
+
+<body class="bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 min-h-screen py-12 flex flex-col items-center justify-center">
+
+    <!-- ══ HEADER STICKY MEDISTOCK ══════════════════════════════════════ -->
+    <style>
+        body { margin-top: 62px !important; }
+        #ms-header {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100vw !important;
+            z-index: 99999 !important;
+            background: linear-gradient(90deg, rgba(30,27,100,0.82) 0%, rgba(14,116,144,0.70) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.22);
+            box-sizing: border-box;
+            padding: 10px 28px;
+        }
+        #ms-header-inner {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        #ms-header .ms-accent-line {
+            width: 3px; height: 32px; border-radius: 9999px;
+            background: linear-gradient(180deg,#67e8f9,#818cf8);
+            flex-shrink: 0;
+        }
+        #ms-header .ms-logo-link {
+            display: flex; align-items: center;
+            gap: 12px; text-decoration: none;
+        }
+        #ms-header .ms-logo-wrap {
+            position: relative; flex-shrink: 0;
+        }
+        #ms-header .ms-logo-glow {
+            position: absolute; inset: 0;
+            background: rgba(103,232,249,0.25);
+            filter: blur(10px); border-radius: 9999px;
+        }
+        #ms-header .ms-logo-img {
+            position: relative; height: 38px; width: auto;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+            transition: transform 0.3s ease;
+        }
+        #ms-header .ms-logo-img:hover { transform: scale(1.1); }
+        #ms-header .ms-brand { line-height: 1; }
+        #ms-header .ms-brand-name {
+            color: white; font-weight: 900; font-size: 1rem;
+            letter-spacing: 0.08em; font-family: Inter, sans-serif;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.25);
+        }
+        #ms-header .ms-brand-name span { color: #67e8f9; }
+        #ms-header .ms-brand-sub {
+            color: rgba(255,255,255,0.45); font-size: 0.62rem;
+            font-weight: 500; letter-spacing: 0.12em;
+            text-transform: uppercase; margin-top: 2px;
+        }
+        #ms-header .ms-sep {
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.12), transparent);
+            margin-left: 8px;
+        }
+        #ms-header .ms-status {
+            display: flex; align-items: center;
+            gap: 6px; flex-shrink: 0;
+        }
+        #ms-header .ms-dot {
+            width: 7px; height: 7px; border-radius: 9999px;
+            background: #34d399;
+            box-shadow: 0 0 8px rgba(52,211,153,0.8);
+            animation: ms-pulse 2s infinite;
+        }
+        #ms-header .ms-status-txt {
+            color: rgba(255,255,255,0.45); font-size: 0.68rem;
+            font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+        }
+        @keyframes ms-pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+    </style>
+    <header id="ms-header">
+        <div id="ms-header-inner">
+            <div class="ms-accent-line"></div>
+            <a href="/" class="ms-logo-link">
+                <div class="ms-logo-wrap">
+                    <div class="ms-logo-glow"></div>
+                    <img src="/Imagenes/Logo.png" alt="MEDISTOCK" class="ms-logo-img"/>
+                </div>
+                <div class="ms-brand">
+                    <div class="ms-brand-name">MEDI<span>STOCK</span></div>
+                    <div class="ms-brand-sub">Gestión Inteligente</div>
+                </div>
+            </a>
+            <div class="ms-sep"></div>
+            <div class="ms-status">
+                <div class="ms-dot"></div>
+                <span class="ms-status-txt">Sistema activo</span>
+            </div>
+        </div>
+    </header>
+    <!-- ══ FIN HEADER ═══════════════════════════════════════════════════ -->
+
+<div class="w-full max-w-3xl mx-auto bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-10 border border-white/20">
+    <h1 class="text-3xl font-extrabold text-white text-center mb-6">Editar Perfil</h1>
+
+    <div th:if="${mensajeExito}" class="bg-green-500 text-white font-semibold text-center py-3 mb-6 rounded-lg shadow-md">
+      <p th:text="${mensajeExito}"></p>
+    </div>
+
+    <form th:action="@{/usuario/editar/{id}(id=${usuario.id})}"
+          th:object="${usuario}"
+          method="post"
+          class="space-y-6">
+
+      <div>
+        <label class="block text-white mb-2">Nombre</label>
+        <input type="text" th:field="*{nombre}" class="w-full px-4 py-2 rounded-lg border focus:ring focus:ring-blue-300" required>
+      </div>
+
+      <div>
+        <label class="block text-white mb-2">Apellido</label>
+        <input type="text" th:field="*{apellido}" class="w-full px-4 py-2 rounded-lg border focus:ring focus:ring-blue-300" required>
+      </div>
+
+      <div>
+        <label class="block text-white mb-2">Correo</label>
+        <input type="email" th:field="*{correo}" class="w-full px-4 py-2 rounded-lg border focus:ring focus:ring-blue-300" required>
+      </div>
+
+      <div>
+        <label class="block text-white mb-2">Dirección</label>
+        <input type="text" th:field="*{direccion}" class="w-full px-4 py-2 rounded-lg border focus:ring focus:ring-blue-300">
+      </div>
+
+      <div>
+        <label class="block text-white mb-2">Contacto</label>
+        <input type="text" th:field="*{contacto}" class="w-full px-4 py-2 rounded-lg border focus:ring focus:ring-blue-300">
+      </div>
+
+      <div>
+        <label class="block text-white mb-2">Régimen</label>
+        <select th:field="*{regimen}" class="w-full px-4 py-2 rounded-lg border focus:ring focus:ring-blue-300">
+          <option value="">Selecciona</option>
+          <option value="Contributivo" th:selected="${usuario.regimen=='Contributivo'}">Contributivo</option>
+          <option value="Subsidiado" th:selected="${usuario.regimen=='Subsidiado'}">Subsidiado</option>
+        </select>
+      </div>
+
+      <div class="flex justify-center gap-4 mt-6">
+        <a href="/usuario/perfil" class="px-6 py-3 bg-gray-400 text-white rounded-lg shadow hover:bg-gray-500">Cancelar</a>
+        <button type="submit" class="px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600">
+          Guardar Cambios Generales
+        </button>
+      </div>
+    </form>
+
+    <div class="mt-8 border-t border-white/30 pt-6">
+      <form th:action="@{/usuario/editar-eps/{id}(id=${usuario.id})}"
+            method="post"
+            class="flex items-center gap-3">
+
+        <select name="eps.id"
+                class="w-full px-4 py-2 rounded-lg border focus:ring focus:ring-blue-300 text-gray-900"
+                th:disabled="${usuario.epsBloqueada}">
+          <option value="">Selecciona tu EPS</option>
+          <option th:each="e : ${epsList}"
+                  th:value="${e.id}"
+                  th:text="${e.nombre}"
+                  th:selected="${usuario.eps != null and e.id == usuario.eps.id}">
+          </option>
+        </select>
+
+        <button type="submit"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                th:disabled="${usuario.epsBloqueada}">
+          Guardar EPS
+        </button>
+      </form>
+
+      <p th:if="${usuario.epsBloqueada}" class="text-yellow-300 text-sm mt-3 text-center">
+        Ya has cambiado tu EPS
+      </p>
+    </div>
+
+    <div class="flex justify-center mt-10">
+      <a href="/usuario/dashboard" 
+         class="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow hover:bg-indigo-700 transition">
+        Volver al Dashboard
+      </a>
+    </div>
+  </div>
+
+    <div th:replace="~{fragments/chatbot-widget :: chatbot}"></div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+target/
+.idea/
+*.iml
+.vscode/
+.env
+medistock_completo/src/main/resources/application.properties
+medistock_completo/src/main/resources/application.yml

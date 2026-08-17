@@ -1,0 +1,178 @@
+<!-- ══════════════════════════════════════════════════════════════════════
+     WIDGET FLOTANTE — Asistente MediStock (Gemini)
+     Se incluye con: <div th:replace="~{fragments/chatbot-widget :: chatbot}"></div>
+     No depende de phosphor-icons (usa SVG inline) para funcionar en
+     cualquier página del rol Usuario, tenga o no ese script cargado.
+     ══════════════════════════════════════════════════════════════════════ -->
+<div th:fragment="chatbot">
+
+    <!-- Botón flotante (FAB) -->
+    <button id="ms-chat-fab"
+            onclick="msChatToggle()"
+            class="fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full shadow-2xl
+                   bg-gradient-to-br from-blue-600 to-cyan-400 text-white
+                   flex items-center justify-center hover:scale-110
+                   transition-transform duration-200"
+            aria-label="Abrir asistente MediStock">
+        <svg id="ms-chat-fab-icon-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" class="w-7 h-7">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.06 0-2.077-.163-3.02-.462L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8Z" />
+        </svg>
+        <svg id="ms-chat-fab-icon-close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" class="w-7 h-7 hidden">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+    </button>
+
+    <!-- Panel de chat -->
+    <div id="ms-chat-panel"
+         class="hidden fixed bottom-24 right-5 z-50 w-[92vw] max-w-sm h-[70vh] max-h-[520px]
+                bg-white rounded-2xl shadow-2xl border border-gray-200
+                flex flex-col overflow-hidden">
+
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-4 py-3 flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.06 0-2.077-.163-3.02-.462L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8Z" />
+                </svg>
+            </div>
+            <div class="min-w-0">
+                <p class="font-semibold text-sm leading-tight">Asistente MediStock</p>
+                <p class="text-[11px] text-white/80 leading-tight">Medicamentos, farmacias y solicitudes</p>
+            </div>
+        </div>
+
+        <!-- Mensajes -->
+        <div id="ms-chat-mensajes" class="flex-1 overflow-y-auto px-3 py-3 space-y-3 bg-gray-50 text-sm"></div>
+
+        <!-- Input -->
+        <form id="ms-chat-form" class="border-t border-gray-200 p-2 flex items-end gap-2 bg-white">
+            <textarea id="ms-chat-input" rows="1"
+                      placeholder="Pregunta por un medicamento, farmacia..."
+                      class="flex-1 resize-none rounded-xl border border-gray-300 px-3 py-2 text-sm
+                             focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+            <button type="submit"
+                    class="shrink-0 w-10 h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white
+                           flex items-center justify-center transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.126A1 1 0 0 1 4.712 1.94L21 12 4.712 22.06a1 1 0 0 1-1.443-1.187L6 12Zm0 0h14" />
+                </svg>
+            </button>
+        </form>
+    </div>
+
+    <script th:inline="javascript">
+        (function () {
+            var abierto = false;
+            var cargando = false;
+            var historial = []; // [{rol:'user'|'model', texto:'...'}]
+
+            var fab = document.getElementById('ms-chat-fab');
+            var panel = document.getElementById('ms-chat-panel');
+            var iconOpen = document.getElementById('ms-chat-fab-icon-open');
+            var iconClose = document.getElementById('ms-chat-fab-icon-close');
+            var mensajesEl = document.getElementById('ms-chat-mensajes');
+            var form = document.getElementById('ms-chat-form');
+            var input = document.getElementById('ms-chat-input');
+
+            window.msChatToggle = function () {
+                abierto = !abierto;
+                panel.classList.toggle('hidden', !abierto);
+                iconOpen.classList.toggle('hidden', abierto);
+                iconClose.classList.toggle('hidden', !abierto);
+
+                if (abierto && mensajesEl.children.length === 0) {
+                    agregarBurbuja('model',
+                        '¡Hola! Soy el asistente de MediStock. Puedo ayudarte a saber en qué ' +
+                        'farmacia hay un medicamento, cómo generar tu código de cita o cómo va tu ' +
+                        'solicitud. ¿En qué te ayudo?');
+                }
+                if (abierto) {
+                    input.focus();
+                }
+            };
+
+            function agregarBurbuja(rol, texto) {
+                var wrap = document.createElement('div');
+                wrap.className = rol === 'user' ? 'flex justify-end' : 'flex justify-start';
+
+                var burbuja = document.createElement('div');
+                burbuja.className = rol === 'user'
+                    ? 'max-w-[80%] bg-blue-600 text-white rounded-2xl rounded-br-sm px-3 py-2 whitespace-pre-line'
+                    : 'max-w-[80%] bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-bl-sm px-3 py-2 whitespace-pre-line';
+                burbuja.textContent = texto;
+
+                wrap.appendChild(burbuja);
+                mensajesEl.appendChild(wrap);
+                mensajesEl.scrollTop = mensajesEl.scrollHeight;
+                return burbuja;
+            }
+
+            function agregarIndicadorEscribiendo() {
+                var wrap = document.createElement('div');
+                wrap.id = 'ms-chat-typing';
+                wrap.className = 'flex justify-start';
+                wrap.innerHTML = '<div class="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-3 py-2 text-gray-400 text-xs">Escribiendo…</div>';
+                mensajesEl.appendChild(wrap);
+                mensajesEl.scrollTop = mensajesEl.scrollHeight;
+            }
+
+            function quitarIndicadorEscribiendo() {
+                var el = document.getElementById('ms-chat-typing');
+                if (el) el.remove();
+            }
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                enviarMensaje();
+            });
+
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    enviarMensaje();
+                }
+            });
+
+            function enviarMensaje() {
+                var texto = input.value.trim();
+                if (!texto || cargando) return;
+
+                agregarBurbuja('user', texto);
+                input.value = '';
+                cargando = true;
+                agregarIndicadorEscribiendo();
+
+                fetch('/usuario/chatbot/mensaje', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pregunta: texto, historial: historial })
+                })
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        quitarIndicadorEscribiendo();
+                        var respuesta = data.respuesta || 'No pude responder en este momento.';
+                        agregarBurbuja('model', respuesta);
+
+                        historial.push({ rol: 'user', texto: texto });
+                        historial.push({ rol: 'model', texto: respuesta });
+                        if (historial.length > 20) {
+                            historial = historial.slice(historial.length - 20);
+                        }
+                    })
+                    .catch(function () {
+                        quitarIndicadorEscribiendo();
+                        agregarBurbuja('model', 'Ocurrió un error de conexión. Intenta de nuevo.');
+                    })
+                    .finally(function () {
+                        cargando = false;
+                    });
+            }
+        })();
+    </script>
+</div>

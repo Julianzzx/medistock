@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil de Usuario | Medistock</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="icon" type="image/png" href="/Imagenes/Logo.png"/>
+</head>
+<body class="bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 min-h-screen py-12">
+
+    <!-- ══ HEADER STICKY MEDISTOCK ══════════════════════════════════════ -->
+    <style>
+        body { margin-top: 62px !important; }
+        #ms-header {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100vw !important;
+            z-index: 99999 !important;
+            background: linear-gradient(90deg, rgba(30,27,100,0.82) 0%, rgba(14,116,144,0.70) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.22);
+            box-sizing: border-box;
+            padding: 10px 28px;
+        }
+        #ms-header-inner {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        #ms-header .ms-accent-line {
+            width: 3px; height: 32px; border-radius: 9999px;
+            background: linear-gradient(180deg,#67e8f9,#818cf8);
+            flex-shrink: 0;
+        }
+        #ms-header .ms-logo-link {
+            display: flex; align-items: center;
+            gap: 12px; text-decoration: none;
+        }
+        #ms-header .ms-logo-wrap {
+            position: relative; flex-shrink: 0;
+        }
+        #ms-header .ms-logo-glow {
+            position: absolute; inset: 0;
+            background: rgba(103,232,249,0.25);
+            filter: blur(10px); border-radius: 9999px;
+        }
+        #ms-header .ms-logo-img {
+            position: relative; height: 38px; width: auto;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+            transition: transform 0.3s ease;
+        }
+        #ms-header .ms-logo-img:hover { transform: scale(1.1); }
+        #ms-header .ms-brand { line-height: 1; }
+        #ms-header .ms-brand-name {
+            color: white; font-weight: 900; font-size: 1rem;
+            letter-spacing: 0.08em; font-family: Inter, sans-serif;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.25);
+        }
+        #ms-header .ms-brand-name span { color: #67e8f9; }
+        #ms-header .ms-brand-sub {
+            color: rgba(255,255,255,0.45); font-size: 0.62rem;
+            font-weight: 500; letter-spacing: 0.12em;
+            text-transform: uppercase; margin-top: 2px;
+        }
+        #ms-header .ms-sep {
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.12), transparent);
+            margin-left: 8px;
+        }
+        #ms-header .ms-status {
+            display: flex; align-items: center;
+            gap: 6px; flex-shrink: 0;
+        }
+        #ms-header .ms-dot {
+            width: 7px; height: 7px; border-radius: 9999px;
+            background: #34d399;
+            box-shadow: 0 0 8px rgba(52,211,153,0.8);
+            animation: ms-pulse 2s infinite;
+        }
+        #ms-header .ms-status-txt {
+            color: rgba(255,255,255,0.45); font-size: 0.68rem;
+            font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+        }
+        @keyframes ms-pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+    </style>
+    <header id="ms-header">
+        <div id="ms-header-inner">
+            <div class="ms-accent-line"></div>
+            <a href="/" class="ms-logo-link">
+                <div class="ms-logo-wrap">
+                    <div class="ms-logo-glow"></div>
+                    <img src="/Imagenes/Logo.png" alt="MEDISTOCK" class="ms-logo-img"/>
+                </div>
+                <div class="ms-brand">
+                    <div class="ms-brand-name">MEDI<span>STOCK</span></div>
+                    <div class="ms-brand-sub">Gestión Inteligente</div>
+                </div>
+            </a>
+            <div class="ms-sep"></div>
+            <div class="ms-status">
+                <div class="ms-dot"></div>
+                <span class="ms-status-txt">Sistema activo</span>
+            </div>
+        </div>
+    </header>
+    <!-- ══ FIN HEADER ═══════════════════════════════════════════════════ -->
+
+<div class="w-full max-w-4xl mx-auto bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-10 border border-white/20">
+
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-extrabold text-white drop-shadow-lg">Mi Perfil</h1>
+      <p class="text-white/80 mt-2">Aquí puedes ver toda tu información registrada</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <div class="bg-white/20 p-6 rounded-2xl shadow-md border border-white/20">
+        <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+          <i class="ph ph-user text-2xl text-indigo-300"></i> Información Personal
+        </h2>
+        <p class="text-white"><strong>Nombre:</strong> <span th:text="${usuario.nombre}"></span></p>
+        <p class="text-white"><strong>Apellido:</strong> <span th:text="${usuario.apellido}"></span></p>
+        <p class="text-white"><strong>Edad:</strong> <span th:text="${usuario.edad}"></span></p>
+        <p class="text-white"><strong>Género:</strong> <span th:text="${usuario.genero}"></span></p>
+      </div>
+
+      <div class="bg-white/20 p-6 rounded-2xl shadow-md border border-white/20">
+        <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+          <i class="ph ph-envelope text-2xl text-cyan-300"></i> Contacto
+        </h2>
+        <p class="text-white"><strong>Correo:</strong> <span th:text="${usuario.correo}"></span></p>
+        <p class="text-white"><strong>Teléfono:</strong> <span th:text="${usuario.contacto}"></span></p>
+        <p class="text-white"><strong>Dirección:</strong> <span th:text="${usuario.direccion}"></span></p>
+      </div>
+
+      <div class="bg-white/20 p-6 rounded-2xl shadow-md border border-white/20 md:col-span-2">
+        <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2 justify-center text-center">
+  <i class="ph ph-shield-heart text-2xl text-green-300"></i> EPS y Régimen
+</h2>
+        <p class="text-white"><strong>EPS:</strong> <span th:text="${usuario.eps.nombre}"></span></p>
+        <p class="text-white"><strong>Régimen:</strong> <span th:text="${usuario.regimen}"></span></p>
+      </div>
+
+    </div>
+
+    <div class="flex justify-center mt-6 gap-4">
+  <a href="/usuario/dashboard"
+     class="inline-flex items-center gap-3 bg-white/30 hover:bg-white/50 text-blue-900 font-bold px-8 py-4 rounded-full shadow-lg transition transform hover:scale-105">
+    <i class="ph ph-arrow-left text-2xl"></i> Volver al Dashboard
+  </a>
+
+  <a th:href="@{/usuario/editar/{id}(id=${usuario.id})}"
+     class="inline-flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white font-bold px-8 py-4 rounded-full shadow-lg transition transform hover:scale-105">
+    <i class="ph ph-pencil text-2xl"></i> Actualizar Datos
+  </a>
+</div>
+  </div>
+
+    <div th:replace="~{fragments/chatbot-widget :: chatbot}"></div>
+</body>
+</html>

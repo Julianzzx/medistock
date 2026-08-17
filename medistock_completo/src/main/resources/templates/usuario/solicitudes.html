@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mis Solicitudes | Medistock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="icon" type="image/png" href="/Imagenes/Logo.png"/>
+</head>
+
+<body class="bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 min-h-screen py-10 flex flex-col items-center">
+
+    <!-- ══ HEADER STICKY MEDISTOCK ══════════════════════════════════════ -->
+    <style>
+        body { margin-top: 62px !important; }
+        #ms-header {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100vw !important;
+            z-index: 99999 !important;
+            background: linear-gradient(90deg, rgba(30,27,100,0.82) 0%, rgba(14,116,144,0.70) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.22);
+            box-sizing: border-box;
+            padding: 10px 28px;
+        }
+        #ms-header-inner {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        #ms-header .ms-accent-line {
+            width: 3px; height: 32px; border-radius: 9999px;
+            background: linear-gradient(180deg,#67e8f9,#818cf8);
+            flex-shrink: 0;
+        }
+        #ms-header .ms-logo-link {
+            display: flex; align-items: center;
+            gap: 12px; text-decoration: none;
+        }
+        #ms-header .ms-logo-wrap {
+            position: relative; flex-shrink: 0;
+        }
+        #ms-header .ms-logo-glow {
+            position: absolute; inset: 0;
+            background: rgba(103,232,249,0.25);
+            filter: blur(10px); border-radius: 9999px;
+        }
+        #ms-header .ms-logo-img {
+            position: relative; height: 38px; width: auto;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+            transition: transform 0.3s ease;
+        }
+        #ms-header .ms-logo-img:hover { transform: scale(1.1); }
+        #ms-header .ms-brand { line-height: 1; }
+        #ms-header .ms-brand-name {
+            color: white; font-weight: 900; font-size: 1rem;
+            letter-spacing: 0.08em; font-family: Inter, sans-serif;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.25);
+        }
+        #ms-header .ms-brand-name span { color: #67e8f9; }
+        #ms-header .ms-brand-sub {
+            color: rgba(255,255,255,0.45); font-size: 0.62rem;
+            font-weight: 500; letter-spacing: 0.12em;
+            text-transform: uppercase; margin-top: 2px;
+        }
+        #ms-header .ms-sep {
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.12), transparent);
+            margin-left: 8px;
+        }
+        #ms-header .ms-status {
+            display: flex; align-items: center;
+            gap: 6px; flex-shrink: 0;
+        }
+        #ms-header .ms-dot {
+            width: 7px; height: 7px; border-radius: 9999px;
+            background: #34d399;
+            box-shadow: 0 0 8px rgba(52,211,153,0.8);
+            animation: ms-pulse 2s infinite;
+        }
+        #ms-header .ms-status-txt {
+            color: rgba(255,255,255,0.45); font-size: 0.68rem;
+            font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+        }
+        @keyframes ms-pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+    </style>
+    <header id="ms-header">
+        <div id="ms-header-inner">
+            <div class="ms-accent-line"></div>
+            <a href="/" class="ms-logo-link">
+                <div class="ms-logo-wrap">
+                    <div class="ms-logo-glow"></div>
+                    <img src="/Imagenes/Logo.png" alt="MEDISTOCK" class="ms-logo-img"/>
+                </div>
+                <div class="ms-brand">
+                    <div class="ms-brand-name">MEDI<span>STOCK</span></div>
+                    <div class="ms-brand-sub">Gestión Inteligente</div>
+                </div>
+            </a>
+            <div class="ms-sep"></div>
+            <div class="ms-status">
+                <div class="ms-dot"></div>
+                <span class="ms-status-txt">Sistema activo</span>
+            </div>
+        </div>
+    </header>
+    <!-- ══ FIN HEADER ═══════════════════════════════════════════════════ -->
+
+<div class="w-full max-w-6xl bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-8 relative">
+
+        <div class="flex justify-start mb-6" th:if="${!isManager}">
+            <a href="/usuario/farmacias"
+                class="inline-flex items-center gap-3 bg-white/30 hover:bg-white/50 text-blue-900 font-bold px-6 py-3 rounded-full shadow-lg transition transform hover:scale-105">
+                <i class="ph ph-arrow-left text-2xl"></i> Volver a Farmacias
+            </a>
+        </div>
+
+        <h2 class="text-3xl md:text-4xl font-extrabold text-white text-center drop-shadow-md mb-10">
+            Mis Solicitudes
+        </h2>
+
+        <div class="flex flex-col items-center mb-4 gap-3">
+            <form th:action="@{/usuario/solicitudes/buscar}" method="get"
+                class="flex items-center gap-2 w-full md:w-2/3">
+                <input type="text" name="keyword" placeholder="Buscar solicitud..."
+                    class="px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-400 outline-none w-full">
+                <button type="submit"
+                    class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:bg-blue-700 transition">
+                    Buscar
+                </button>
+            </form>
+
+            <a href="/usuario/solicitudes"
+                class="px-5 py-2 bg-cyan-500 text-white font-semibold rounded-xl shadow-md hover:bg-cyan-600 transition">
+                Mostrar Todo
+            </a>
+
+            <div class="flex gap-2 flex-wrap justify-center">
+                <a href="/usuario/solicitudes?estado=EN_PROCESO"
+                    class="px-4 py-2 bg-yellow-400 text-yellow-900 font-semibold rounded-xl shadow-md hover:bg-yellow-500 transition">
+                    En Proceso
+                </a>
+                <a href="/usuario/solicitudes?estado=ACEPTADA"
+                    class="px-4 py-2 bg-green-500 text-white font-semibold rounded-xl shadow-md hover:bg-green-600 transition">
+                    Aceptadas
+                </a>
+                <a href="/usuario/solicitudes?estado=RECHAZADA"
+                    class="px-4 py-2 bg-red-500 text-white font-semibold rounded-xl shadow-md hover:bg-red-600 transition">
+                    Rechazadas
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(solicitudes)}"
+            class="flex items-center justify-center gap-2 text-white font-semibold text-lg bg-red-500/80 p-4 rounded-2xl shadow-md mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 9v2m0 4h.01M4.93 4.93l14.14 14.14M9.17 9.17l5.66 5.66" />
+            </svg>
+            No tienes solicitudes registradas.
+        </div>
+
+        <div th:unless="${#lists.isEmpty(solicitudes)}" class="grid gap-6">
+            <div th:each="sol : ${solicitudes}"
+                class="flex flex-col md:flex-row items-center md:items-start gap-6 bg-white/90 p-6 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-[1.01] transition">
+
+                <div class="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-xl shadow-inner">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3v12.75m4.5-12.75v12.75M4.5 6.75h15M4.5 6.75a2.25
+                     2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h15a2.25
+                     2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25M4.5
+                     6.75V4.5a2.25 2.25 0 012.25-2.25h10.5A2.25 2.25
+                     0 0119.5 4.5v2.25" />
+                    </svg>
+                </div>
+
+                <div class="flex-1 w-full">
+                    <h3 class="text-xl font-bold text-blue-700 mb-2" th:text="${sol.medicamento.nombre}">Medicamento
+                    </h3>
+
+                    <p class="text-gray-700 mb-1">
+                        <span class="font-semibold">Cantidad:</span>
+                        <span th:text="${sol.cantidad}"></span>
+                    </p>
+
+                    <p class="text-gray-700 mb-1">
+                        <span class="font-semibold">Farmacia:</span>
+                        <span th:text="${sol.medicamento.farmacia.nombre}"></span>
+                    </p>
+
+                    <p class="text-gray-700 mb-1">
+                        <span class="font-semibold">Fecha:</span>
+                        <span th:text="${#temporals.format(sol.fechaSolicitud, 'dd/MM/yyyy HH:mm')}"></span>
+                    </p>
+
+                    <div class="mt-2">
+                        <th:block th:switch="${sol.estado}">
+                            <span th:case="${T(com.example.demo.Model.EstadoSolicitud).EN_PROCESO}"
+                                class="px-3 py-1 rounded-full bg-yellow-200 text-yellow-800 text-sm font-medium">
+                                En Proceso
+                            </span>
+                            <span th:case="${T(com.example.demo.Model.EstadoSolicitud).ACEPTADA}"
+                                class="px-3 py-1 rounded-full bg-green-200 text-green-800 text-sm font-medium">
+                                Aceptada
+                            </span>
+                            <span th:case="${T(com.example.demo.Model.EstadoSolicitud).RECHAZADA}"
+                                class="px-3 py-1 rounded-full bg-red-200 text-red-800 text-sm font-medium">
+                                Rechazada
+                            </span>
+                        </th:block>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+       <div class="flex justify-center items-center gap-3 mt-8" th:if="${totalPages > 1}">
+    
+    <a th:if="${currentPage > 1}"
+       th:href="@{/usuario/solicitudes(page=${currentPage - 2}, estado=${estado}, keyword=${keyword})}"
+       class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition">
+        ← Anterior
+    </a>
+
+    <span class="px-4 py-2 bg-white/20 text-white rounded-lg shadow">
+        Página <span th:text="${currentPage}"></span> de <span th:text="${totalPages}"></span>
+    </span>
+
+    <a th:if="${currentPage < totalPages}"
+       th:href="@{/usuario/solicitudes(page=${currentPage}, estado=${estado}, keyword=${keyword})}"
+       class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition">
+        Siguiente →
+    </a>
+
+</div>
+
+        <div class="flex justify-center mt-6">
+            <a href="/usuario/dashboard"
+                class="inline-flex items-center gap-3 bg-white/30 hover:bg-white/50 text-blue-900 font-bold px-8 py-4 rounded-full shadow-lg transition transform hover:scale-105">
+                <i class="ph ph-arrow-left text-2xl"></i> Volver al Dashboard
+            </a>
+        </div>
+
+    </div>
+    <div th:replace="~{fragments/chatbot-widget :: chatbot}"></div>
+</body>
+
+</html>

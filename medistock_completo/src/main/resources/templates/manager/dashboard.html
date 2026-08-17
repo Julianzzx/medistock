@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>Panel de Manager | Medistock</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+
+        /* ════════════════════════════════════════
+           BASE
+        ════════════════════════════════════════ */
+        body{
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1 0%,
+                    #38bdf8 50%,
+                    #22d3ee 100%
+                );
+
+            min-height:100vh;
+            font-family:'Inter',sans-serif;
+        }
+
+        /* ════════════════════════════════════════
+           CONTENEDOR
+        ════════════════════════════════════════ */
+        .main-container{
+            background:rgba(255,255,255,0.10);
+
+            backdrop-filter:blur(18px);
+
+            border:1px solid rgba(255,255,255,0.20);
+
+            box-shadow:
+                0 10px 35px rgba(0,0,0,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        /* ════════════════════════════════════════
+           CARDS
+        ════════════════════════════════════════ */
+        .card{
+            position:relative;
+            overflow:hidden;
+
+            transition:
+                transform .25s ease,
+                box-shadow .25s ease,
+                border-color .25s ease;
+        }
+
+        .card:hover{
+            transform:translateY(-5px);
+
+            box-shadow:
+                0 15px 35px rgba(0,0,0,0.20);
+
+            border-color:rgba(255,255,255,0.45);
+        }
+
+        .card::before{
+            content:"";
+
+            position:absolute;
+            inset:0;
+
+            background:
+                linear-gradient(
+                    120deg,
+                    rgba(255,255,255,0.15),
+                    transparent 45%
+                );
+
+            opacity:0;
+
+            transition:opacity .3s ease;
+
+            pointer-events:none;
+        }
+
+        .card:hover::before{
+            opacity:1;
+        }
+
+        /* ════════════════════════════════════════
+           BOTONES
+        ════════════════════════════════════════ */
+        .menu-btn{
+            transition:
+                transform .25s ease,
+                background .25s ease,
+                color .25s ease,
+                border-color .25s ease;
+        }
+
+        .menu-btn:hover{
+            transform:scale(1.03);
+        }
+
+        /* ════════════════════════════════════════
+           TITULO
+        ════════════════════════════════════════ */
+        .title-shadow{
+            text-shadow:
+                0 4px 14px rgba(0,0,0,0.25),
+                0 2px 4px rgba(255,255,255,0.15);
+        }
+
+        /* ════════════════════════════════════════
+           SCROLLBAR
+        ════════════════════════════════════════ */
+        ::-webkit-scrollbar{
+            width:10px;
+        }
+
+        ::-webkit-scrollbar-track{
+            background:rgba(255,255,255,0.08);
+        }
+
+        ::-webkit-scrollbar-thumb{
+            background:rgba(255,255,255,0.22);
+            border-radius:9999px;
+        }
+
+        /* ════════════════════════════════════════
+           RESPONSIVE
+        ════════════════════════════════════════ */
+        @media(max-width:1024px){
+
+            .dashboard-grid{
+                grid-template-columns:1fr;
+            }
+
+        }
+
+    </style>
+    <link rel="icon" type="image/png" href="/Imagenes/Logo.png"/>
+</head>
+
+<body class="py-10 px-4 flex justify-center">
+
+<div class="w-full max-w-7xl flex flex-col gap-8">
+
+    <!-- ════════════════════════════════════════
+         HEADER
+    ════════════════════════════════════════ -->
+
+    <!-- ══ HEADER STICKY MEDISTOCK ══════════════════════════════════════ -->
+    <style>
+        body { margin-top: 62px !important; }
+        #ms-header {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100vw !important;
+            z-index: 99999 !important;
+            background: linear-gradient(90deg, rgba(30,27,100,0.82) 0%, rgba(14,116,144,0.70) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.22);
+            box-sizing: border-box;
+            padding: 10px 28px;
+        }
+        #ms-header-inner {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        #ms-header .ms-accent-line {
+            width: 3px; height: 32px; border-radius: 9999px;
+            background: linear-gradient(180deg,#67e8f9,#818cf8);
+            flex-shrink: 0;
+        }
+        #ms-header .ms-logo-link {
+            display: flex; align-items: center;
+            gap: 12px; text-decoration: none;
+        }
+        #ms-header .ms-logo-wrap {
+            position: relative; flex-shrink: 0;
+        }
+        #ms-header .ms-logo-glow {
+            position: absolute; inset: 0;
+            background: rgba(103,232,249,0.25);
+            filter: blur(10px); border-radius: 9999px;
+        }
+        #ms-header .ms-logo-img {
+            position: relative; height: 38px; width: auto;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+            transition: transform 0.3s ease;
+        }
+        #ms-header .ms-logo-img:hover { transform: scale(1.1); }
+        #ms-header .ms-brand { line-height: 1; }
+        #ms-header .ms-brand-name {
+            color: white; font-weight: 900; font-size: 1rem;
+            letter-spacing: 0.08em; font-family: Inter, sans-serif;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.25);
+        }
+        #ms-header .ms-brand-name span { color: #67e8f9; }
+        #ms-header .ms-brand-sub {
+            color: rgba(255,255,255,0.45); font-size: 0.62rem;
+            font-weight: 500; letter-spacing: 0.12em;
+            text-transform: uppercase; margin-top: 2px;
+        }
+        #ms-header .ms-sep {
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.12), transparent);
+            margin-left: 8px;
+        }
+        #ms-header .ms-status {
+            display: flex; align-items: center;
+            gap: 6px; flex-shrink: 0;
+        }
+        #ms-header .ms-dot {
+            width: 7px; height: 7px; border-radius: 9999px;
+            background: #34d399;
+            box-shadow: 0 0 8px rgba(52,211,153,0.8);
+            animation: ms-pulse 2s infinite;
+        }
+        #ms-header .ms-status-txt {
+            color: rgba(255,255,255,0.45); font-size: 0.68rem;
+            font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+        }
+        @keyframes ms-pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+    </style>
+    <header id="ms-header">
+        <div id="ms-header-inner">
+            <div class="ms-accent-line"></div>
+            <a href="/" class="ms-logo-link">
+                <div class="ms-logo-wrap">
+                    <div class="ms-logo-glow"></div>
+                    <img src="/Imagenes/Logo.png" alt="MEDISTOCK" class="ms-logo-img"/>
+                </div>
+                <div class="ms-brand">
+                    <div class="ms-brand-name">MEDI<span>STOCK</span></div>
+                    <div class="ms-brand-sub">Gestión Inteligente</div>
+                </div>
+            </a>
+            <div class="ms-sep"></div>
+            <div class="ms-status">
+                <div class="ms-dot"></div>
+                <span class="ms-status-txt">Sistema activo</span>
+            </div>
+        </div>
+    </header>
+    <!-- ══ FIN HEADER ═══════════════════════════════════════════════════ -->
+
+<!-- ════════════════════════════════════════
+         CONTENIDO
+    ════════════════════════════════════════ -->
+    <div class="main-container rounded-3xl p-8 md:p-10 flex flex-col gap-10">
+
+        <!-- Intro -->
+        <div class="text-center">
+
+            <h2 class="text-4xl md:text-5xl font-black text-white tracking-wide title-shadow">
+                Panel de Manager
+            </h2>
+
+            <p class="text-white/75 mt-4 text-lg md:text-xl">
+                Administra usuarios, inventario, EPS, reportes y modelos predictivos
+            </p>
+
+        </div>
+
+        <!-- Grid -->
+        <div class="dashboard-grid grid grid-cols-1 lg:grid-cols-4 gap-8">
+
+            <!-- Personal -->
+            <div class="card bg-white/15 rounded-3xl shadow-xl p-6 border border-white/20 flex flex-col">
+
+                <h2 class="text-indigo-100 font-bold text-xl mb-6 flex items-center gap-2">
+
+                    <i class="ph ph-identification-badge text-2xl text-indigo-300"></i>
+
+                    Gestión de Personal
+
+                </h2>
+
+                <div class="flex flex-col gap-4">
+
+                    <a href="/manager/usuarios"
+                       class="menu-btn group flex items-center gap-3 bg-white/30 text-indigo-900 font-semibold px-5 py-4 rounded-2xl shadow-md border border-white/20 hover:bg-indigo-600 hover:text-white hover:border-indigo-300/70">
+
+                        <i class="ph ph-users text-2xl group-hover:animate-bounce"></i>
+
+                        Usuarios
+
+                    </a>
+
+                    <a href="/manager/admins"
+                       class="menu-btn group flex items-center gap-3 bg-white/30 text-indigo-900 font-semibold px-5 py-4 rounded-2xl shadow-md border border-white/20 hover:bg-indigo-600 hover:text-white hover:border-indigo-300/70">
+
+                        <i class="ph ph-shield-star text-2xl group-hover:animate-bounce"></i>
+
+                        Admins
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- Inventario -->
+            <div class="card bg-white/15 rounded-3xl shadow-xl p-6 border border-white/20 flex flex-col">
+
+                <h2 class="text-cyan-100 font-bold text-xl mb-6 flex items-center gap-2">
+
+                    <i class="ph ph-archive text-2xl text-cyan-300"></i>
+
+                    Gestión de Inventario
+
+                </h2>
+
+                <div class="flex flex-col gap-4">
+
+                    <a href="/manager/farmacias"
+                       class="menu-btn group flex items-center gap-3 bg-white/30 text-indigo-900 font-semibold px-5 py-4 rounded-2xl shadow-md border border-white/20 hover:bg-cyan-600 hover:text-white hover:border-cyan-300/70">
+
+                        <i class="ph ph-first-aid text-2xl group-hover:animate-bounce"></i>
+
+                        Farmacias
+
+                    </a>
+
+                    <a href="/manager/eps/select"
+                       class="menu-btn group flex items-center gap-3 bg-white/30 text-indigo-900 font-semibold px-5 py-4 rounded-2xl shadow-md border border-white/20 hover:bg-cyan-600 hover:text-white hover:border-cyan-300/70">
+
+                        <i class="ph ph-pill text-2xl group-hover:animate-bounce"></i>
+
+                        Medicamentos
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- EPS -->
+            <div class="card bg-white/15 rounded-3xl shadow-xl p-6 border border-white/20 flex flex-col">
+
+                <h2 class="text-emerald-100 font-bold text-xl mb-6 flex items-center gap-2">
+
+                    <i class="ph ph-buildings text-2xl text-emerald-300"></i>
+
+                    Gestión de EPS
+
+                </h2>
+
+                <div class="flex flex-col gap-4">
+
+                    <a href="/manager/eps"
+                       class="menu-btn group flex items-center gap-3 bg-white/30 text-emerald-900 font-semibold px-5 py-4 rounded-2xl shadow-md border border-white/20 hover:bg-emerald-600 hover:text-white hover:border-emerald-300/70">
+
+                        <i class="ph ph-hospital text-2xl group-hover:animate-bounce"></i>
+
+                        EPS
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- Reportes -->
+            <div class="card bg-white/15 rounded-3xl shadow-xl p-6 border border-white/20 flex flex-col">
+
+                <h2 class="text-purple-100 font-bold text-xl mb-6 flex items-center gap-2">
+
+                    <i class="ph ph-chart-bar text-2xl text-purple-300"></i>
+
+                    Reportes
+
+                </h2>
+
+                <div class="flex flex-col gap-4">
+
+                    <a href="/manager/powerbi"
+                       class="menu-btn group flex items-center gap-3 bg-white/30 text-purple-900 font-semibold px-5 py-4 rounded-2xl shadow-md border border-white/20 hover:bg-purple-600 hover:text-white hover:border-purple-300/70">
+
+                        <i class="ph ph-monitor text-2xl group-hover:animate-bounce"></i>
+
+                        Ver Dashboard
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- WEKA -->
+            <div class="card bg-white/15 rounded-3xl shadow-xl p-6 border border-white/20 flex flex-col lg:col-span-2">
+
+                <h2 class="text-violet-100 font-bold text-xl mb-6 flex items-center gap-2">
+
+                    <i class="ph ph-brain text-2xl text-violet-300"></i>
+
+                    Modelo Predictivo
+
+                </h2>
+
+                <div class="flex flex-col gap-4">
+
+                    <a href="/manager/weka"
+                       class="menu-btn group flex items-center gap-3 bg-white/30 text-indigo-900 font-semibold px-5 py-4 rounded-2xl shadow-md border border-white/20 hover:bg-violet-600 hover:text-white hover:border-violet-300/70">
+
+                        <i class="ph ph-tree-structure text-2xl group-hover:animate-bounce"></i>
+
+                        Predicción WEKA
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- Solicitudes -->
+            <div class="card bg-gradient-to-r from-indigo-500/70 to-cyan-500/70 rounded-3xl shadow-xl p-8 border border-white/20 flex flex-col justify-center items-center text-center lg:col-span-2">
+
+                <i class="ph ph-envelope-open text-6xl text-white mb-5"></i>
+
+                <h2 class="text-white font-black text-3xl mb-4">
+                    Gestión de Solicitudes
+                </h2>
+
+                <p class="text-white/80 mb-6 max-w-md">
+                    Revisa, administra y procesa solicitudes del sistema.
+                </p>
+
+                <a href="/manager/solicitudes"
+                   class="inline-flex items-center gap-3 bg-white/25 text-white font-bold px-7 py-4 rounded-2xl shadow-lg border border-white/20 hover:bg-white hover:text-indigo-700 transition-all duration-300 hover:scale-105">
+
+                    <i class="ph ph-arrow-right"></i>
+
+                    Ir a Solicitudes
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- Logout -->
+        <div class="flex justify-center pt-2">
+
+            <form th:action="@{/logout}" method="post">
+
+                <button type="submit"
+                        class="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-4 rounded-full shadow-lg transition transform hover:scale-110 hover:shadow-red-400/50">
+
+                    <i class="ph ph-sign-out text-2xl"></i>
+
+                    Cerrar Sesión
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medicamentos | Medistock</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fadeInUp {
+      animation: fadeInUp 0.6s ease-out;
+    }
+  </style>
+    <link rel="icon" type="image/png" href="/Imagenes/Logo.png"/>
+</head>
+
+<body class="bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 min-h-screen py-10 flex flex-col items-center">
+
+    <!-- ══ HEADER STICKY MEDISTOCK ══════════════════════════════════════ -->
+    <style>
+        body { margin-top: 62px !important; }
+        #ms-header {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100vw !important;
+            z-index: 99999 !important;
+            background: linear-gradient(90deg, rgba(30,27,100,0.82) 0%, rgba(14,116,144,0.70) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.22);
+            box-sizing: border-box;
+            padding: 10px 28px;
+        }
+        #ms-header-inner {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        #ms-header .ms-accent-line {
+            width: 3px; height: 32px; border-radius: 9999px;
+            background: linear-gradient(180deg,#67e8f9,#818cf8);
+            flex-shrink: 0;
+        }
+        #ms-header .ms-logo-link {
+            display: flex; align-items: center;
+            gap: 12px; text-decoration: none;
+        }
+        #ms-header .ms-logo-wrap {
+            position: relative; flex-shrink: 0;
+        }
+        #ms-header .ms-logo-glow {
+            position: absolute; inset: 0;
+            background: rgba(103,232,249,0.25);
+            filter: blur(10px); border-radius: 9999px;
+        }
+        #ms-header .ms-logo-img {
+            position: relative; height: 38px; width: auto;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+            transition: transform 0.3s ease;
+        }
+        #ms-header .ms-logo-img:hover { transform: scale(1.1); }
+        #ms-header .ms-brand { line-height: 1; }
+        #ms-header .ms-brand-name {
+            color: white; font-weight: 900; font-size: 1rem;
+            letter-spacing: 0.08em; font-family: Inter, sans-serif;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.25);
+        }
+        #ms-header .ms-brand-name span { color: #67e8f9; }
+        #ms-header .ms-brand-sub {
+            color: rgba(255,255,255,0.45); font-size: 0.62rem;
+            font-weight: 500; letter-spacing: 0.12em;
+            text-transform: uppercase; margin-top: 2px;
+        }
+        #ms-header .ms-sep {
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.12), transparent);
+            margin-left: 8px;
+        }
+        #ms-header .ms-status {
+            display: flex; align-items: center;
+            gap: 6px; flex-shrink: 0;
+        }
+        #ms-header .ms-dot {
+            width: 7px; height: 7px; border-radius: 9999px;
+            background: #34d399;
+            box-shadow: 0 0 8px rgba(52,211,153,0.8);
+            animation: ms-pulse 2s infinite;
+        }
+        #ms-header .ms-status-txt {
+            color: rgba(255,255,255,0.45); font-size: 0.68rem;
+            font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+        }
+        @keyframes ms-pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+    </style>
+    <header id="ms-header">
+        <div id="ms-header-inner">
+            <div class="ms-accent-line"></div>
+            <a href="/" class="ms-logo-link">
+                <div class="ms-logo-wrap">
+                    <div class="ms-logo-glow"></div>
+                    <img src="/Imagenes/Logo.png" alt="MEDISTOCK" class="ms-logo-img"/>
+                </div>
+                <div class="ms-brand">
+                    <div class="ms-brand-name">MEDI<span>STOCK</span></div>
+                    <div class="ms-brand-sub">Gestión Inteligente</div>
+                </div>
+            </a>
+            <div class="ms-sep"></div>
+            <div class="ms-status">
+                <div class="ms-dot"></div>
+                <span class="ms-status-txt">Sistema activo</span>
+            </div>
+        </div>
+    </header>
+    <!-- ══ FIN HEADER ═══════════════════════════════════════════════════ -->
+
+<div th:with="managerParam=${isManager} ? '?isManager=true' : ''"
+    class="w-full max-w-7xl bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-8 animate-fadeInUp">
+
+    <form th:action="@{/usuario/generar-cita}" method="post">
+      <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition">
+        <i class="ph ph-calendar-check text-lg"></i> Generar Orden de Cita →
+      </button>
+    </form>
+
+    <br>
+    <br>
+
+    <form th:action="@{'/usuario/farmacia/' + ${farmaciaId} + ${managerParam}}" method="get"
+      class="flex flex-wrap items-center justify-center gap-3 mb-6 max-w-3xl mx-auto">
+      <div
+        class="flex items-center flex-1 bg-white/20 rounded-xl px-3 py-2 backdrop-blur-md shadow-inner border border-white/30 min-w-[250px]">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white mr-2" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
+        </svg>
+        <input type="text" name="nombre" placeholder="Buscar medicamento..." th:value="${nombre}"
+          class="w-full bg-transparent text-white placeholder-white/70 focus:outline-none">
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-2">
+        <button type="submit"
+          class="px-4 py-2 bg-indigo-600 text-white rounded-xl shadow hover:shadow-lg hover:scale-105 hover:bg-indigo-700 transition-all flex items-center gap-1">
+          Buscar
+        </button>
+
+        <a th:href="@{'/usuario/farmacia/' + ${farmaciaId} + ${managerParam}}"
+          class="px-4 py-2 bg-indigo-600 text-white rounded-xl shadow hover:shadow-lg hover:scale-105 hover:bg-indigo-700 transition-all flex items-center gap-1">
+          Mostrar Todo
+        </a>
+
+        <button type="button" id="btnFiltros"
+          class="px-4 py-2 bg-indigo-600 text-white rounded-xl shadow hover:shadow-lg hover:scale-105 hover:bg-indigo-700 transition-all flex items-center gap-1">
+          <i class="ph ph-funnel text-lg"></i> Filtros
+        </button>
+
+        <a href="/usuario/solicitudes"
+          class="px-4 py-2 bg-indigo-600 text-white rounded-xl shadow hover:shadow-lg hover:scale-105 hover:bg-indigo-700 transition-all flex items-center gap-1">
+          <i class="ph ph-list text-lg"></i>
+          Solicitudes
+        </a>
+      </div>
+    </form>
+
+    <div id="panelFiltros"
+      class="hidden bg-white/90 backdrop-blur-md border border-gray-300 rounded-2xl shadow-lg p-6 mb-6">
+      <form th:action="@{'/usuario/farmacia/' + ${farmaciaId} + ${managerParam}}" method="get"
+        class="grid md:grid-cols-4 gap-4">
+
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Laboratorio:</label>
+          <select name="laboratorio" class="w-full border border-gray-300 rounded-lg p-2">
+            <option value="">-- Todos --</option>
+            <option th:each="lab : ${laboratorios}" th:value="${lab}" th:text="${lab}"
+              th:selected="${lab == laboratorio}"></option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Concentración:</label>
+          <select name="concentracion" class="w-full border border-gray-300 rounded-lg p-2">
+            <option value="">-- Todas --</option>
+            <option th:each="conc : ${concentraciones}" th:value="${conc}" th:text="${conc}"
+              th:selected="${conc == concentracion}"></option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Presentación:</label>
+          <select name="presentacion" class="w-full border border-gray-300 rounded-lg p-2">
+            <option value="">-- Todas --</option>
+            <option th:each="pres : ${presentaciones}" th:value="${pres}" th:text="${pres}"
+              th:selected="${pres == presentacion}"></option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Descripción:</label>
+          <select name="descripcion" class="w-full border border-gray-300 rounded-lg p-2">
+            <option value="">-- Todas --</option>
+            <option th:each="desc : ${descripciones}" th:value="${desc}" th:text="${desc}"
+              th:selected="${desc == descripcion}"></option>
+          </select>
+        </div>
+
+        <div class="md:col-span-4 flex justify-end gap-3 mt-4">
+          <button type="submit"
+            class="px-5 py-2 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition">
+            Aplicar filtros
+          </button>
+          <a th:href="@{'/usuario/farmacia/' + ${farmaciaId} + ${managerParam}}"
+            class="px-5 py-2 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition">
+            Limpiar
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <div th:if="${msg}" id="msg"
+      class="mb-4 bg-green-100 text-green-800 px-4 py-3 rounded-xl font-semibold shadow-lg border border-green-300"
+      th:text="${msg}"></div>
+
+    <div th:if="${error}" id="error"
+      class="mb-4 bg-red-100 text-red-800 px-4 py-3 rounded-xl font-semibold shadow-lg border border-red-300"
+      th:text="${error}"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.getElementById("btnFiltros");
+        const panel = document.getElementById("panelFiltros");
+        if (btn) btn.addEventListener("click", () => panel.classList.toggle("hidden"));
+
+        setTimeout(() => {
+          const msgDiv = document.getElementById('msg');
+          if (msgDiv) msgDiv.style.display = 'none';
+          const errDiv = document.getElementById('error');
+          if (errDiv) errDiv.style.display = 'none';
+        }, 3000);
+      });
+    </script>
+
+    <div class="flex flex-col gap-6">
+      <div th:each="med : ${medicamentos}"
+        class="flex flex-col md:flex-row items-center gap-6 bg-white/80 p-6 rounded-2xl shadow-md hover:shadow-lg hover:scale-[1.02] transition">
+        <div class="flex-shrink-0">
+          <div
+            class="w-24 h-24 bg-gradient-to-tr from-indigo-100 to-sky-200 rounded-xl flex items-center justify-center shadow-inner">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-indigo-700" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3v12.75m4.5-12.75v12.75M4.5 6.75h15M4.5 6.75a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h15a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25M4.5 6.75V4.5
+                   a2.25 2.25 0 012.25-2.25h10.5A2.25 2.25 0 0119.5 4.5v2.25" />
+            </svg>
+          </div>
+        </div>
+
+        <div class="flex-1 w-full">
+          <h3 class="font-bold text-xl text-indigo-700" th:text="${med.nombre}">Nombre</h3>
+          <p class="text-gray-600 text-sm mt-1" th:text="'Farmacia: ' + ${med.farmacia.nombre}">Farmacia</p>
+          <p class="text-gray-800 font-medium mt-2">Stock: <span th:text="${med.cantidad}"></span></p>
+          <p class="text-gray-800 mt-1">Concentración: <span th:text="${med.concentracion}"></span></p>
+          <p class="text-gray-800 mt-1">Descripción: <span th:text="${med.descripcion}"></span></p>
+          <p class="text-gray-800 mt-1">Presentación: <span th:text="${med.presentacion}"></span></p>
+          <p class="text-gray-800 mt-1">Laboratorio: <span th:text="${med.laboratorio}"></span></p>
+        </div>
+
+        <div class="flex flex-col items-center gap-2 md:items-end w-full md:w-auto">
+          <form th:action="@{'/usuario/solicitar-medicamento/' + ${med.id} + ${managerParam}}" method="post"
+            class="flex flex-col gap-2">
+            <input type="hidden" name="medicamentoId" th:value="${med.id}" />
+            <input type="hidden" name="page" th:value="${currentPage}" />
+            <input type="hidden" name="nombre" th:value="${nombre}" />
+
+            <input type="number" name="cantidad" min="1" th:attr="max=${med.cantidad}" required
+              placeholder="Cantidad"
+              class="p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 w-28" />
+
+            <input type="text" name="codigo" required placeholder="Código"
+              class="p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 w-28" />
+
+            <button type="submit" th:disabled="${med.cantidad} <= 0"
+              class="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-xl font-semibold shadow-md transition">
+              <span th:text="${med.cantidad} > 0 ? 'Solicitar' : 'Sin stock'"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-center items-center gap-2 mt-8">
+      <a th:if="${currentPage > 1}" th:href="@{/usuario/farmacia/{id}(
+           id=${farmaciaId},
+           page=${currentPage - 2},
+           nombre=${nombre},
+           isManager=${isManager}
+         )}" class="px-3 py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+        ← Anterior
+      </a>
+
+      <span class="px-4 py-2 bg-white/70 rounded-lg shadow text-gray-800">
+        Página <span th:text="${currentPage}"></span> de <span th:text="${totalPages}"></span>
+      </span>
+
+      <a th:if="${currentPage < totalPages}" th:href="@{/usuario/farmacia/{id}(
+           id=${farmaciaId},
+           page=${currentPage},
+           nombre=${nombre},
+           isManager=${isManager}
+         )}" class="px-3 py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+        Siguiente →
+      </a>
+    </div>
+
+    <div class="mt-8 flex justify-center gap-4">
+      <a th:href="@{'/usuario/farmacias' + ${managerParam}}"
+        class="px-6 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition">
+        ← Volver a Farmacias
+      </a>
+    </div>
+
+  </div>
+    <div th:replace="~{fragments/chatbot-widget :: chatbot}"></div>
+</body>
+
+</html>
