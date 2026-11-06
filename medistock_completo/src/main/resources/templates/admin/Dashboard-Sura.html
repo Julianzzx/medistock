@@ -1,207 +1,328 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Sura | Medistock</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <style>
-    .card {
-      position: relative;
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-      overflow: hidden;
-    }
-
-    .card:hover {
-      transform: translateY(-8px) scale(1.03);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(120deg, rgba(255, 255, 255, 0.15), transparent 60%);
-      transform: rotate(25deg);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      pointer-events: none;
-    }
-
-    .card:hover::before {
-      opacity: 1;
-    }
-  </style>
-    <link rel="icon" type="image/png" href="/Imagenes/Logo.png"/>
-</head>
-
-<body
-  class="bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 min-h-screen flex items-center justify-center py-12">
-
-    <!-- ══ HEADER STICKY MEDISTOCK ══════════════════════════════════════ -->
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard Administrador Sura | Medistock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { margin-top: 62px !important; }
-        #ms-header {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            width: 100vw !important;
-            z-index: 99999 !important;
-            background: linear-gradient(90deg, rgba(30,27,100,0.82) 0%, rgba(14,116,144,0.70) 100%);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.18);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.22);
-            box-sizing: border-box;
-            padding: 10px 28px;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* slate-950 */
         }
-        #ms-header-inner {
-            display: flex;
-            align-items: center;
-            gap: 14px;
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.75) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(20, 184, 166, 0.8), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
-        #ms-header .ms-accent-line {
-            width: 3px; height: 32px; border-radius: 9999px;
-            background: linear-gradient(180deg,#67e8f9,#818cf8);
-            flex-shrink: 0;
+
+        .glass-card:hover {
+            transform: translateY(-6px);
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border-color: rgba(20, 184, 166, 0.4);
+            box-shadow: 0 30px 60px -12px rgba(20, 184, 166, 0.2);
         }
-        #ms-header .ms-logo-link {
-            display: flex; align-items: center;
-            gap: 12px; text-decoration: none;
+
+        .glass-card:hover::before {
+            opacity: 1;
         }
-        #ms-header .ms-logo-wrap {
-            position: relative; flex-shrink: 0;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        #ms-header .ms-logo-glow {
-            position: absolute; inset: 0;
-            background: rgba(103,232,249,0.25);
-            filter: blur(10px); border-radius: 9999px;
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
-        #ms-header .ms-logo-img {
-            position: relative; height: 38px; width: auto;
-            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
-            transition: transform 0.3s ease;
+
+        /* Tech grid background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
         }
-        #ms-header .ms-logo-img:hover { transform: scale(1.1); }
-        #ms-header .ms-brand { line-height: 1; }
-        #ms-header .ms-brand-name {
-            color: white; font-weight: 900; font-size: 1rem;
-            letter-spacing: 0.08em; font-family: Inter, sans-serif;
-            text-shadow: 0 1px 8px rgba(0,0,0,0.25);
+
+        .pulse-glow {
+            box-shadow: 0 0 25px rgba(20, 184, 166, 0.25);
         }
-        #ms-header .ms-brand-name span { color: #67e8f9; }
-        #ms-header .ms-brand-sub {
-            color: rgba(255,255,255,0.45); font-size: 0.62rem;
-            font-weight: 500; letter-spacing: 0.12em;
-            text-transform: uppercase; margin-top: 2px;
-        }
-        #ms-header .ms-sep {
-            flex: 1; height: 1px;
-            background: linear-gradient(90deg, rgba(255,255,255,0.12), transparent);
-            margin-left: 8px;
-        }
-        #ms-header .ms-status {
-            display: flex; align-items: center;
-            gap: 6px; flex-shrink: 0;
-        }
-        #ms-header .ms-dot {
-            width: 7px; height: 7px; border-radius: 9999px;
-            background: #34d399;
-            box-shadow: 0 0 8px rgba(52,211,153,0.8);
-            animation: ms-pulse 2s infinite;
-        }
-        #ms-header .ms-status-txt {
-            color: rgba(255,255,255,0.45); font-size: 0.68rem;
-            font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
-        }
-        @keyframes ms-pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
     </style>
-    <header id="ms-header">
-        <div id="ms-header-inner">
-            <div class="ms-accent-line"></div>
-            <a href="/" class="ms-logo-link">
-                <div class="ms-logo-wrap">
-                    <div class="ms-logo-glow"></div>
-                    <img src="/Imagenes/Logo.png" alt="MEDISTOCK" class="ms-logo-img"/>
-                </div>
-                <div class="ms-brand">
-                    <div class="ms-brand-name">MEDI<span>STOCK</span></div>
-                    <div class="ms-brand-sub">Gestión Inteligente</div>
-                </div>
-            </a>
-            <div class="ms-sep"></div>
-            <div class="ms-status">
-                <div class="ms-dot"></div>
-                <span class="ms-status-txt">Sistema activo</span>
+</head>
+<body class="text-slate-100 min-h-screen flex bg-grid relative overflow-x-hidden">
+
+<!-- Iluminación ambiental de fondo (Tonos Sura: Teal / Esmeralda / Sky) -->
+<div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-teal-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+<div class="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-sky-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+<!-- BARRA LATERAL (Estilo profesional limpio con identidad EPS Sura) -->
+<aside class="hidden lg:flex w-80 bg-slate-900/95 backdrop-blur-2xl border-r border-slate-800/80 flex-col justify-between p-6 z-30 sticky top-0 h-screen shadow-2xl">
+    <div class="space-y-6">
+        <!-- Logo y Entidad -->
+        <div class="flex items-center gap-3 px-2">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center text-white shadow-lg shadow-teal-500/30">
+                <i class="ph ph-shield-check text-2xl"></i>
+            </div>
+            <div>
+                <span class="text-lg font-extrabold tracking-tight text-white block leading-none">EPS SURA</span>
+                <span class="text-[10px] text-teal-400 font-bold uppercase tracking-wider">Admin Network</span>
             </div>
         </div>
-    </header>
-    <!-- ══ FIN HEADER ═══════════════════════════════════════════════════ -->
 
-<div
-    class="w-full max-w-6xl bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-10 flex flex-col gap-10 border border-white/20">
+        <!-- Menú Lateral Principal -->
+        <nav class="space-y-1.5 text-sm font-medium px-1">
+            <a href="#" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg shadow-teal-600/30 font-bold">
+                <i class="ph ph-squares-four text-xl"></i>
+                <span>Panel Admin</span>
+            </a>
+            <div class="pt-2 pb-1 px-3">
+                <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Estado EPS</span>
+            </div>
+        </nav>
 
-    <div class="text-center">
-      <h1 class="text-5xl font-extrabold text-white drop-shadow-lg tracking-wide">
-        Dashboard Sura
-      </h1>
-      <p class="text-white/80 mt-3 text-lg md:text-xl">
-        Control y seguimiento de solicitudes y medicamentos en Medical Center - Sura
-      </p>
+        <!-- Mini Tarjeta de Estadísticas de Red EPS Sura -->
+        <div class="mx-1 p-4 rounded-2xl bg-gradient-to-br from-slate-950/80 to-slate-900/80 border border-slate-800/80 relative overflow-hidden group">
+            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-teal-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <i class="ph ph-pulse text-teal-400 text-base"></i> Red Sura
+                </span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Activo</span>
+            </div>
+            <div class="space-y-2">
+                <div>
+                    <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                        <span>Aprobación de Solicitudes</span>
+                        <span class="text-teal-400 font-bold">99.1%</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full" style="width: 99.1%;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                        <span>Farmacias Asignadas</span>
+                        <span class="text-emerald-400 font-bold">15 Sedes</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-emerald-500 rounded-full" style="width: 92%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Imagen de Contexto Institucional EPS Sura -->
+        <div class="mx-1 rounded-2xl overflow-hidden relative border border-slate-800/80 h-44 group shadow-lg">
+            <img src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?q=80&w=600&auto=format&fit=crop"
+                 alt="Salud Sura"
+                 class="w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-700 filter brightness-75" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex flex-col justify-end p-3.5">
+                <p class="text-[10px] text-teal-400 font-bold uppercase tracking-wider mb-0.5">Gestión y Cuidado</p>
+                <p class="text-xs text-slate-200 font-semibold leading-tight">Optimización farmacéutica segura.</p>
+            </div>
+        </div>
+
+        <!-- Indicadores de Seguridad y Sincronización -->
+        <div class="mx-1 grid grid-cols-2 gap-2">
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-shield-check text-teal-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Portal EPS</p>
+                <p class="text-xs font-extrabold text-white">Verificado</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-database text-emerald-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Red Stock</p>
+                <p class="text-xs font-extrabold text-white">Sincronizado</p>
+            </div>
+        </div>
     </div>
 
-    <div class="flex justify-center">
-      <p
-        class="bg-yellow-300/80 text-indigo-900 px-6 py-3 rounded-full font-bold shadow-md flex items-center gap-3 text-lg">
-        <i class="ph ph-envelope-open text-2xl"></i>
-        Solicitudes en proceso:
-        <span th:text="${pendientes}">0</span>
-      </p>
+    <!-- Perfil / Estado en Sidebar -->
+    <div class="pt-3 border-t border-slate-800/80">
+        <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-500 to-emerald-400 text-white flex items-center justify-center font-extrabold text-xs shadow-md">
+                AS
+            </div>
+            <div class="overflow-hidden flex-1">
+                <p class="text-xs font-bold text-white truncate" th:text="${admin.nombre} + ' ' + ${admin.apellido}">Administrador</p>
+                <p class="text-[10px] text-emerald-400 font-semibold truncate flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sura Activo
+                </p>
+            </div>
+        </div>
     </div>
+</aside>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+<!-- CONTENIDO PRINCIPAL -->
+<main class="flex-1 min-h-screen flex flex-col p-4 md:p-10 z-10 overflow-y-auto">
+    <div class="w-full max-w-7xl mx-auto flex flex-col gap-8 animate-fade-in">
 
-      <div
-        class="card bg-white/20 rounded-2xl shadow-lg p-8 border border-white/20 hover:border-indigo-400/60 flex flex-col items-center text-center">
-        <i class="ph ph-envelope-simple text-5xl text-indigo-300 mb-4"></i>
-        <h2 class="text-indigo-100 font-bold text-2xl mb-4">Gestión de Solicitudes</h2>
-        <a href="/admin/solicitudes" th:href="@{/admin/solicitudes(isManager=${isManager})}"
-          class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl shadow-md transition transform hover:scale-105">
-          Ver Solicitudes
-        </a>
+        <!-- Header / Barra Superior con Bienvenida y Estadísticas -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 glass-panel rounded-3xl p-6 md:p-8 border border-slate-800">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-xs font-bold uppercase tracking-wider mb-2">
+                    <i class="ph ph-shield-check"></i> Red EPS Sura
+                </div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight" th:text="'Bienvenido, ' + ${admin.nombre} + ' ' + ${admin.apellido}">Panel Administrador - Sura</h1>
+                <p class="text-slate-400 text-sm mt-1">Gestión administrativa de solicitudes y farmacias asignadas a la red EPS Sura.</p>
+            </div>
 
-      </div>
+            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white font-bold transition-all duration-300 text-xs shadow-lg shadow-rose-900/20 group">
+                        <i class="ph ph-sign-out text-lg transition-transform group-hover:-translate-x-1"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </form>
+            </div>
+        </div>
 
-      <div
-        class="card bg-white/20 rounded-2xl shadow-lg p-8 border border-white/20 hover:border-cyan-400/60 flex flex-col items-center text-center">
-        <i class="ph ph-pill text-5xl text-cyan-300 mb-4"></i>
-        <h2 class="text-cyan-100 font-bold text-2xl mb-4">Gestión de Medicamentos</h2>
-        <a href="/admin/farmacias" th:href="@{/admin/farmacias(isManager=${isManager})}"
-          class="inline-block bg-cyan-600 hover:bg-cyan-700 text-white font-semibold px-6 py-3 rounded-xl shadow-md transition transform hover:scale-105">
-          Ver Medicamentos
-        </a>
-      </div>
+        <!-- Métricas Superiores del Sistema EPS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="glass-section rounded-3xl p-6 border border-white/5 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Estado de Red</p>
+                    <h3 class="text-white font-extrabold text-lg flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> 100% Operativo
+                    </h3>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20 text-xl">
+                    <i class="ph ph-activity"></i>
+                </div>
+            </div>
+
+            <div class="glass-section rounded-3xl p-6 border border-white/5 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Cobertura EPS</p>
+                    <h3 class="text-white font-extrabold text-lg">Sura Regional</h3>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-400 flex items-center justify-center border border-teal-500/20 text-xl">
+                    <i class="ph ph-buildings"></i>
+                </div>
+            </div>
+
+            <div class="glass-section rounded-3xl p-6 border border-white/5 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Protocolo</p>
+                    <h3 class="text-white font-extrabold text-lg">Alta Seguridad</h3>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center justify-center border border-sky-500/20 text-xl">
+                    <i class="ph ph-lock-key"></i>
+                </div>
+            </div>
+
+            <div class="glass-section rounded-3xl p-6 border border-white/5 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Soporte Médico</p>
+                    <h3 class="text-white font-extrabold text-lg">24 Horas</h3>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center border border-purple-500/20 text-xl">
+                    <i class="ph ph-headset"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Módulos Centrales del Administrador EPS Sura -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Tarjeta 1: Gestión de Solicitudes de Usuarios -->
+            <div class="glass-card rounded-3xl p-8 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="w-16 h-16 rounded-2xl bg-teal-500/10 flex items-center justify-center text-teal-400 border border-teal-500/20 group-hover:scale-110 transition-transform shadow-inner">
+                            <i class="ph ph-clipboard-text text-3xl"></i>
+                        </div>
+                        <span class="text-xs font-bold text-teal-400 bg-teal-500/10 px-3 py-1 rounded-full border border-teal-500/20 uppercase tracking-wider">Validación</span>
+                    </div>
+                    <h2 class="text-white font-extrabold text-2xl mb-2">Solicitudes de Usuarios</h2>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-8">Acepta o rechaza con total trazabilidad las solicitudes de medicamentos emitidas por los afiliados a tu EPS.</p>
+                </div>
+                <div>
+                    <a th:href="@{/admin/solicitudes}"
+                       class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-[0_0_30px_rgba(20,184,166,0.3)] transition-all duration-300 flex items-center justify-center gap-2 group-hover:scale-[1.02]">
+                        <span>Gestionar Solicitudes</span>
+                        <i class="ph ph-arrow-right text-lg transition-transform group-hover:translate-x-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tarjeta 2: Red de Farmacias y Stock -->
+            <div class="glass-card rounded-3xl p-8 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="w-16 h-16 rounded-2xl bg-sky-500/10 flex items-center justify-center text-sky-400 border border-sky-500/20 group-hover:scale-110 transition-transform shadow-inner">
+                            <i class="ph ph-storefront text-3xl"></i>
+                        </div>
+                        <span class="text-xs font-bold text-sky-400 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20 uppercase tracking-wider">Logística</span>
+                    </div>
+                    <h2 class="text-white font-extrabold text-2xl mb-2">Farmacias y Stock</h2>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-8">Monitorea en tiempo real el inventario disponible y gestiona solicitudes de reabastecimiento para tus farmacias asignadas.</p>
+                </div>
+                <div>
+                    <a th:href="@{/admin/farmacias}"
+                       class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-sky-600 to-cyan-600 hover:from-sky-500 hover:to-cyan-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-[0_0_30px_rgba(14,165,233,0.3)] transition-all duration-300 flex items-center justify-center gap-2 group-hover:scale-[1.02]">
+                        <span>Ver Farmacias</span>
+                        <i class="ph ph-arrow-right text-lg transition-transform group-hover:translate-x-1"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Banner Inferior de Apoyo Logístico EPS Sura -->
+        <div class="glass-card rounded-3xl p-8 md:p-10 relative overflow-hidden group z-10 bg-gradient-to-r from-teal-950/70 via-slate-900/90 to-sky-950/70 border border-teal-500/30 pulse-glow">
+            <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-teal-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                <div class="flex items-center gap-6 text-center md:text-left">
+                    <div class="w-16 h-16 rounded-2xl bg-teal-500/15 flex items-center justify-center text-teal-300 border border-teal-500/30 shrink-0">
+                        <i class="ph ph-shield-star text-3xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-white font-bold text-xl mb-1">Gobernanza y Trazabilidad Sura</h2>
+                        <p class="text-slate-300 text-sm max-w-xl leading-relaxed">Cada validación de medicamentos se procesa con altos estándares de calidad institucional para asegurar la disponibilidad continua.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-bold text-teal-400 bg-teal-500/10 px-4 py-2 rounded-xl border border-teal-500/20 shrink-0">
+                    <i class="ph ph-check-circle text-base"></i> Sistema Homologado
+                </div>
+            </div>
+        </div>
 
     </div>
+</main>
 
-    <div class="flex justify-center mt-6" th:unless="${isManager}">
-      <form th:action="@{/logout}" method="post">
-        <button type="submit"
-          class="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-4 rounded-full shadow-lg transition transform hover:scale-110 hover:shadow-red-400/50">
-          <i class="ph ph-sign-out text-2xl"></i> Cerrar Sesión
-        </button>
-      </form>
-    </div>
-  </div>
 </body>
-
 </html>

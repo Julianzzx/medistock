@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Panel Administrador Sanitas | Medistock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* slate-950 */
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.75) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.8), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-6px);
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 30px 60px -12px rgba(59, 130, 246, 0.2);
+        }
+
+        .glass-card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* Tech grid background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+        }
+
+        .pulse-glow {
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.25);
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex bg-grid relative overflow-x-hidden">
+
+<!-- Iluminación ambiental de fondo -->
+<div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+<div class="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+<!-- BARRA LATERAL (Estilo profesional limpio, sin redundancias y con identidad institucional EPS Sanitas) -->
+<aside class="hidden lg:flex w-80 bg-slate-900/95 backdrop-blur-2xl border-r border-slate-800/80 flex-col justify-between p-6 z-30 sticky top-0 h-screen shadow-2xl">
+    <div class="space-y-6">
+        <!-- Logo y Entidad -->
+        <div class="flex items-center gap-3 px-2">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                <i class="ph ph-shield-check text-2xl"></i>
+            </div>
+            <div>
+                <span class="text-lg font-extrabold tracking-tight text-white block leading-none">SANITAS</span>
+                <span class="text-[10px] text-blue-400 font-bold uppercase tracking-wider">EPS Admin Network</span>
+            </div>
+        </div>
+
+        <!-- Menú Lateral Principal -->
+        <nav class="space-y-1.5 text-sm font-medium px-1">
+            <a href="#" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/30 font-bold">
+                <i class="ph ph-squares-four text-xl"></i>
+                <span>Panel Admin</span>
+            </a>
+            <div class="pt-2 pb-1 px-3">
+                <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Estado EPS</span>
+            </div>
+        </nav>
+
+        <!-- Mini Tarjeta de Estadísticas de Red EPS -->
+        <div class="mx-1 p-4 rounded-2xl bg-gradient-to-br from-slate-950/80 to-slate-900/80 border border-slate-800/80 relative overflow-hidden group">
+            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-blue-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <i class="ph ph-pulse text-blue-400 text-base"></i> Red Sanitas
+                </span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Activo</span>
+            </div>
+            <div class="space-y-2">
+                <div>
+                    <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                        <span>Aprobación de Solicitudes</span>
+                        <span class="text-blue-400 font-bold">98.2%</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full" style="width: 98.2%;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                        <span>Farmacias Asignadas</span>
+                        <span class="text-emerald-400 font-bold">12 Sedes</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-emerald-500 rounded-full" style="width: 90%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Imagen de Contexto Institucional EPS -->
+        <div class="mx-1 rounded-2xl overflow-hidden relative border border-slate-800/80 h-44 group shadow-lg">
+            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=600&auto=format&fit=crop"
+                 alt="Hospital Sanitas"
+                 class="w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-700 filter brightness-75" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex flex-col justify-end p-3.5">
+                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-0.5">Gestión Médica</p>
+                <p class="text-xs text-slate-200 font-semibold leading-tight">Atención y control farmacéutico seguro.</p>
+            </div>
+        </div>
+
+        <!-- Indicadores de Seguridad y Sincronización -->
+        <div class="mx-1 grid grid-cols-2 gap-2">
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-shield-check text-blue-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Portal EPS</p>
+                <p class="text-xs font-extrabold text-white">Verificado</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-database text-emerald-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Red Stock</p>
+                <p class="text-xs font-extrabold text-white">Sincronizado</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Perfil / Estado en Sidebar -->
+    <div class="pt-3 border-t border-slate-800/80">
+        <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center font-extrabold text-xs shadow-md">
+                AS
+            </div>
+            <div class="overflow-hidden flex-1">
+                <p class="text-xs font-bold text-white truncate" th:text="${admin.nombre} + ' ' + ${admin.apellido}">Administrador</p>
+                <p class="text-[10px] text-emerald-400 font-semibold truncate flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sanitas Activo
+                </p>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- CONTENIDO PRINCIPAL -->
+<main class="flex-1 min-h-screen flex flex-col p-4 md:p-10 z-10 overflow-y-auto">
+    <div class="w-full max-w-7xl mx-auto flex flex-col gap-8 animate-fade-in">
+
+        <!-- Header / Barra Superior con Bienvenida y Estadísticas -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 glass-panel rounded-3xl p-6 md:p-8 border border-slate-800">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">
+                    <i class="ph ph-shield-check"></i> Red EPS Sanitas
+                </div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight" th:text="'Bienvenido, ' + ${admin.nombre} + ' ' + ${admin.apellido}">Panel Administrador - Sanitas</h1>
+                <p class="text-slate-400 text-sm mt-1">Gestión administrativa de solicitudes y farmacias asignadas a la red EPS Sanitas.</p>
+            </div>
+
+            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white font-bold transition-all duration-300 text-xs shadow-lg shadow-rose-900/20 group">
+                        <i class="ph ph-sign-out text-lg transition-transform group-hover:-translate-x-1"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Métricas Superiores del Sistema EPS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="glass-section rounded-3xl p-6 border border-white/5 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Estado de Red</p>
+                    <h3 class="text-white font-extrabold text-lg flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> 100% Operativo
+                    </h3>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20 text-xl">
+                    <i class="ph ph-activity"></i>
+                </div>
+            </div>
+
+            <div class="glass-section rounded-3xl p-6 border border-white/5 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Cobertura EPS</p>
+                    <h3 class="text-white font-extrabold text-lg">Sanitas Nacional</h3>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20 text-xl">
+                    <i class="ph ph-buildings"></i>
+                </div>
+            </div>
+
+            <div class="glass-section rounded-3xl p-6 border border-white/5 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Protocolo</p>
+                    <h3 class="text-white font-extrabold text-lg">Alta Seguridad</h3>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20 text-xl">
+                    <i class="ph ph-lock-key"></i>
+                </div>
+            </div>
+
+            <div class="glass-section rounded-3xl p-6 border border-white/5 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Soporte Médico</p>
+                    <h3 class="text-white font-extrabold text-lg">24 Horas</h3>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center border border-purple-500/20 text-xl">
+                    <i class="ph ph-headset"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Módulos Centrales del Administrador EPS Sanitas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Tarjeta 1: Gestión de Solicitudes de Usuarios -->
+            <div class="glass-card rounded-3xl p-8 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20 group-hover:scale-110 transition-transform shadow-inner">
+                            <i class="ph ph-clipboard-text text-3xl"></i>
+                        </div>
+                        <span class="text-xs font-bold text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20 uppercase tracking-wider">Validación</span>
+                    </div>
+                    <h2 class="text-white font-extrabold text-2xl mb-2">Solicitudes de Usuarios</h2>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-8">Acepta o rechaza con total trazabilidad las solicitudes de medicamentos emitidas por los afiliados a tu EPS.</p>
+                </div>
+                <div>
+                    <a th:href="@{/admin/solicitudes}"
+                       class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all duration-300 flex items-center justify-center gap-2 group-hover:scale-[1.02]">
+                        <span>Gestionar Solicitudes</span>
+                        <i class="ph ph-arrow-right text-lg transition-transform group-hover:translate-x-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tarjeta 2: Red de Farmacias y Stock -->
+            <div class="glass-card rounded-3xl p-8 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20 group-hover:scale-110 transition-transform shadow-inner">
+                            <i class="ph ph-storefront text-3xl"></i>
+                        </div>
+                        <span class="text-xs font-bold text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20 uppercase tracking-wider">Logística</span>
+                    </div>
+                    <h2 class="text-white font-extrabold text-2xl mb-2">Farmacias y Stock</h2>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-8">Monitorea en tiempo real el inventario disponible y gestiona solicitudes de reabastecimiento para tus farmacias asignadas.</p>
+                </div>
+                <div>
+                    <a th:href="@{/admin/farmacias}"
+                       class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-[0_0_30px_rgba(99,102,241,0.3)] transition-all duration-300 flex items-center justify-center gap-2 group-hover:scale-[1.02]">
+                        <span>Ver Farmacias</span>
+                        <i class="ph ph-arrow-right text-lg transition-transform group-hover:translate-x-1"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Banner Inferior de Apoyo Logístico EPS -->
+        <div class="glass-card rounded-3xl p-8 md:p-10 relative overflow-hidden group z-10 bg-gradient-to-r from-blue-950/70 via-slate-900/90 to-indigo-950/70 border border-blue-500/30 pulse-glow">
+            <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                <div class="flex items-center gap-6 text-center md:text-left">
+                    <div class="w-16 h-16 rounded-2xl bg-blue-500/15 flex items-center justify-center text-blue-300 border border-blue-500/30 shrink-0">
+                        <i class="ph ph-shield-star text-3xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-white font-bold text-xl mb-1">Gobernanza y Trazabilidad EPS</h2>
+                        <p class="text-slate-300 text-sm max-w-xl leading-relaxed">Cada validación de medicamentos se registra bajo estrictas normativas de seguridad sanitaria para garantizar el abastecimiento óptimo.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-bold text-blue-400 bg-blue-500/10 px-4 py-2 rounded-xl border border-blue-500/20 shrink-0">
+                    <i class="ph ph-check-circle text-base"></i> Sistema Homologado
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+</body>
+</html>

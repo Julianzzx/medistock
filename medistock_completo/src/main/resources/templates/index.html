@@ -2,417 +2,358 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Medistock | Gestión Inteligente de Farmacias</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <title>MEDISTOCK | Gestión de Medicamentos</title>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
+        .animate-float { animation: float 4s ease-in-out infinite; }
 
-  <style>
-    * {
-      font-family: 'Inter', sans-serif;
-    }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    body {
-      background:
-        linear-gradient(135deg,
-          rgba(59, 130, 246, 0.85),
-          rgba(79, 70, 229, 0.9),
-          rgba(139, 92, 246, 0.85)),
-        url("Imagenes/fondo-medistock.png");
+        .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
 
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
+        .glass-card:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(56, 189, 248, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -10px rgba(2, 132, 199, 0.2);
+        }
 
-      overflow-x: hidden;
-    }
-
-    @keyframes fade-in {
-      from {
-        opacity: 0;
-        transform: scale(0.98);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes float {
-
-      0%,
-      100% {
-        transform: translateY(0px) translateX(0px);
-      }
-
-      33% {
-        transform: translateY(-5px) translateX(2px);
-      }
-
-      66% {
-        transform: translateY(3px) translateX(-1px);
-      }
-    }
-
-    .animate-card {
-      animation: fade-in 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #ffffff, #e0e7ff);
-      transition: all 0.3s ease;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.3);
-    }
-
-    .btn-secondary {
-      background: linear-gradient(135deg, rgba(79, 70, 229, 0.9), rgba(139, 92, 246, 0.9));
-      backdrop-filter: blur(8px);
-      transition: all 0.3s ease;
-    }
-
-    .btn-secondary:hover {
-      transform: translateY(-2px);
-      background: linear-gradient(135deg, rgba(79, 70, 229, 1), rgba(139, 92, 246, 1));
-      box-shadow: 0 15px 30px -10px rgba(79, 70, 229, 0.4);
-    }
-
-    .floating-shape {
-      position: absolute;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      animation: float 8s ease-in-out infinite;
-    }
-
-    .header-glass {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-      transition: all 0.3s ease;
-    }
-
-    .logo-header {
-      max-height: 40px;
-      width: auto;
-      transition: all 0.3s ease;
-    }
-
-    /* ============================================ */
-    /* TARJETA PRINCIPAL - OCUPA MÁXIMO ESPACIO     */
-    /* ============================================ */
-    .hero-card {
-      background: rgba(255, 255, 255, 0.06);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 2.5rem;
-      transition: all 0.3s ease;
-    }
-
-    /* Logo dentro de la tarjeta */
-    .logo-hero {
-      max-width: 100%;
-      width: 600;
-      height: auto;
-      opacity: 0.75;
-      mix-blend-mode: soft-light;
-      filter: brightness(1.08) contrast(1.03);
-      transition: all 0.4s ease;
-    }
-
-    .logo-hero:hover {
-      opacity: 0.95;
-      mix-blend-mode: overlay;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    @media (max-width: 768px) {
-      .hero-card {
-        border-radius: 1.5rem;
-      }
-      
-      .logo-hero {
-        max-width: 200px;
-      }
-    }
-  </style>
-    <link rel="icon" type="image/png" href="/Imagenes/Logo.png"/>
+        .image-ring {
+            box-shadow: 0 0 0 4px rgba(15, 23, 42, 1), 0 0 0 8px rgba(56, 189, 248, 0.5);
+        }
+    </style>
 </head>
 
-<body class="min-h-screen flex flex-col">
+<body class="bg-slate-950 text-slate-300 min-h-screen flex flex-col selection:bg-cyan-500 selection:text-white overflow-x-hidden">
 
-  <div th:if="${mensajeExito}" id="mensajeExito"
-    class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold px-5 py-2.5 rounded-xl shadow-2xl z-50 transition-opacity duration-500 backdrop-blur-sm text-sm">
-    <div class="flex items-center gap-2">
-      <i class="ph ph-check-circle text-lg"></i>
-      <span th:text="${mensajeExito}"></span>
-    </div>
-  </div>
+<!-- Notificaciones Flotantes -->
+<div th:if="${mensajeExito}" id="mensajeExito"
+     class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-emerald-500/90 text-white font-medium px-6 py-3.5 rounded-2xl shadow-2xl z-50 flex items-center gap-3 transition-all duration-500 border border-emerald-400 backdrop-blur-md">
+    <i class="ph ph-check-circle text-2xl"></i>
+    <span th:text="${mensajeExito}" class="text-sm"></span>
+</div>
 
-  <!-- ============================================ -->
-  <!-- HEADER                                       -->
-  <!-- ============================================ -->
-  <header class="header-glass fixed top-0 left-0 w-full z-50 py-2.5 px-4 md:px-8">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
+<div th:if="${param.registrado}" id="mensajeRegistrado"
+     class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-emerald-500/90 text-white font-medium px-6 py-3.5 rounded-2xl shadow-2xl z-50 flex items-center gap-3 transition-all duration-500 border border-emerald-400 backdrop-blur-md">
+    <i class="ph ph-check-circle text-2xl"></i>
+    <span class="text-sm">¡Registro exitoso! Ya puedes iniciar sesión en la plataforma.</span>
+</div>
 
-      <a href="/" class="flex items-center gap-2.5 group">
-        <img src="Imagenes/Logo.png" alt="MEDISTOCK" class="logo-header transition-transform group-hover:scale-105">
-        <span class="text-white font-semibold text-lg hidden sm:inline tracking-tight">
-          MEDI<span class="text-cyan-300">STOCK</span>
-        </span>
-      </a>
-
-      <nav class="hidden md:flex items-center gap-6">
-        <a href="#inicio" class="text-white/80 hover:text-white transition-colors font-medium text-sm">Inicio</a>
-        <a href="#servicios" class="text-white/80 hover:text-white transition-colors font-medium text-sm">Servicios</a>
-        <a href="#contacto" class="text-white/80 hover:text-white transition-colors font-medium text-sm">Contacto</a>
-      </nav>
-
-      <div class="flex items-center gap-2.5">
-        <a href="/login.html"
-          class="hidden sm:inline-flex items-center gap-1 text-white/85 hover:text-white font-medium text-sm transition-colors">
-          <i class="ph ph-sign-in"></i> Iniciar
-        </a>
-        <a href="/registro"
-          class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-medium px-3.5 py-1.5 rounded-full text-sm transition-all duration-300">
-          <i class="ph ph-user-plus mr-1"></i> Registrarse
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <div class="h-14"></div>
-
-  <main class="flex-grow">
-
-    <!-- ============================================ -->
-    <!-- SECCIÓN HERO - TARJETA QUE OCUPA MÁXIMO      -->
-    <!-- ============================================ -->
-    <section id="inicio" class="relative min-h-[82vh] flex items-center justify-center px-4 md:px-8 py-8">
-
-      <div class="floating-shape w-96 h-96 -top-48 -left-48" style="animation-delay: 0s;"></div>
-      <div class="floating-shape w-64 h-64 -bottom-32 -right-32" style="animation-delay: 2s; animation-duration: 10s;"></div>
-      <div class="floating-shape w-40 h-40 top-1/3 right-10" style="animation-delay: 4s; animation-duration: 7s;"></div>
-
-      <div class="relative z-10 w-full max-w-7xl mx-auto animate-card">
-        
-        <!-- TARJETA PRINCIPAL - OCUPA TODO EL ANCHO DISPONIBLE -->
-        <div class="hero-card p-6 md:p-10 lg:p-12">
-          
-          <!-- Layout horizontal dentro de la tarjeta -->
-          <div class="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-12">
-            
-            <!-- COLUMNA IZQUIERDA: LOGO -->
-            <div class="lg:w-5/12 flex justify-center lg:justify-start">
-              <div class="text-center lg:text-left">
-                <img src="Imagenes/Logo.png"
-                  alt="MEDISTOCK"
-                  class="logo-hero mx-auto lg:mx-0">
-              </div>
+<!-- Header / Navbar -->
+<header class="fixed w-full top-0 z-50 glass-panel border-b border-white/5 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <!-- Logo -->
+        <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                <i class="ph ph-capsule text-2xl"></i>
             </div>
-
-            <!-- COLUMNA DERECHA: TODO EL CONTENIDO -->
-            <div class="lg:w-7/12 text-center lg:text-left">
-              
-              <!-- Título principal -->
-              <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight">
-                <span class="text-white drop-shadow-lg">MEDI</span>
-                <span class="bg-gradient-to-r from-cyan-300 via-indigo-300 to-purple-300 bg-clip-text text-transparent drop-shadow-lg">STOCK</span>
-              </h1>
-
-              <!-- Línea decorativa -->
-              <div class="flex justify-center lg:justify-start gap-2 my-3">
-                <div class="w-12 h-0.5 bg-gradient-to-r from-cyan-400/60 to-transparent rounded-full"></div>
-                <div class="w-6 h-0.5 bg-cyan-400/40 rounded-full"></div>
-              </div>
-
-              <!-- Subtítulo -->
-              <p class="text-white/90 text-base sm:text-lg md:text-xl font-medium leading-relaxed">
-                <i class="ph ph-crosshair text-cyan-300/70 mr-2"></i>
-                Gestión de medicamentos en <span class="text-cyan-200/80 font-semibold">tiempo real</span>
-              </p>
-
-              <p class="text-white/70 text-sm sm:text-base mt-2">
-                diseñado para tu tranquilidad y bienestar.
-              </p>
-
-              <!-- Botones -->
-              <div class="mt-6 flex flex-wrap justify-center lg:justify-start gap-3">
-                <a href="/login.html"
-                  class="btn-primary inline-flex items-center gap-2 text-indigo-700 font-semibold px-6 py-2.5 md:px-7 md:py-3 rounded-full shadow-xl transition-all duration-300 text-sm md:text-base">
-
-                  <i class="ph ph-sign-in text-xl md:text-2xl"></i>
-                  Iniciar Sesión
-                </a>
-
-                <a href="/registro"
-                  class="btn-secondary inline-flex items-center gap-2 text-white font-semibold px-6 py-2.5 md:px-7 md:py-3 rounded-full shadow-xl transition-all duration-300 text-sm md:text-base border border-white/15">
-
-                  <i class="ph ph-user-plus text-xl md:text-2xl"></i>
-                  Registrarse
-                </a>
-              </div>
-
-              <!-- Características rápidas (Seguro, 24/7, Datos reales) -->
-              <div class="mt-8 pt-5 border-t border-white/15 flex flex-wrap gap-5 justify-center lg:justify-start">
-                <div class="flex items-center gap-2 text-white/70 text-sm">
-                  <i class="ph ph-shield-check text-cyan-300/80 text-base"></i>
-                  <span>Seguro</span>
-                </div>
-                <div class="flex items-center gap-2 text-white/70 text-sm">
-                  <i class="ph ph-clock text-cyan-300/80 text-base"></i>
-                  <span>24/7</span>
-                </div>
-                <div class="flex items-center gap-2 text-white/70 text-sm">
-                  <i class="ph ph-database text-cyan-300/80 text-base"></i>
-                  <span>Datos reales</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <a href="#servicios" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 animate-bounce hidden md:block">
-        <i class="ph ph-mouse text-white/25 text-xl hover:text-white/40 transition-colors"></i>
-      </a>
-    </section>
-
-    <!-- ============================================ -->
-    <!-- SECCIÓN DE SERVICIOS                         -->
-    <!-- ============================================ -->
-    <section id="servicios" class="px-4 md:px-8 py-12">
-      <div class="max-w-7xl mx-auto">
-
-        <div class="hero-card p-5 md:p-7 mb-8 text-center">
-          <div class="flex items-center justify-center gap-2 mb-2">
-            <i class="ph ph-info text-cyan-300/70 text-2xl"></i>
-            <h2 class="text-xl md:text-2xl font-bold text-white/90">Información</h2>
-          </div>
-          <p class="text-white/70 text-sm md:text-base max-w-2xl mx-auto">
-            Sistema diseñado para ayudarte a encontrar medicamentos, farmacias y atención de confianza de forma rápida y segura.
-          </p>
+            <span class="text-xl font-extrabold tracking-tight text-white">MEDISTOCK</span>
         </div>
 
-        <div class="grid gap-5 md:gap-6 md:grid-cols-3">
-          <a th:href="@{/farmacias}" class="hero-card p-6 text-center transition-all duration-300 hover:scale-105 cursor-pointer">
-            <div class="bg-white/10 w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <i class="ph ph-hospital text-3xl text-cyan-300/70"></i>
-            </div>
-            <h3 class="text-xl font-bold text-white/90 mb-2">Farmacias</h3>
-            <p class="text-white/60 text-sm leading-relaxed">Encuentra farmacias, servicios y disponibilidad médica de forma confiable.</p>
-            <div class="mt-3 flex items-center justify-center gap-1 text-cyan-300/60 text-xs font-medium">
-              <span>Explorar</span> <i class="ph ph-arrow-right text-sm"></i>
-            </div>
-          </a>
-
-          <a th:href="@{/medicamentos}" class="hero-card p-6 text-center transition-all duration-300 hover:scale-105 cursor-pointer">
-            <div class="bg-white/10 w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <i class="ph ph-pill text-3xl text-cyan-300/70"></i>
-            </div>
-            <h3 class="text-xl font-bold text-white/90 mb-2">Medicamentos</h3>
-            <p class="text-white/60 text-sm leading-relaxed">Consulta medicamentos disponibles, cantidades y en qué farmacias encontrarlos.</p>
-            <div class="mt-3 flex items-center justify-center gap-1 text-cyan-300/60 text-xs font-medium">
-              <span>Explorar</span> <i class="ph ph-arrow-right text-sm"></i>
-            </div>
-          </a>
-
-          <a th:href="@{/soporte}" class="hero-card p-6 text-center transition-all duration-300 hover:scale-105 cursor-pointer">
-            <div class="bg-white/10 w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <i class="ph ph-headset text-3xl text-cyan-300/70"></i>
-            </div>
-            <h3 class="text-xl font-bold text-white/90 mb-2">Soporte</h3>
-            <p class="text-white/60 text-sm leading-relaxed">Nuestro equipo está listo para ayudarte en todo momento con tus consultas.</p>
-            <div class="mt-3 flex items-center justify-center gap-1 text-cyan-300/60 text-xs font-medium">
-              <span>Explorar</span> <i class="ph ph-arrow-right text-sm"></i>
-            </div>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <section class="px-4 md:px-8 pb-12">
-      <div class="max-w-7xl mx-auto grid gap-5 md:grid-cols-2">
-        <div class="hero-card p-6 text-center hover:scale-105 transition-all duration-300">
-          <i class="ph ph-first-aid text-4xl text-cyan-300/70 mb-3"></i>
-          <h3 class="text-xl font-bold text-white/90 mb-2">Cuidado y confianza</h3>
-          <p class="text-white/60 text-sm leading-relaxed">Tu bienestar es nuestra prioridad. Encuentra la atención que mereces en cada farmacia afiliada.</p>
-        </div>
-        <div class="hero-card p-6 text-center hover:scale-105 transition-all duration-300">
-          <i class="ph ph-stethoscope text-4xl text-cyan-300/70 mb-3"></i>
-          <h3 class="text-xl font-bold text-white/90 mb-2">Atención médica moderna</h3>
-          <p class="text-white/60 text-sm leading-relaxed">Conecta con las mejores farmacias y servicios médicos de tu ciudad.</p>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <footer id="contacto" class="bg-white/95 text-gray-700 mt-auto py-8 shadow-inner">
-    <div class="container mx-auto px-5 grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
-      <div>
-        <h3 class="text-base font-bold text-indigo-600 mb-2">Categorías</h3>
-        <nav class="space-y-1.5 text-sm">
-          <a href="#" class="block hover:text-indigo-500 transition-colors">Medicamentos para la salud</a>
-          <a href="#" class="block hover:text-indigo-500 transition-colors">Equipos médicos</a>
-          <a href="#" class="block hover:text-indigo-500 transition-colors">Servicios farmacéuticos</a>
+        <!-- Links Center -->
+        <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-400">
+            <a href="#beneficios" class="hover:text-cyan-400 transition-colors">Beneficios</a>
+            <a href="#modulos" class="hover:text-cyan-400 transition-colors">Módulos</a>
+            <a href="#contacto" class="hover:text-cyan-400 transition-colors">Soporte</a>
         </nav>
-      </div>
-      <div>
-        <h3 class="text-base font-bold text-indigo-600 mb-2">Para Registrarse</h3>
-        <p class="text-sm font-medium">Enviar datos al correo</p>
-        <nav><a href="mailto:adminuser@gmail.com" class="text-indigo-500 hover:underline text-sm">adminuser@gmail.com</a></nav>
-      </div>
-      <div>
-        <h3 class="text-base font-bold text-indigo-600 mb-2">Soporte</h3>
-        <nav class="space-y-1.5 text-sm">
-          <a href="#" class="block hover:text-indigo-500 transition-colors">Preguntas Frecuentes</a>
-          <a href="#" class="block hover:text-indigo-500 transition-colors">Ayuda en Línea</a>
-          <a href="#" class="block hover:text-indigo-500 transition-colors">Confianza y Seguridad</a>
-        </nav>
-      </div>
-    </div>
-    <div class="flex justify-center space-x-5 mt-5">
-      <a href="#" class="text-gray-500 hover:text-indigo-600 transition-colors text-xl"><i class="ph ph-facebook-logo"></i></a>
-      <a href="#" class="text-gray-500 hover:text-indigo-600 transition-colors text-xl"><i class="ph ph-twitter-logo"></i></a>
-      <a href="#" class="text-gray-500 hover:text-indigo-600 transition-colors text-xl"><i class="ph ph-instagram-logo"></i></a>
-    </div>
-    <p class="text-center text-gray-500 text-xs font-medium mt-5">© 2025 MEDISTOCK - Todos los derechos reservados</p>
-  </footer>
 
-  <script>
-    const msg = document.getElementById("mensajeExito");
-    if (msg) {
-      setTimeout(() => {
-        msg.style.opacity = "0";
-        setTimeout(() => msg.remove(), 500);
-      }, 2500);
-    }
+        <!-- CTA Right (Solo un botón) -->
+        <div>
+            <a th:href="@{/login}" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:scale-105">
+                <i class="ph ph-sign-in text-lg"></i>
+                <span>Acceder</span>
+            </a>
+        </div>
+    </div>
+</header>
 
-    window.addEventListener('scroll', function() {
-      const header = document.querySelector('header');
-      if (window.scrollY > 30) {
-        header.style.background = 'rgba(0, 0, 0, 0.5)';
-      } else {
-        header.style.background = 'rgba(255, 255, 255, 0.08)';
-      }
+<!-- HERO SECTION (Inspirado en la caja flotante de tu imagen) -->
+<section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-[90vh] flex items-center">
+    <!-- Background Image with Overlay -->
+    <div class="absolute inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1585435557343-3b092031a831?q=80&w=2070&auto=format&fit=crop" alt="Farmacia" class="w-full h-full object-cover opacity-30" />
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-transparent"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 w-full relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <!-- Floating Info Box -->
+        <div class="glass-panel p-8 md:p-12 rounded-3xl border-l-4 border-l-cyan-500 shadow-2xl relative animate-float">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-6">
+                <i class="ph ph-rocket-launch"></i> Plataforma v2.0
+            </div>
+
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-6">
+                Control <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">absoluto</span> de tu inventario médico.
+            </h1>
+
+            <p class="text-lg text-slate-300 font-medium leading-relaxed mb-8">
+                Unifica tu red de EPS, automatiza el reabastecimiento de farmacias y garantiza la salud de tus pacientes sin quiebres de stock.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a th:href="@{/registro}" class="text-center bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold px-8 py-4 rounded-xl shadow-lg transition-all hover:-translate-y-1">
+                    Comenzar ahora
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECCIÓN BENEFICIOS (Inspirado en "We care about you" con imagen circular) -->
+<section id="beneficios" class="py-24 bg-slate-950 relative border-t border-white/5">
+    <!-- Luces de fondo -->
+    <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+
+        <!-- Texto y Lista -->
+        <div>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-6">Optimizamos cada eslabón de tu red.</h2>
+            <p class="text-slate-400 text-lg mb-10 leading-relaxed">
+                Olvídate de las hojas de cálculo y los inventarios desactualizados. Medistock centraliza la operación logística para que te enfoques en lo importante: los pacientes.
+            </p>
+
+            <ul class="space-y-8">
+                <li class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400 shrink-0 mt-1 border border-cyan-500/20">
+                        <i class="ph ph-chart-polar text-2xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-white mb-1">Trazabilidad en tiempo real</h4>
+                        <p class="text-slate-400 text-sm">Monitorea el stock de todas las farmacias afiliadas a tu EPS al instante, identificando lotes y fechas de caducidad.</p>
+                    </div>
+                </li>
+                <li class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 shrink-0 mt-1 border border-blue-500/20">
+                        <i class="ph ph-arrows-left-right text-2xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-white mb-1">Reabastecimiento Inteligente</h4>
+                        <p class="text-slate-400 text-sm">Los managers solicitan medicamentos con un clic y los administradores aprueban o rechazan el envío desde el dashboard central.</p>
+                    </div>
+                </li>
+                <li class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0 mt-1 border border-emerald-500/20">
+                        <i class="ph ph-shield-check text-2xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-white mb-1">Aislamiento de Datos Seguro</h4>
+                        <p class="text-slate-400 text-sm">Arquitectura Multi-Tenant. Cada administrador solo tiene acceso a las farmacias y datos de su propia EPS, garantizando privacidad.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Imagen Circular -->
+        <div class="flex justify-center relative">
+            <div class="relative w-72 h-72 md:w-96 md:h-96 rounded-full p-2 bg-gradient-to-tr from-cyan-500 to-blue-600 animate-[spin_10s_linear_infinite]">
+                <div class="w-full h-full rounded-full bg-slate-950 overflow-hidden relative image-ring animate-[spin_10s_linear_infinite_reverse]">
+                    <img src="https://images.unsplash.com/photo-1576091160550-2173ff9e5952?q=80&w=2070&auto=format&fit=crop"
+                         alt="Doctor con tablet"
+                         class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-500" />
+                </div>
+            </div>
+
+            <!-- Badge flotante sobre la imagen -->
+            <div class="absolute -bottom-6 -right-4 glass-panel px-6 py-4 rounded-2xl shadow-xl flex items-center gap-4 animate-float" style="animation-delay: 1s;">
+                <div class="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                    <i class="ph ph-trend-up text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-white font-bold text-lg">+40%</p>
+                    <p class="text-slate-400 text-xs uppercase">Eficiencia</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECCIÓN ROLES / PERFILES (Inspirado en "Our Specialist") -->
+<section id="modulos" class="py-24 bg-slate-900 border-t border-white/5 relative">
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">Diseñado para cada Rol</h2>
+            <p class="text-slate-400 text-lg">Un ecosistema conectado donde cada tipo de usuario tiene las herramientas exactas que necesita para operar con excelencia.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            <!-- Rol 1: Admin EPS -->
+            <div class="glass-card rounded-3xl p-8 flex flex-col items-center text-center relative overflow-hidden group">
+                <div class="w-24 h-24 rounded-full overflow-hidden mb-6 border-4 border-slate-800 group-hover:border-blue-500 transition-colors">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=256&auto=format&fit=crop" alt="Admin EPS" class="w-full h-full object-cover" />
+                </div>
+                <h3 class="text-xl font-bold text-white">Manager</h3>
+                <p class="text-blue-400 text-sm font-semibold mb-4">Control Central</p>
+                <p class="text-slate-400 text-sm mb-6 flex-grow">
+                    Visualiza la red completa de farmacias, aprueba despachos, gestiona usuarios y analiza estadísticas globales de la entidad promotora de salud.
+                </p>
+                <div class="w-full pt-4 border-t border-white/5">
+                    <span class="inline-block bg-blue-500/10 text-blue-400 text-xs px-3 py-1 rounded-full border border-blue-500/20">Acceso Total EPS</span>
+                </div>
+            </div>
+
+            <!-- Rol 2: Manager Farmacia -->
+            <div class="glass-card rounded-3xl p-8 flex flex-col items-center text-center relative overflow-hidden group">
+                <div class="w-24 h-24 rounded-full overflow-hidden mb-6 border-4 border-slate-800 group-hover:border-cyan-500 transition-colors">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=256&auto=format&fit=crop" alt="Manager Farmacia" class="w-full h-full object-cover" />
+                </div>
+                <h3 class="text-xl font-bold text-white">Admin</h3>
+                <p class="text-cyan-400 text-sm font-semibold mb-4">Gestión Local</p>
+                <p class="text-slate-400 text-sm mb-6 flex-grow">
+                    Encargado de una sede específica. Actualiza existencias, solicita reabastecimiento al detectar stock bajo y procesa entregas a pacientes.
+                </p>
+                <div class="w-full pt-4 border-t border-white/5">
+                    <span class="inline-block bg-cyan-500/10 text-cyan-400 text-xs px-3 py-1 rounded-full border border-cyan-500/20">Operativa Local</span>
+                </div>
+            </div>
+
+            <!-- Rol 3: Paciente / Usuario -->
+            <div class="glass-card rounded-3xl p-8 flex flex-col items-center text-center relative overflow-hidden group">
+                <div class="w-24 h-24 rounded-full overflow-hidden mb-6 border-4 border-slate-800 group-hover:border-emerald-500 transition-colors">
+                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=256&auto=format&fit=crop" alt="Usuario Final" class="w-full h-full object-cover" />
+                </div>
+                <h3 class="text-xl font-bold text-white">Usuario</h3>
+                <p class="text-emerald-400 text-sm font-semibold mb-4">Consulta Rápida</p>
+                <p class="text-slate-400 text-sm mb-6 flex-grow">
+                    Busca medicamentos por nombre, verifica en qué farmacias de su EPS hay disponibilidad y reserva para evitar filas y viajes innecesarios.
+                </p>
+                <div class="w-full pt-4 border-t border-white/5">
+                    <span class="inline-block bg-emerald-500/10 text-emerald-400 text-xs px-3 py-1 rounded-full border border-emerald-500/20">Experiencia Paciente</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- SECCIÓN CTA INFERIOR -->
+<section class="py-20 relative overflow-hidden">
+    <!-- Gradient BG -->
+    <div class="absolute inset-0 bg-gradient-to-r from-blue-900/40 to-cyan-900/40 z-0"></div>
+    <div class="absolute inset-0 bg-slate-950/60 z-0 backdrop-blur-sm"></div>
+
+    <div class="max-w-4xl mx-auto px-6 text-center relative z-10 flex flex-col items-center">
+        <div class="w-20 h-20 rounded-full bg-cyan-500 flex items-center justify-center text-slate-900 shadow-[0_0_50px_rgba(6,182,212,0.4)] mb-8">
+            <i class="ph ph-heartbeat text-4xl"></i>
+        </div>
+        <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-6">Farmacias conectadas. Pacientes seguros.</h2>
+        <p class="text-slate-300 text-lg mb-10 max-w-2xl">Únete a la nueva era de administración médica y elimina las fricciones logísticas de tu red de salud.</p>
+
+        <a th:href="@{/registro}" class="inline-flex items-center gap-2 bg-white text-slate-900 font-extrabold px-10 py-4 rounded-xl shadow-xl hover:bg-slate-200 transition-all hover:scale-105 uppercase tracking-wide text-sm">
+            Crear mi cuenta gratis
+            <i class="ph ph-arrow-right text-lg"></i>
+        </a>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contacto" class="bg-slate-950 border-t border-white/10 pt-16 pb-8 px-6">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <!-- Brand -->
+        <div class="col-span-1 md:col-span-2">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+                    <i class="ph ph-capsule text-lg"></i>
+                </div>
+                <span class="text-xl font-bold text-white tracking-wide">Medistock</span>
+            </div>
+            <p class="text-sm text-slate-400 max-w-sm mb-6 leading-relaxed">
+                Infraestructura tecnológica avanzada para la administración y trazabilidad farmacéutica institucional. Operando 24/7.
+            </p>
+            <div class="flex gap-4">
+                <a href="#" class="w-10 h-10 rounded-full bg-slate-900 border border-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:border-cyan-500 transition-colors"><i class="ph ph-twitter-logo text-lg"></i></a>
+                <a href="#" class="w-10 h-10 rounded-full bg-slate-900 border border-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:border-cyan-500 transition-colors"><i class="ph ph-linkedin-logo text-lg"></i></a>
+            </div>
+        </div>
+
+        <!-- Links -->
+        <div>
+            <h4 class="text-white font-bold mb-4">Plataforma</h4>
+            <ul class="space-y-3 text-sm text-slate-400">
+                <li><a th:href="@{/login}" class="hover:text-cyan-400 transition-colors">Iniciar Sesión</a></li>
+                <li><a th:href="@{/registro}" class="hover:text-cyan-400 transition-colors">Registrar Entidad</a></li>
+                <li><a href="#modulos" class="hover:text-cyan-400 transition-colors">Ver Módulos</a></li>
+            </ul>
+        </div>
+
+        <!-- Contacto -->
+        <div>
+            <h4 class="text-white font-bold mb-4">Contacto Comercial</h4>
+            <ul class="space-y-3 text-sm text-slate-400">
+                <li class="flex items-center gap-2"><i class="ph ph-envelope-simple text-cyan-400"></i> admin@medistock.com</li>
+                <li class="flex items-center gap-2"><i class="ph ph-phone text-cyan-400"></i> +57 300 000 0000</li>
+                <li class="flex items-center gap-2"><i class="ph ph-map-pin text-cyan-400"></i> Bogotá, Colombia</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="max-w-7xl mx-auto pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-slate-500 text-xs">© 2026 Medistock Software. Todos los derechos reservados.</p>
+        <div class="flex items-center gap-2 text-xs font-medium text-slate-400">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            Sistemas operando normalmente
+        </div>
+    </div>
+</footer>
+
+<!-- Script de Notificaciones y Navbar -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Auto-hide alerts
+        const autoHide = (id) => {
+            const el = document.getElementById(id);
+            if (el) {
+                setTimeout(() => {
+                    el.classList.add("opacity-0", "-translate-y-4");
+                    setTimeout(() => el.remove(), 500);
+                }, 4000);
+            }
+        };
+        autoHide("mensajeRegistrado");
+        autoHide("mensajeExito");
+
+        // Navbar scroll effect
+        const header = document.querySelector('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-lg', 'bg-slate-950/90');
+                header.classList.remove('bg-transparent');
+            } else {
+                header.classList.remove('shadow-lg', 'bg-slate-950/90');
+                header.classList.add('bg-transparent');
+            }
+        });
     });
-  </script>
+</script>
 
 </body>
-
 </html>

@@ -1,235 +1,317 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Farmacias | Medistock</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <style>
-    .card {
-      position: relative;
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-      overflow: hidden;
-    }
-
-    .card:hover {
-      transform: translateY(-8px) scale(1.03);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(120deg, rgba(255, 255, 255, 0.15), transparent 60%);
-      transform: rotate(25deg);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      pointer-events: none;
-    }
-
-    .card:hover::before {
-      opacity: 1;
-    }
-  </style>
-    <link rel="icon" type="image/png" href="/Imagenes/Logo.png"/>
-</head>
-
-<body
-  class="bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 min-h-screen flex items-center justify-center py-12">
-
-    <!-- ══ HEADER STICKY MEDISTOCK ══════════════════════════════════════ -->
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Red de Farmacias | Medistock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { margin-top: 62px !important; }
-        #ms-header {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            width: 100vw !important;
-            z-index: 99999 !important;
-            background: linear-gradient(90deg, rgba(30,27,100,0.82) 0%, rgba(14,116,144,0.70) 100%);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.18);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.22);
-            box-sizing: border-box;
-            padding: 10px 28px;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* slate-950 */
         }
-        #ms-header-inner {
-            display: flex;
-            align-items: center;
-            gap: 14px;
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        .input-field {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: #3b82f6; /* blue-500 */
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            outline: none;
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.75) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.8), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
-        #ms-header .ms-accent-line {
-            width: 3px; height: 32px; border-radius: 9999px;
-            background: linear-gradient(180deg,#67e8f9,#818cf8);
-            flex-shrink: 0;
+
+        .glass-card:hover {
+            transform: translateY(-6px);
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 30px 60px -12px rgba(59, 130, 246, 0.2);
         }
-        #ms-header .ms-logo-link {
-            display: flex; align-items: center;
-            gap: 12px; text-decoration: none;
+
+        .glass-card:hover::before {
+            opacity: 1;
         }
-        #ms-header .ms-logo-wrap {
-            position: relative; flex-shrink: 0;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        #ms-header .ms-logo-glow {
-            position: absolute; inset: 0;
-            background: rgba(103,232,249,0.25);
-            filter: blur(10px); border-radius: 9999px;
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
-        #ms-header .ms-logo-img {
-            position: relative; height: 38px; width: auto;
-            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
-            transition: transform 0.3s ease;
+
+        /* Tech grid background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
         }
-        #ms-header .ms-logo-img:hover { transform: scale(1.1); }
-        #ms-header .ms-brand { line-height: 1; }
-        #ms-header .ms-brand-name {
-            color: white; font-weight: 900; font-size: 1rem;
-            letter-spacing: 0.08em; font-family: Inter, sans-serif;
-            text-shadow: 0 1px 8px rgba(0,0,0,0.25);
-        }
-        #ms-header .ms-brand-name span { color: #67e8f9; }
-        #ms-header .ms-brand-sub {
-            color: rgba(255,255,255,0.45); font-size: 0.62rem;
-            font-weight: 500; letter-spacing: 0.12em;
-            text-transform: uppercase; margin-top: 2px;
-        }
-        #ms-header .ms-sep {
-            flex: 1; height: 1px;
-            background: linear-gradient(90deg, rgba(255,255,255,0.12), transparent);
-            margin-left: 8px;
-        }
-        #ms-header .ms-status {
-            display: flex; align-items: center;
-            gap: 6px; flex-shrink: 0;
-        }
-        #ms-header .ms-dot {
-            width: 7px; height: 7px; border-radius: 9999px;
-            background: #34d399;
-            box-shadow: 0 0 8px rgba(52,211,153,0.8);
-            animation: ms-pulse 2s infinite;
-        }
-        #ms-header .ms-status-txt {
-            color: rgba(255,255,255,0.45); font-size: 0.68rem;
-            font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
-        }
-        @keyframes ms-pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
     </style>
-    <header id="ms-header">
-        <div id="ms-header-inner">
-            <div class="ms-accent-line"></div>
-            <a href="/" class="ms-logo-link">
-                <div class="ms-logo-wrap">
-                    <div class="ms-logo-glow"></div>
-                    <img src="/Imagenes/Logo.png" alt="MEDISTOCK" class="ms-logo-img"/>
-                </div>
-                <div class="ms-brand">
-                    <div class="ms-brand-name">MEDI<span>STOCK</span></div>
-                    <div class="ms-brand-sub">Gestión Inteligente</div>
-                </div>
-            </a>
-            <div class="ms-sep"></div>
-            <div class="ms-status">
-                <div class="ms-dot"></div>
-                <span class="ms-status-txt">Sistema activo</span>
+</head>
+<body class="text-slate-100 min-h-screen flex bg-grid relative overflow-x-hidden">
+
+<!-- Iluminación ambiental de fondo (Tonos blue/cyan para Red de Farmacias Usuario) -->
+<div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+<div class="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+<!-- BARRA LATERAL REDISEÑADA (Especializada para Red de Farmacias Usuario con estadísticas) -->
+<aside class="hidden lg:flex w-80 bg-slate-900/95 backdrop-blur-2xl border-r border-slate-800/80 flex-col justify-between p-6 z-30 sticky top-0 h-screen shadow-2xl overflow-y-auto">
+    <div class="space-y-6">
+        <!-- Logo y Entidad -->
+        <div class="flex items-center gap-3 px-2">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                <i class="ph ph-buildings text-2xl"></i>
+            </div>
+            <div>
+                <span class="text-lg font-extrabold tracking-tight text-white block leading-none">MEDISTOCK</span>
+                <span class="text-[10px] text-blue-400 font-bold uppercase tracking-wider">Red de Farmacias</span>
             </div>
         </div>
-    </header>
-    <!-- ══ FIN HEADER ═══════════════════════════════════════════════════ -->
 
-<div
-    class="w-full max-w-7xl bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-10 flex flex-col gap-6 border border-white/20">
-
-    <div class="text-center">
-      <h1 class="text-5xl font-extrabold text-white drop-shadow-lg tracking-wide">
-        Farmacias - <span th:text="${nombreEps}">EPS</span>
-      </h1>
-      <p class="text-white/80 mt-3 text-lg md:text-xl" th:if="${farmacias.size() > 0}">
-        Listado de farmacias. Haz click en "Ver Medicamentos" para cada farmacia.
-      </p>
-      <p class="text-white/80 mt-3 text-lg md:text-xl" th:if="${farmacias.size() == 0}">
-        No se encontraron farmacias para su EPS.
-      </p>
-    </div>
-
-    <form th:action="@{/usuario/farmacias}" method="get"
-      class="flex flex-wrap items-center justify-center gap-3 mb-6 max-w-3xl mx-auto">
-      <div
-        class="flex items-center flex-1 bg-white/20 rounded-xl px-3 py-2 backdrop-blur-md shadow-inner border border-white/30 min-w-[250px]">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white mr-2" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
-        </svg>
-        <input type="text" name="nombre" placeholder="Buscar farmacia..." th:value="${nombre}"
-          class="w-full bg-transparent text-white placeholder-white/70 focus:outline-none">
-      </div>
-
-      <div class="flex flex-wrap justify-center gap-2">
-        <button type="submit"
-          class="px-4 py-2 bg-indigo-600 text-white rounded-xl shadow hover:shadow-lg hover:scale-105 hover:bg-indigo-700 transition-all flex items-center gap-1">
-          Buscar
-        </button>
-
-        <a th:href="@{/usuario/farmacias}"
-          class="px-4 py-2 bg-indigo-600 text-white rounded-xl shadow hover:shadow-lg hover:scale-105 hover:bg-indigo-700 transition-all flex items-center gap-1">
-          Mostrar Todo
-        </a>
-      </div>
-    </form>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
-      <div th:each="farmacia : ${farmacias}"
-        class="card bg-white/20 rounded-2xl shadow-lg p-6 border border-white/20 flex flex-col gap-4">
-        <h2 class="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-          <i class="ph ph-buildings text-xl text-blue-300"></i>
-          <span th:text="${farmacia.nombre}">Nombre Farmacia</span>
-        </h2>
-        <p class="text-white/80" th:text="${farmacia.direccion}">Dirección</p>
-        <div class="mt-4">
-          <a th:href="@{'/usuario/farmacia/' + ${farmacia.id}}"
-            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-3 rounded-xl shadow transition hover:scale-105">
-            <i class="ph ph-pill text-lg"></i> Solicitar Medicamentos
-          </a>
+        <!-- Menú de Navegación Limpio -->
+        <div class="space-y-1.5 px-1">
+            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-3 block mb-1">Navegación</span>
+            <a href="/usuario/dashboard" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium text-xs transition-colors">
+                <i class="ph ph-arrow-left text-lg text-blue-400"></i>
+                <span>Volver al Dashboard</span>
+            </a>
+            <a href="/usuario/farmacias" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold text-xs shadow-lg shadow-blue-600/20 transition-all">
+                <i class="ph ph-buildings text-lg"></i>
+                <span>Farmacias EPS</span>
+            </a>
         </div>
-      </div>
+
+        <!-- Divisor sutil -->
+        <div class="h-px bg-slate-800 my-2"></div>
+
+        <!-- Estadística en Vivo de Farmacias -->
+        <div class="mx-1 p-4 rounded-2xl bg-gradient-to-br from-slate-950/90 to-slate-900/90 border border-slate-800 relative overflow-hidden shadow-inner">
+            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-blue-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <i class="ph ph-chart-line-up text-blue-400 text-base"></i> Red EPS
+                </span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20" th:text="${nombreEps}">EPS</span>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800/60">
+                    <span class="text-xs text-slate-400 font-semibold">Farmacias Disponibles</span>
+                    <span class="text-white font-extrabold text-sm" th:text="${farmacias != null ? farmacias.size() : '0'}">0</span>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                        <span>Disponibilidad Red</span>
+                        <span class="text-emerald-400 font-bold">100%</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-emerald-500 rounded-full" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjetas de Seguridad -->
+        <div class="mx-1 grid grid-cols-2 gap-2">
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-shield-check text-blue-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Convenio</p>
+                <p class="text-xs font-extrabold text-white">Autorizado</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-database text-emerald-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Estado DB</p>
+                <p class="text-xs font-extrabold text-white">Óptimo</p>
+            </div>
+        </div>
+
+        <!-- Imagen Contextual Institucional -->
+        <div class="mx-1 rounded-2xl overflow-hidden relative border border-slate-800/80 h-36 group shadow-lg">
+            <img src="/Imagenes/Hospital.jpg"
+                 alt="Red de Farmacias Medistock"
+                 class="w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-700 filter brightness-75" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex flex-col justify-end p-3">
+                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-0.5">Red de Farmacias</p>
+                <p class="text-xs text-slate-200 font-semibold leading-tight">Consulta de sucursales aliadas.</p>
+            </div>
+        </div>
     </div>
 
-    <div class="flex justify-center items-center gap-4 mt-6" th:if="${totalPages > 1}">
-      <a th:if="${currentPage > 1}" th:href="@{/usuario/farmacias(page=${currentPage-2}, nombre=${nombre})}"
-        class="px-4 py-2 bg-white/30 hover:bg-white/50 text-blue-900 rounded-xl">
-        ← Anterior
-      </a>
-
-      <span class="px-4 py-2 bg-white/50 text-blue-900 rounded-xl">
-        Página <span th:text="${currentPage}"></span> de <span th:text="${totalPages}"></span>
-      </span>
-
-      <a th:if="${currentPage < totalPages}" th:href="@{/usuario/farmacias(page=${currentPage}, nombre=${nombre})}"
-        class="px-4 py-2 bg-white/30 hover:bg-white/50 text-blue-900 rounded-xl">
-        Siguiente →
-      </a>
+    <!-- Pie de Barra con Perfil Activo -->
+    <div class="pt-4 border-t border-slate-800/80">
+        <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center font-extrabold text-xs shadow-md">
+                US
+            </div>
+            <div class="overflow-hidden flex-1">
+                <p class="text-xs font-bold text-white truncate">Afiliado EPS</p>
+                <p class="text-[10px] text-emerald-400 font-semibold truncate flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sesión Segura
+                </p>
+            </div>
+        </div>
     </div>
+</aside>
 
-    <div class="flex justify-center mt-6">
-      <a href="/usuario/dashboard"
-        class="inline-flex items-center gap-3 bg-white/30 hover:bg-white/50 text-blue-900 font-bold px-8 py-4 rounded-full shadow-lg transition transform hover:scale-105">
-        <i class="ph ph-arrow-left text-2xl"></i> Volver al Dashboard
-      </a>
+<!-- CONTENIDO PRINCIPAL -->
+<main class="flex-1 min-h-screen flex flex-col p-4 md:p-10 z-10 overflow-y-auto">
+    <div class="w-full max-w-7xl mx-auto flex flex-col gap-8 animate-fade-in">
+
+        <!-- Encabezado Superior -->
+        <div class="glass-panel rounded-3xl p-6 md:p-8 border border-slate-800 relative overflow-hidden flex flex-col gap-6">
+            <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+                <div class="flex items-center gap-5">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 flex-shrink-0">
+                        <i class="ph ph-buildings text-3xl"></i>
+                    </div>
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider mb-1">
+                            <i class="ph ph-hospital"></i> Red Médica Afiliada
+                        </div>
+                        <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                            Red de Farmacias — <span class="text-cyan-400" th:text="${nombreEps}">EPS</span>
+                        </h1>
+                        <p class="text-slate-400 text-sm sm:text-base mt-1">Explora las farmacias disponibles para tu EPS y consulta su inventario en tiempo real.</p>
+                    </div>
+                </div>
+
+                <a th:href="@{/usuario/dashboard}"
+                   class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold transition-all duration-300 text-xs uppercase tracking-wider border border-slate-700 shadow-sm">
+                    <i class="ph ph-arrow-left text-base"></i>
+                    <span>Volver al Dashboard</span>
+                </a>
+            </div>
+
+            <!-- Alerta si no hay EPS -->
+            <div th:if="${error}" class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm font-medium flex items-center gap-3 relative z-10">
+                <i class="ph ph-warning-circle text-xl flex-shrink-0 text-amber-400"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Barra de Búsqueda -->
+            <form th:action="@{/usuario/farmacias}" method="get" class="flex flex-col md:flex-row gap-4 relative z-10 pt-4 border-t border-slate-800 items-center justify-between">
+                <div class="relative flex-1 w-full">
+                    <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                    <input type="text" name="nombre" placeholder="Buscar farmacia por nombre..." th:value="${nombre}"
+                           class="w-full input-field pl-12 pr-4 py-3.5 rounded-2xl text-sm" />
+                </div>
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <button type="submit"
+                            class="flex-1 md:flex-none px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-md">
+                        <span>Buscar</span>
+                    </button>
+                    <a th:if="${nombre != null and !nombre.isEmpty()}" th:href="@{/usuario/farmacias}"
+                       class="px-5 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-wider border border-slate-700 transition-all duration-300 flex items-center justify-center gap-2" title="Limpiar búsqueda">
+                        <i class="ph ph-x text-lg"></i>
+                        <span>Limpiar</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Cuadrícula de Farmacias -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" th:if="${farmacias != null and !farmacias.isEmpty()}">
+            <div th:each="farmacia : ${farmacias}" class="glass-card rounded-3xl p-7 flex flex-col justify-between gap-6 shadow-xl">
+                <div class="flex flex-col gap-3">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20 shadow-inner">
+                        <i class="ph ph-storefront text-2xl"></i>
+                    </div>
+                    <h2 class="text-white font-extrabold text-xl tracking-tight truncate" th:text="${farmacia.nombre}">Nombre Farmacia</h2>
+                    <p class="text-slate-400 text-sm flex items-center gap-2">
+                        <i class="ph ph-map-pin text-cyan-400 text-base flex-shrink-0"></i>
+                        <span class="truncate" th:text="${farmacia.direccion}">Dirección</span>
+                    </p>
+                </div>
+                <a th:href="@{'/usuario/farmacia/' + ${farmacia.id}}"
+                   class="w-full py-3.5 px-4 rounded-xl bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 border border-slate-700 hover:border-blue-500 flex items-center justify-between shadow-sm group">
+                    <span>Ver Medicamentos</span>
+                    <i class="ph ph-arrow-right text-base opacity-70 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Mensaje si no hay farmacias -->
+        <div th:if="${farmacias == null or farmacias.isEmpty()}" class="glass-panel rounded-3xl p-12 text-center text-slate-400 flex flex-col items-center justify-center gap-3 border border-slate-800">
+            <div class="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-3xl mb-1 shadow-inner">
+                <i class="ph ph-storefront-slash"></i>
+            </div>
+            <p class="text-base font-semibold text-slate-300">No se encontraron farmacias registradas para tu EPS.</p>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex justify-center items-center gap-3 pt-2" th:if="${totalPages > 1}">
+            <a th:if="${currentPage > 1}" th:href="@{/usuario/farmacias(page=${currentPage - 1}, nombre=${nombre})}"
+               class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-blue-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                &laquo; Anterior
+            </a>
+
+            <span class="px-4 py-2.5 text-xs text-slate-300 font-bold uppercase tracking-wider bg-slate-900/60 rounded-xl border border-slate-800">
+                Página <span class="text-white" th:text="${currentPage}"></span> de <span class="text-white" th:text="${totalPages}"></span>
+            </span>
+
+            <a th:if="${currentPage < totalPages}" th:href="@{/usuario/farmacias(page=${currentPage + 1}, nombre=${nombre})}"
+               class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-blue-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                Siguiente &raquo;
+            </a>
+        </div>
+
     </div>
+</main>
 
-  </div>
-    <div th:replace="~{fragments/chatbot-widget :: chatbot}"></div>
+<!-- Script para asegurar que al entrar siempre comience desde el inicio de la página -->
+<script>
+    window.addEventListener("load", () => {
+        window.scrollTo(0, 0);
+        const mainContainer = document.querySelector("main");
+        if (mainContainer) {
+            mainContainer.scrollTop = 0;
+        }
+    });
+</script>
+
 </body>
-
 </html>

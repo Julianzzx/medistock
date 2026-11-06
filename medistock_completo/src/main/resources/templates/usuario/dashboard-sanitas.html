@@ -1,208 +1,352 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Sanitas | Medistock</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <style>
-    .card {
-      position: relative;
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-      overflow: hidden;
-    }
-    .card:hover {
-      transform: translateY(-8px) scale(1.03);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-    }
-    .card::before {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(120deg, rgba(255,255,255,0.15), transparent 60%);
-      transform: rotate(25deg);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      pointer-events: none;
-    }
-    .card:hover::before {
-      opacity: 1;
-    }
-  </style>
-    <link rel="icon" type="image/png" href="/Imagenes/Logo.png"/>
-</head>
-<body class="bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 min-h-screen py-12">
-
-    <!-- ══ HEADER STICKY MEDISTOCK ══════════════════════════════════════ -->
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Portal del Paciente | Medistock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { margin-top: 62px !important; }
-        #ms-header {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            width: 100vw !important;
-            z-index: 99999 !important;
-            background: linear-gradient(90deg, rgba(30,27,100,0.82) 0%, rgba(14,116,144,0.70) 100%);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.18);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.22);
-            box-sizing: border-box;
-            padding: 10px 28px;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* slate-950 */
         }
-        #ms-header-inner {
-            display: flex;
-            align-items: center;
-            gap: 14px;
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.75) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.8), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
-        #ms-header .ms-accent-line {
-            width: 3px; height: 32px; border-radius: 9999px;
-            background: linear-gradient(180deg,#67e8f9,#818cf8);
-            flex-shrink: 0;
+
+        .glass-card:hover {
+            transform: translateY(-6px);
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 30px 60px -12px rgba(59, 130, 246, 0.2);
         }
-        #ms-header .ms-logo-link {
-            display: flex; align-items: center;
-            gap: 12px; text-decoration: none;
+
+        .glass-card:hover::before {
+            opacity: 1;
         }
-        #ms-header .ms-logo-wrap {
-            position: relative; flex-shrink: 0;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        #ms-header .ms-logo-glow {
-            position: absolute; inset: 0;
-            background: rgba(103,232,249,0.25);
-            filter: blur(10px); border-radius: 9999px;
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
-        #ms-header .ms-logo-img {
-            position: relative; height: 38px; width: auto;
-            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
-            transition: transform 0.3s ease;
+
+        /* Tech grid background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
         }
-        #ms-header .ms-logo-img:hover { transform: scale(1.1); }
-        #ms-header .ms-brand { line-height: 1; }
-        #ms-header .ms-brand-name {
-            color: white; font-weight: 900; font-size: 1rem;
-            letter-spacing: 0.08em; font-family: Inter, sans-serif;
-            text-shadow: 0 1px 8px rgba(0,0,0,0.25);
+
+        .pulse-glow {
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.25);
         }
-        #ms-header .ms-brand-name span { color: #67e8f9; }
-        #ms-header .ms-brand-sub {
-            color: rgba(255,255,255,0.45); font-size: 0.62rem;
-            font-weight: 500; letter-spacing: 0.12em;
-            text-transform: uppercase; margin-top: 2px;
-        }
-        #ms-header .ms-sep {
-            flex: 1; height: 1px;
-            background: linear-gradient(90deg, rgba(255,255,255,0.12), transparent);
-            margin-left: 8px;
-        }
-        #ms-header .ms-status {
-            display: flex; align-items: center;
-            gap: 6px; flex-shrink: 0;
-        }
-        #ms-header .ms-dot {
-            width: 7px; height: 7px; border-radius: 9999px;
-            background: #34d399;
-            box-shadow: 0 0 8px rgba(52,211,153,0.8);
-            animation: ms-pulse 2s infinite;
-        }
-        #ms-header .ms-status-txt {
-            color: rgba(255,255,255,0.45); font-size: 0.68rem;
-            font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
-        }
-        @keyframes ms-pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
     </style>
-    <header id="ms-header">
-        <div id="ms-header-inner">
-            <div class="ms-accent-line"></div>
-            <a href="/" class="ms-logo-link">
-                <div class="ms-logo-wrap">
-                    <div class="ms-logo-glow"></div>
-                    <img src="/Imagenes/Logo.png" alt="MEDISTOCK" class="ms-logo-img"/>
-                </div>
-                <div class="ms-brand">
-                    <div class="ms-brand-name">MEDI<span>STOCK</span></div>
-                    <div class="ms-brand-sub">Gestión Inteligente</div>
-                </div>
-            </a>
-            <div class="ms-sep"></div>
-            <div class="ms-status">
-                <div class="ms-dot"></div>
-                <span class="ms-status-txt">Sistema activo</span>
+</head>
+<body class="text-slate-100 min-h-screen flex bg-grid relative overflow-x-hidden">
+
+<!-- Iluminación ambiental de fondo (Tonos Azul / Cian característicos del portal de usuario) -->
+<div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+<div class="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+<!-- BARRA LATERAL (Estilo profesional limpio, enfocado exclusivamente en la navegación del paciente) -->
+<aside class="hidden lg:flex w-80 bg-slate-900/95 backdrop-blur-2xl border-r border-slate-800/80 flex-col justify-between p-6 z-30 sticky top-0 h-screen shadow-2xl">
+    <div class="space-y-6">
+        <!-- Logo y Entidad -->
+        <div class="flex items-center gap-3 px-2">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                <i class="ph ph-user-circle text-2xl"></i>
+            </div>
+            <div>
+                <span class="text-lg font-extrabold tracking-tight text-white block leading-none">MEDISTOCK</span>
+                <span class="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">Portal del Paciente</span>
             </div>
         </div>
-    </header>
-    <!-- ══ FIN HEADER ═══════════════════════════════════════════════════ -->
 
-<div class="w-full max-w-7xl mx-auto bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-10 flex flex-col gap-10 border border-white/20">
+        <!-- Menú Lateral Principal -->
+        <nav class="space-y-1.5 text-sm font-medium px-1">
+            <a href="#" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-600/30 font-bold">
+                <i class="ph ph-squares-four text-xl"></i>
+                <span>Mi Panel</span>
+            </a>
+            <div class="pt-2 pb-1 px-3">
+                <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Accesos Rápidos</span>
+            </div>
+        </nav>
 
-    <div class="text-center">
-      <h1 class="text-5xl font-extrabold text-white drop-shadow-lg tracking-wide">Dashboard Sanitas</h1>
-      <p class="text-white/80 mt-3 text-lg md:text-xl">
-        Bienvenido, consulta farmacias, gestiona solicitudes y genera tu cita
-      </p>
+        <!-- Mini Tarjeta de Estado de Recetas / Trámites -->
+        <div class="mx-1 p-4 rounded-2xl bg-gradient-to-br from-slate-950/80 to-slate-900/80 border border-slate-800/80 relative overflow-hidden group">
+            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-cyan-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <i class="ph ph-pulse text-cyan-400 text-base"></i> Estado Clínico
+                </span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Al día</span>
+            </div>
+            <div class="space-y-2">
+                <div>
+                    <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                        <span>Disponibilidad de Red</span>
+                        <span class="text-cyan-400 font-bold">100%</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                        <span>Trámites Activos</span>
+                        <span class="text-emerald-400 font-bold">Sincronizados</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-emerald-500 rounded-full" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Imagen de Contexto Institucional del Paciente -->
+        <div class="mx-1 rounded-2xl overflow-hidden relative border border-slate-800/80 h-44 group shadow-lg">
+            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=600&auto=format&fit=crop"
+                 alt="Salud y Bienestar Medistock"
+                 class="w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-700 filter brightness-75" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex flex-col justify-end p-3.5">
+                <p class="text-[10px] text-cyan-400 font-bold uppercase tracking-wider mb-0.5">Atención Preferencial</p>
+                <p class="text-xs text-slate-200 font-semibold leading-tight">Gestión ágil de farmacias y citas médicas.</p>
+            </div>
+        </div>
+
+        <!-- Indicadores de Privacidad y Soporte -->
+        <div class="mx-1 grid grid-cols-2 gap-2">
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-shield-check text-blue-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Privacidad</p>
+                <p class="text-xs font-extrabold text-white">Protegida</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-headset text-emerald-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Soporte</p>
+                <p class="text-xs font-extrabold text-white">24/7</p>
+            </div>
+        </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+    <!-- Perfil / Estado en Sidebar -->
+    <div class="pt-3 border-t border-slate-800/80">
+        <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 text-white flex items-center justify-center font-extrabold text-xs shadow-md">
+                US
+            </div>
+            <div class="overflow-hidden flex-1">
+                <p class="text-xs font-bold text-white truncate">Paciente Afiliado</p>
+                <p class="text-[10px] text-emerald-400 font-semibold truncate flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sesión Activa
+                </p>
+            </div>
+        </div>
+    </div>
+</aside>
 
-      <div class="card bg-white/20 rounded-2xl shadow-lg p-6 border border-white/20 hover:border-blue-400/60 transition flex flex-col">
-        <h2 class="text-blue-100 font-bold text-xl mb-6 flex items-center gap-2">
-          <i class="ph ph-buildings text-2xl text-blue-300"></i> Farmacias
-        </h2>
-        <a href="/usuario/farmacias" class="group flex items-center gap-3 bg-white/30 text-blue-900 font-semibold px-5 py-4 rounded-xl shadow-md border border-white/20 transition hover:scale-105 hover:bg-blue-600 hover:text-white hover:border-blue-300/70">
-          <i class="ph ph-first-aid text-2xl group-hover:animate-bounce"></i> Ver Farmacias
-        </a>
-      </div>
+<!-- CONTENIDO PRINCIPAL -->
+<main class="flex-1 min-h-screen flex flex-col p-4 md:p-10 z-10 overflow-y-auto">
+    <div class="w-full max-w-7xl mx-auto flex flex-col gap-8 animate-fade-in">
 
-      <div class="card bg-white/20 rounded-2xl shadow-lg p-6 border border-white/20 hover:border-cyan-400/60 transition flex flex-col">
-        <h2 class="text-cyan-100 font-bold text-xl mb-6 flex items-center gap-2">
-          <i class="ph ph-list text-2xl text-cyan-300"></i> Mis Solicitudes
-        </h2>
-        <a href="/usuario/solicitudes" class="group flex items-center gap-3 bg-white/30 text-cyan-900 font-semibold px-5 py-4 rounded-xl shadow-md border border-white/20 transition hover:scale-105 hover:bg-cyan-600 hover:text-white hover:border-cyan-300/70">
-          <i class="ph ph-envelope-open text-2xl group-hover:animate-bounce"></i> Ver Solicitudes
-        </a>
-      </div>
+        <!-- Cabecera del Dashboard -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 glass-panel rounded-3xl p-6 md:p-8 border border-slate-800">
+            <div class="flex items-center gap-5">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 flex-shrink-0">
+                    <i class="ph ph-squares-four text-3xl"></i>
+                </div>
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider mb-1">
+                        <i class="ph ph-sparkle"></i> Portal del Paciente
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Panel de Control</h1>
+                    <p class="text-slate-400 text-sm sm:text-base mt-1">Bienvenido al sistema integrado de gestión farmacéutica y servicios médicos.</p>
+                </div>
+            </div>
 
-      <div class="card bg-white/20 rounded-2xl shadow-lg p-6 border border-white/20 hover:border-green-400/60 transition flex flex-col">
-        <h2 class="text-green-100 font-bold text-xl mb-6 flex items-center gap-2">
-          <i class="ph ph-calendar-check text-2xl text-green-300"></i> Generar Orden de Cita
-        </h2>
-        <form th:action="@{/usuario/generar-cita}" method="post" class="group flex items-center gap-3">
-          <button type="submit" class="w-full flex items-center justify-center gap-3 bg-white/30 text-green-900 font-semibold px-5 py-4 rounded-xl shadow-md border border-white/20 transition hover:scale-105 hover:bg-green-600 hover:text-white hover:border-green-300/70">
-            <i class="ph ph-check-square text-2xl group-hover:animate-bounce"></i> Generar
-          </button>
-        </form>
-      </div>
+            <!-- Botón de Cerrar Sesión -->
+            <form th:action="@{/logout}" method="post" class="w-full md:w-auto flex justify-end">
+                <button type="submit" class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white font-bold transition-all duration-300 text-xs shadow-lg shadow-rose-900/20 group">
+                    <i class="ph ph-sign-out text-lg transition-transform group-hover:-translate-x-1"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Estadísticas Rápidas del Usuario -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="glass-section rounded-3xl p-6 border border-white/5 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Estado de Cuenta</p>
+                    <h3 class="text-white font-extrabold text-lg flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Activo
+                    </h3>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20 text-xl">
+                    <i class="ph ph-user-check"></i>
+                </div>
+            </div>
+
+            <div class="glass-section rounded-3xl p-6 border border-white/5 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Red Médica</p>
+                    <h3 class="text-white font-extrabold text-lg">Sedes Afiliadas</h3>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20 text-xl">
+                    <i class="ph ph-buildings"></i>
+                </div>
+            </div>
+
+            <div class="glass-section rounded-3xl p-6 border border-white/5 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Trámites</p>
+                    <h3 class="text-white font-extrabold text-lg">En Línea</h3>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/20 text-xl">
+                    <i class="ph ph-list-checks"></i>
+                </div>
+            </div>
+
+            <div class="glass-section rounded-3xl p-6 border border-white/5 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Seguridad</p>
+                    <h3 class="text-white font-extrabold text-lg">Encriptado</h3>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center border border-purple-500/20 text-xl">
+                    <i class="ph ph-shield-check"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cuadrícula de Opciones Principales del Usuario -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- Card 1: Red de Farmacias -->
+            <div class="glass-card rounded-3xl p-7 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20 group-hover:scale-110 transition-transform shadow-inner">
+                            <i class="ph ph-buildings text-3xl"></i>
+                        </div>
+                        <span class="text-[11px] font-bold text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20 uppercase tracking-wider">Red</span>
+                    </div>
+                    <h2 class="text-white font-extrabold text-xl mb-2">Red de Farmacias</h2>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-8">Consulta sedes afiliadas, disponibilidad médica y horarios de atención actualizados.</p>
+                </div>
+                <a th:href="@{/usuario/farmacias}" class="flex items-center justify-between px-4 py-3.5 rounded-2xl bg-slate-900/80 hover:bg-blue-600 text-slate-300 hover:text-white font-semibold text-xs transition-all duration-300 border border-slate-700/60 hover:border-blue-500 shadow-md group/btn">
+                    <span class="flex items-center gap-2.5"><i class="ph ph-buildings text-base text-blue-400 group-hover/btn:text-white"></i> Ver Farmacias</span>
+                    <i class="ph ph-arrow-right text-xs opacity-50 group-hover/btn:opacity-100 group-hover/btn:translate-x-1 transition-all"></i>
+                </a>
+            </div>
+
+            <!-- Card 2: Mis Solicitudes -->
+            <div class="glass-card rounded-3xl p-7 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 border border-cyan-500/20 group-hover:scale-110 transition-transform shadow-inner">
+                            <i class="ph ph-list-checks text-3xl"></i>
+                        </div>
+                        <span class="text-[11px] font-bold text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20 uppercase tracking-wider">Trámites</span>
+                    </div>
+                    <h2 class="text-white font-extrabold text-xl mb-2">Mis Solicitudes</h2>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-8">Revisa el estado actual de tus trámites, recetas y requerimientos médicos pendientes.</p>
+                </div>
+                <a th:href="@{/usuario/solicitudes}" class="flex items-center justify-between px-4 py-3.5 rounded-2xl bg-slate-900/80 hover:bg-cyan-600 text-slate-300 hover:text-white font-semibold text-xs transition-all duration-300 border border-slate-700/60 hover:border-cyan-500 shadow-md group/btn">
+                    <span class="flex items-center gap-2.5"><i class="ph ph-list-checks text-base text-cyan-400 group-hover/btn:text-white"></i> Ver Solicitudes</span>
+                    <i class="ph ph-arrow-right text-xs opacity-50 group-hover/btn:opacity-100 group-hover/btn:translate-x-1 transition-all"></i>
+                </a>
+            </div>
+
+            <!-- Card 3: Generar Orden de Cita -->
+            <div class="glass-card rounded-3xl p-7 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20 group-hover:scale-110 transition-transform shadow-inner">
+                            <i class="ph ph-calendar-check text-3xl"></i>
+                        </div>
+                        <span class="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 uppercase tracking-wider">Citas</span>
+                    </div>
+                    <h2 class="text-white font-extrabold text-xl mb-2">Generar Orden de Cita</h2>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-8">Inicia el proceso para solicitar y programar tu próxima cita médica de forma rápida.</p>
+                </div>
+                <form th:action="@{/usuario/generar-cita}" method="post" class="w-full">
+                    <button type="submit" class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl bg-slate-900/80 hover:bg-emerald-600 text-slate-300 hover:text-white font-semibold text-xs transition-all duration-300 border border-slate-700/60 hover:border-emerald-500 shadow-md group/btn">
+                        <span class="flex items-center gap-2.5"><i class="ph ph-plus-circle text-base text-emerald-400 group-hover/btn:text-white"></i> Generar Cita</span>
+                        <i class="ph ph-arrow-right text-xs opacity-50 group-hover/btn:opacity-100 group-hover/btn:translate-x-1 transition-all"></i>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Banner Inferior: Mi Perfil Institucional (Ancho Completo) -->
+        <div class="glass-card rounded-3xl p-8 md:p-10 relative overflow-hidden group z-10 bg-gradient-to-r from-blue-950/70 via-slate-900/90 to-purple-950/70 border border-purple-500/30 pulse-glow">
+            <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                <div class="flex items-center gap-6 text-center md:text-left">
+                    <div class="w-20 h-20 rounded-3xl bg-gradient-to-tr from-blue-600 to-purple-500 flex items-center justify-center text-white shrink-0 group-hover:scale-105 transition-transform shadow-xl shadow-purple-500/30">
+                        <i class="ph ph-user-gear text-4xl"></i>
+                    </div>
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-purple-400 text-xs font-bold uppercase tracking-wider mb-1.5">
+                            <i class="ph ph-user"></i> Configuración de Cuenta
+                        </div>
+                        <h2 class="text-white font-extrabold text-2xl md:text-3xl mb-2">Mi Perfil Institucional</h2>
+                        <p class="text-slate-300 text-sm max-w-2xl leading-relaxed">Actualiza tus datos personales, información de contacto y EPS asignada para mantener tu expediente clínico al día.</p>
+                    </div>
+                </div>
+                <a th:href="@{/usuario/editar}"
+                   class="px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-500 hover:from-blue-500 hover:to-purple-400 text-white font-extrabold text-xs uppercase tracking-wider shadow-[0_0_30px_rgba(168,85,247,0.35)] transition-all duration-300 flex items-center gap-3 shrink-0 hover:scale-105">
+                    <span>Gestionar Perfil</span>
+                    <i class="ph ph-arrow-right text-lg"></i>
+                </a>
+            </div>
+        </div>
 
     </div>
+</main>
 
-    <div class="flex justify-center">
-      <div class="card bg-white/20 rounded-2xl shadow-lg p-6 w-full max-w-sm border border-white/20 hover:border-purple-400/60 transition flex flex-col items-center">
-        <h2 class="text-purple-100 font-bold text-xl mb-6 flex items-center gap-2">
-          <i class="ph ph-user text-2xl text-purple-300"></i> Mi Perfil
-        </h2>
-        <a href="/usuario/perfil" class="group flex items-center justify-center gap-3 bg-white/30 text-purple-900 font-semibold px-5 py-4 rounded-xl shadow-md border border-white/20 transition hover:scale-105 hover:bg-purple-600 hover:text-white hover:border-purple-300/70 w-full text-center">
-          <i class="ph ph-identification-badge text-2xl group-hover:animate-bounce"></i> Ver Perfil
-        </a>
-      </div>
-    </div>
+<div th:replace="~{fragments/chatbot :: chatbot}"></div>
 
-    <div class="flex justify-center mt-6">
-      <form th:action="@{/logout}" method="post">
-        <button type="submit" class="inline-flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-4 rounded-full shadow-lg transition transform hover:scale-110 hover:shadow-red-400/50">
-          <i class="ph ph-sign-out text-2xl"></i> Cerrar Sesión
-        </button>
-      </form>
-    </div>
-
-  </div>
-    <div th:replace="~{fragments/chatbot-widget :: chatbot}"></div>
 </body>
 </html>

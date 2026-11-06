@@ -1,175 +1,263 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Generar Cita | Medistock</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/png" href="/Imagenes/Logo.png"/>
-</head>
-<body class="bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 min-h-screen flex items-center justify-center">
-
-    <!-- ══ HEADER STICKY MEDISTOCK ══════════════════════════════════════ -->
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Generar Cita | Medistock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { margin-top: 62px !important; }
-        #ms-header {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            width: 100vw !important;
-            z-index: 99999 !important;
-            background: linear-gradient(90deg, rgba(30,27,100,0.82) 0%, rgba(14,116,144,0.70) 100%);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.18);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.22);
-            box-sizing: border-box;
-            padding: 10px 28px;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* slate-950 */
         }
-        #ms-header-inner {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         }
-        #ms-header .ms-accent-line {
-            width: 3px; height: 32px; border-radius: 9999px;
-            background: linear-gradient(180deg,#67e8f9,#818cf8);
-            flex-shrink: 0;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        #ms-header .ms-logo-link {
-            display: flex; align-items: center;
-            gap: 12px; text-decoration: none;
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
-        #ms-header .ms-logo-wrap {
-            position: relative; flex-shrink: 0;
+
+        /* Tech grid background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
         }
-        #ms-header .ms-logo-glow {
-            position: absolute; inset: 0;
-            background: rgba(103,232,249,0.25);
-            filter: blur(10px); border-radius: 9999px;
-        }
-        #ms-header .ms-logo-img {
-            position: relative; height: 38px; width: auto;
-            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
-            transition: transform 0.3s ease;
-        }
-        #ms-header .ms-logo-img:hover { transform: scale(1.1); }
-        #ms-header .ms-brand { line-height: 1; }
-        #ms-header .ms-brand-name {
-            color: white; font-weight: 900; font-size: 1rem;
-            letter-spacing: 0.08em; font-family: Inter, sans-serif;
-            text-shadow: 0 1px 8px rgba(0,0,0,0.25);
-        }
-        #ms-header .ms-brand-name span { color: #67e8f9; }
-        #ms-header .ms-brand-sub {
-            color: rgba(255,255,255,0.45); font-size: 0.62rem;
-            font-weight: 500; letter-spacing: 0.12em;
-            text-transform: uppercase; margin-top: 2px;
-        }
-        #ms-header .ms-sep {
-            flex: 1; height: 1px;
-            background: linear-gradient(90deg, rgba(255,255,255,0.12), transparent);
-            margin-left: 8px;
-        }
-        #ms-header .ms-status {
-            display: flex; align-items: center;
-            gap: 6px; flex-shrink: 0;
-        }
-        #ms-header .ms-dot {
-            width: 7px; height: 7px; border-radius: 9999px;
-            background: #34d399;
-            box-shadow: 0 0 8px rgba(52,211,153,0.8);
-            animation: ms-pulse 2s infinite;
-        }
-        #ms-header .ms-status-txt {
-            color: rgba(255,255,255,0.45); font-size: 0.68rem;
-            font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
-        }
-        @keyframes ms-pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
     </style>
-    <header id="ms-header">
-        <div id="ms-header-inner">
-            <div class="ms-accent-line"></div>
-            <a href="/" class="ms-logo-link">
-                <div class="ms-logo-wrap">
-                    <div class="ms-logo-glow"></div>
-                    <img src="/Imagenes/Logo.png" alt="MEDISTOCK" class="ms-logo-img"/>
-                </div>
-                <div class="ms-brand">
-                    <div class="ms-brand-name">MEDI<span>STOCK</span></div>
-                    <div class="ms-brand-sub">Gestión Inteligente</div>
-                </div>
-            </a>
-            <div class="ms-sep"></div>
-            <div class="ms-status">
-                <div class="ms-dot"></div>
-                <span class="ms-status-txt">Sistema activo</span>
+</head>
+<body class="text-slate-100 min-h-screen flex bg-grid relative overflow-x-hidden">
+
+<!-- Iluminación ambiental de fondo (Tonos blue/cyan para Citas) -->
+<div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+<div class="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+<!-- BARRA LATERAL REDISEÑADA (Especializada para Generar Cita con estadísticas) -->
+<aside class="hidden lg:flex w-80 bg-slate-900/95 backdrop-blur-2xl border-r border-slate-800/80 flex-col justify-between p-6 z-30 sticky top-0 h-screen shadow-2xl overflow-y-auto">
+    <div class="space-y-6">
+        <!-- Logo y Entidad -->
+        <div class="flex items-center gap-3 px-2">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                <i class="ph ph-calendar-check text-2xl"></i>
+            </div>
+            <div>
+                <span class="text-lg font-extrabold tracking-tight text-white block leading-none">MEDISTOCK</span>
+                <span class="text-[10px] text-blue-400 font-bold uppercase tracking-wider">Orden de Cita</span>
             </div>
         </div>
-    </header>
-    <!-- ══ FIN HEADER ═══════════════════════════════════════════════════ -->
 
-<div class="bg-white/20 backdrop-blur-lg rounded-3xl shadow-2xl p-10 max-w-md w-full text-center">
-  
-  <h1 class="text-3xl font-bold text-white mb-6 drop-shadow-md">Generar Orden de Cita</h1>
+        <!-- Menú de Navegación Limpio -->
+        <div class="space-y-1.5 px-1">
+            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-3 block mb-1">Navegación</span>
+            <a href="/usuario/dashboard" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium text-xs transition-colors">
+                <i class="ph ph-arrow-left text-lg text-blue-400"></i>
+                <span>Volver al Dashboard</span>
+            </a>
+            <a href="/usuario/farmacias" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium text-xs transition-colors">
+                <i class="ph ph-buildings text-lg text-cyan-400"></i>
+                <span>Red de Farmacias</span>
+            </a>
+        </div>
 
-  <div th:if="${msg}" id="msg" class="mb-4 bg-green-100 text-green-800 px-4 py-3 rounded-xl shadow" th:text="${msg}"></div>
-  <div th:if="${error}" id="error" class="mb-4 bg-red-100 text-red-800 px-4 py-3 rounded-xl shadow" th:text="${error}"></div>
+        <!-- Divisor sutil -->
+        <div class="h-px bg-slate-800 my-2"></div>
 
-  <script>
-    setTimeout(() => {
-      document.getElementById('msg')?.remove();
-      document.getElementById('error')?.remove();
-    }, 3000);
-  </script>
+        <!-- Estadística en Vivo de Citas -->
+        <div class="mx-1 p-4 rounded-2xl bg-gradient-to-br from-slate-950/90 to-slate-900/90 border border-slate-800 relative overflow-hidden shadow-inner">
+            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-blue-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <i class="ph ph-chart-line-up text-blue-400 text-base"></i> Estado de Cita
+                </span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20" th:text="${cita != null ? 'Activa' : 'Pendiente'}">Estado</span>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800/60">
+                    <span class="text-xs text-slate-400 font-semibold">Código Asignado</span>
+                    <span class="text-white font-extrabold text-sm truncate max-w-[120px]" th:text="${cita != null ? cita.codigo : 'Ninguno'}">Ninguno</span>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                        <span>Validez de Orden</span>
+                        <span class="text-emerald-400 font-bold">100%</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-emerald-500 rounded-full" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  <div th:if="${cita != null}" class="bg-white/90 p-6 rounded-2xl shadow-md">
-    <p class="text-gray-700 text-lg mb-2">Tu orden de cita es:</p>
-    <p id="codigo" class="text-2xl font-bold text-indigo-700 tracking-wider" th:text="${cita.codigo}">XXXXXX</p>
-    <p class="text-sm text-gray-500 mt-2">Generado el 
-      <span th:text="${#temporals.format(cita.fechaGeneracion, 'dd/MM/yyyy HH:mm')}"></span>
-    </p>
+        <!-- Tarjetas de Seguridad -->
+        <div class="mx-1 grid grid-cols-2 gap-2">
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-shield-check text-blue-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Sistema</p>
+                <p class="text-xs font-extrabold text-white">Verificado</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-database text-emerald-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Estado DB</p>
+                <p class="text-xs font-extrabold text-white">Óptimo</p>
+            </div>
+        </div>
 
-    <button onclick="copiarCodigo()" 
-            class="mt-4 bg-blue-500 text-white px-5 py-2 rounded-xl shadow hover:bg-blue-600 transition">
-      Copiar Orden
-    </button>
+        <!-- Imagen Contextual Institucional -->
+        <div class="mx-1 rounded-2xl overflow-hidden relative border border-slate-800/80 h-36 group shadow-lg">
+            <img src="/Imagenes/Hospital.jpg"
+                 alt="Generar Cita Medistock"
+                 class="w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-700 filter brightness-75" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex flex-col justify-end p-3">
+                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-0.5">Atención Médica</p>
+                <p class="text-xs text-slate-200 font-semibold leading-tight">Generación de órdenes y códigos.</p>
+            </div>
+        </div>
+    </div>
 
-    <a href="/usuario/farmacias" 
-       class="mt-6 inline-block bg-indigo-600 text-white px-6 py-2 rounded-xl shadow hover:bg-indigo-700 transition">
-      Usar este Orden
-    </a>
-  </div>
+    <!-- Pie de Barra con Perfil Activo -->
+    <div class="pt-4 border-t border-slate-800/80">
+        <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center font-extrabold text-xs shadow-md">
+                US
+            </div>
+            <div class="overflow-hidden flex-1">
+                <p class="text-xs font-bold text-white truncate">Afiliado EPS</p>
+                <p class="text-[10px] text-emerald-400 font-semibold truncate flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sesión Segura
+                </p>
+            </div>
+        </div>
+    </div>
+</aside>
 
-  <div th:if="${cita == null}" class="flex flex-col items-center">
-    <p class="text-white mb-6">Aún no tienes una orden de ciita generado. Haz clic en el botón para generar una.</p>
-    
-    <form action="/usuario/generar-cita" method="post">
-      <button type="submit"
-              class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-semibold shadow-md transition">
-        Generar Orden De Cita
-      </button>
-    </form>
-  </div>
+<!-- CONTENIDO PRINCIPAL -->
+<main class="flex-1 min-h-screen flex flex-col justify-center items-center p-4 md:p-10 z-10 overflow-y-auto">
+    <div class="w-full max-w-lg mx-auto flex flex-col gap-6 animate-fade-in">
 
-  <div class="mt-8">
-    <a href="/usuario/dashboard"
-       class="text-white underline hover:text-gray-200 transition">← Volver al Panel</a>
-  </div>
+        <!-- Panel Principal de Cita -->
+        <div class="glass-panel rounded-3xl p-8 sm:p-10 text-center relative overflow-hidden border border-slate-800">
+            <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-</div>
+            <!-- Icono Superior -->
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 mx-auto mb-6 relative z-10">
+                <i class="ph ph-calendar-check text-3xl"></i>
+            </div>
+
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-6 relative z-10">Orden de Cita</h1>
+
+            <!-- Alertas Dinámicas -->
+            <div th:if="${msg}" id="msg" class="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-bold flex items-center justify-center gap-3 relative z-10">
+                <i class="ph ph-check-circle text-xl flex-shrink-0 text-emerald-400"></i>
+                <span th:text="${msg}"></span>
+            </div>
+
+            <div th:if="${error}" id="error" class="mb-6 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm font-bold flex items-center justify-center gap-3 relative z-10">
+                <i class="ph ph-warning-circle text-xl flex-shrink-0 text-rose-400"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <script>
+                setTimeout(() => {
+                    document.getElementById('msg')?.remove();
+                    document.getElementById('error')?.remove();
+                }, 3000);
+            </script>
+
+            <!-- Estado: Cita Existente -->
+            <div th:if="${cita != null}" class="bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-inner flex flex-col gap-5 relative z-10">
+                <div>
+                    <p class="text-slate-400 text-[11px] font-extrabold uppercase tracking-wider mb-2">Tu código de orden actual:</p>
+                    <p id="codigo" class="text-3xl font-black text-cyan-400 tracking-widest bg-slate-950/80 py-3.5 px-4 rounded-2xl border border-slate-800 select-all shadow-inner" th:text="${cita.codigo}">XXXXXX</p>
+                </div>
+
+                <div class="text-slate-400 text-xs flex items-center justify-center gap-1.5 font-semibold">
+                    <i class="ph ph-clock text-slate-500 text-sm"></i>
+                    <span>Generado el:
+                        <strong class="text-slate-200" th:text="${#temporals.format(cita.fechacita, 'dd/MM/yyyy HH:mm')}"></strong>
+                    </span>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                    <button onclick="copiarCodigo()" id="btnCopiar"
+                            class="flex-1 inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-4 py-3.5 rounded-xl border border-slate-700 transition text-xs uppercase tracking-wider shadow-sm">
+                        <i class="ph ph-copy text-lg text-blue-400"></i>
+                        <span>Copiar Código</span>
+                    </button>
+
+                    <a th:href="@{/usuario/farmacias}"
+                       class="flex-1 inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-3.5 rounded-xl shadow-lg shadow-blue-600/30 transition text-xs uppercase tracking-wider">
+                        <span>Usar en Farmacia</span>
+                        <i class="ph ph-arrow-right text-lg"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Estado: Sin Cita -->
+            <div th:if="${cita == null}" class="flex flex-col items-center gap-6 py-4 relative z-10">
+                <p class="text-slate-300 text-sm leading-relaxed font-medium">Aún no cuentas con una orden de cita generada. Haz clic en el botón inferior para crear una nueva.</p>
+
+                <form th:action="@{/usuario/generar-cita}" method="post" class="w-full">
+                    <button type="submit"
+                            class="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-6 py-4 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)] transition text-sm uppercase tracking-wider">
+                        <i class="ph ph-plus-circle text-xl"></i>
+                        <span>Generar Orden de Cita</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Enlace de Retorno -->
+            <div class="mt-8 pt-6 border-t border-slate-800 relative z-10">
+                <a th:href="@{/usuario/dashboard}"
+                   class="inline-flex items-center gap-2 text-slate-400 hover:text-white text-xs font-bold uppercase tracking-wider transition">
+                    <i class="ph ph-arrow-left text-base"></i>
+                    <span>Volver al Panel</span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</main>
 
 <script>
-  function copiarCodigo() {
-    const codigo = document.getElementById("codigo").innerText;
-    navigator.clipboard.writeText(codigo);
-  }
+    function copiarCodigo() {
+        const codigo = document.getElementById("codigo").innerText;
+        navigator.clipboard.writeText(codigo).then(() => {
+            const btn = document.getElementById("btnCopiar");
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-check text-lg text-emerald-400"></i><span class="text-emerald-400">¡Copiado!</span>';
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+            }, 2000);
+        });
+    }
+
+    window.addEventListener("load", () => {
+        window.scrollTo(0, 0);
+        const mainContainer = document.querySelector("main");
+        if (mainContainer) {
+            mainContainer.scrollTop = 0;
+        }
+    });
 </script>
 
-    <div th:replace="~{fragments/chatbot-widget :: chatbot}"></div>
 </body>
 </html>

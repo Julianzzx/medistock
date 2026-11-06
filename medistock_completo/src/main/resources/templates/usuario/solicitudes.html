@@ -1,260 +1,368 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Mis Solicitudes | Medistock</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="icon" type="image/png" href="/Imagenes/Logo.png"/>
-</head>
-
-<body class="bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 min-h-screen py-10 flex flex-col items-center">
-
-    <!-- ══ HEADER STICKY MEDISTOCK ══════════════════════════════════════ -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { margin-top: 62px !important; }
-        #ms-header {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            width: 100vw !important;
-            z-index: 99999 !important;
-            background: linear-gradient(90deg, rgba(30,27,100,0.82) 0%, rgba(14,116,144,0.70) 100%);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.18);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.22);
-            box-sizing: border-box;
-            padding: 10px 28px;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* slate-950 */
         }
-        #ms-header-inner {
-            display: flex;
-            align-items: center;
-            gap: 14px;
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        .input-field {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: #3b82f6; /* blue-500 */
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            outline: none;
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.75) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.8), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
-        #ms-header .ms-accent-line {
-            width: 3px; height: 32px; border-radius: 9999px;
-            background: linear-gradient(180deg,#67e8f9,#818cf8);
-            flex-shrink: 0;
+
+        .glass-card:hover {
+            transform: translateY(-6px);
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 30px 60px -12px rgba(59, 130, 246, 0.2);
         }
-        #ms-header .ms-logo-link {
-            display: flex; align-items: center;
-            gap: 12px; text-decoration: none;
+
+        .glass-card:hover::before {
+            opacity: 1;
         }
-        #ms-header .ms-logo-wrap {
-            position: relative; flex-shrink: 0;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        #ms-header .ms-logo-glow {
-            position: absolute; inset: 0;
-            background: rgba(103,232,249,0.25);
-            filter: blur(10px); border-radius: 9999px;
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
-        #ms-header .ms-logo-img {
-            position: relative; height: 38px; width: auto;
-            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
-            transition: transform 0.3s ease;
+
+        /* Tech grid background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
         }
-        #ms-header .ms-logo-img:hover { transform: scale(1.1); }
-        #ms-header .ms-brand { line-height: 1; }
-        #ms-header .ms-brand-name {
-            color: white; font-weight: 900; font-size: 1rem;
-            letter-spacing: 0.08em; font-family: Inter, sans-serif;
-            text-shadow: 0 1px 8px rgba(0,0,0,0.25);
-        }
-        #ms-header .ms-brand-name span { color: #67e8f9; }
-        #ms-header .ms-brand-sub {
-            color: rgba(255,255,255,0.45); font-size: 0.62rem;
-            font-weight: 500; letter-spacing: 0.12em;
-            text-transform: uppercase; margin-top: 2px;
-        }
-        #ms-header .ms-sep {
-            flex: 1; height: 1px;
-            background: linear-gradient(90deg, rgba(255,255,255,0.12), transparent);
-            margin-left: 8px;
-        }
-        #ms-header .ms-status {
-            display: flex; align-items: center;
-            gap: 6px; flex-shrink: 0;
-        }
-        #ms-header .ms-dot {
-            width: 7px; height: 7px; border-radius: 9999px;
-            background: #34d399;
-            box-shadow: 0 0 8px rgba(52,211,153,0.8);
-            animation: ms-pulse 2s infinite;
-        }
-        #ms-header .ms-status-txt {
-            color: rgba(255,255,255,0.45); font-size: 0.68rem;
-            font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
-        }
-        @keyframes ms-pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
     </style>
-    <header id="ms-header">
-        <div id="ms-header-inner">
-            <div class="ms-accent-line"></div>
-            <a href="/" class="ms-logo-link">
-                <div class="ms-logo-wrap">
-                    <div class="ms-logo-glow"></div>
-                    <img src="/Imagenes/Logo.png" alt="MEDISTOCK" class="ms-logo-img"/>
-                </div>
-                <div class="ms-brand">
-                    <div class="ms-brand-name">MEDI<span>STOCK</span></div>
-                    <div class="ms-brand-sub">Gestión Inteligente</div>
-                </div>
-            </a>
-            <div class="ms-sep"></div>
-            <div class="ms-status">
-                <div class="ms-dot"></div>
-                <span class="ms-status-txt">Sistema activo</span>
+</head>
+<body class="text-slate-100 min-h-screen flex bg-grid relative overflow-x-hidden">
+
+<!-- Iluminación ambiental de fondo (Tonos blue/cyan para Mis Solicitudes Usuario) -->
+<div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+<div class="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+<!-- BARRA LATERAL REDISEÑADA (Especializada para Mis Solicitudes con estadísticas) -->
+<aside class="hidden lg:flex w-80 bg-slate-900/95 backdrop-blur-2xl border-r border-slate-800/80 flex-col justify-between p-6 z-30 sticky top-0 h-screen shadow-2xl overflow-y-auto">
+    <div class="space-y-6">
+        <!-- Logo y Entidad -->
+        <div class="flex items-center gap-3 px-2">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                <i class="ph ph-clipboard-text text-2xl"></i>
             </div>
-        </div>
-    </header>
-    <!-- ══ FIN HEADER ═══════════════════════════════════════════════════ -->
-
-<div class="w-full max-w-6xl bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-8 relative">
-
-        <div class="flex justify-start mb-6" th:if="${!isManager}">
-            <a href="/usuario/farmacias"
-                class="inline-flex items-center gap-3 bg-white/30 hover:bg-white/50 text-blue-900 font-bold px-6 py-3 rounded-full shadow-lg transition transform hover:scale-105">
-                <i class="ph ph-arrow-left text-2xl"></i> Volver a Farmacias
-            </a>
-        </div>
-
-        <h2 class="text-3xl md:text-4xl font-extrabold text-white text-center drop-shadow-md mb-10">
-            Mis Solicitudes
-        </h2>
-
-        <div class="flex flex-col items-center mb-4 gap-3">
-            <form th:action="@{/usuario/solicitudes/buscar}" method="get"
-                class="flex items-center gap-2 w-full md:w-2/3">
-                <input type="text" name="keyword" placeholder="Buscar solicitud..."
-                    class="px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-400 outline-none w-full">
-                <button type="submit"
-                    class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:bg-blue-700 transition">
-                    Buscar
-                </button>
-            </form>
-
-            <a href="/usuario/solicitudes"
-                class="px-5 py-2 bg-cyan-500 text-white font-semibold rounded-xl shadow-md hover:bg-cyan-600 transition">
-                Mostrar Todo
-            </a>
-
-            <div class="flex gap-2 flex-wrap justify-center">
-                <a href="/usuario/solicitudes?estado=EN_PROCESO"
-                    class="px-4 py-2 bg-yellow-400 text-yellow-900 font-semibold rounded-xl shadow-md hover:bg-yellow-500 transition">
-                    En Proceso
-                </a>
-                <a href="/usuario/solicitudes?estado=ACEPTADA"
-                    class="px-4 py-2 bg-green-500 text-white font-semibold rounded-xl shadow-md hover:bg-green-600 transition">
-                    Aceptadas
-                </a>
-                <a href="/usuario/solicitudes?estado=RECHAZADA"
-                    class="px-4 py-2 bg-red-500 text-white font-semibold rounded-xl shadow-md hover:bg-red-600 transition">
-                    Rechazadas
-                </a>
+            <div>
+                <span class="text-lg font-extrabold tracking-tight text-white block leading-none">MEDISTOCK</span>
+                <span class="text-[10px] text-blue-400 font-bold uppercase tracking-wider">Historial de Solicitudes</span>
             </div>
         </div>
 
-        <div th:if="${#lists.isEmpty(solicitudes)}"
-            class="flex items-center justify-center gap-2 text-white font-semibold text-lg bg-red-500/80 p-4 rounded-2xl shadow-md mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 9v2m0 4h.01M4.93 4.93l14.14 14.14M9.17 9.17l5.66 5.66" />
-            </svg>
-            No tienes solicitudes registradas.
+        <!-- Menú de Navegación Limpio -->
+        <div class="space-y-1.5 px-1">
+            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-3 block mb-1">Navegación</span>
+            <a href="/usuario/farmacias" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium text-xs transition-colors">
+                <i class="ph ph-arrow-left text-lg text-blue-400"></i>
+                <span>Volver a Farmacias</span>
+            </a>
+            <a href="/usuario/dashboard" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium text-xs transition-colors">
+                <i class="ph ph-squares-four text-lg text-cyan-400"></i>
+                <span>Panel Afiliado</span>
+            </a>
+            <a href="/usuario/solicitudes" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold text-xs shadow-lg shadow-blue-600/20 transition-all">
+                <i class="ph ph-list-checks text-lg"></i>
+                <span>Mis Solicitudes</span>
+            </a>
         </div>
 
-        <div th:unless="${#lists.isEmpty(solicitudes)}" class="grid gap-6">
-            <div th:each="sol : ${solicitudes}"
-                class="flex flex-col md:flex-row items-center md:items-start gap-6 bg-white/90 p-6 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-[1.01] transition">
+        <!-- Divisor sutil -->
+        <div class="h-px bg-slate-800 my-2"></div>
 
-                <div class="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-xl shadow-inner">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3v12.75m4.5-12.75v12.75M4.5 6.75h15M4.5 6.75a2.25
-                     2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h15a2.25
-                     2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25M4.5
-                     6.75V4.5a2.25 2.25 0 012.25-2.25h10.5A2.25 2.25
-                     0 0119.5 4.5v2.25" />
-                    </svg>
+        <!-- Estadística en Vivo de Solicitudes -->
+        <div class="mx-1 p-4 rounded-2xl bg-gradient-to-br from-slate-950/90 to-slate-900/90 border border-slate-800 relative overflow-hidden shadow-inner">
+            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-blue-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <i class="ph ph-chart-line-up text-blue-400 text-base"></i> Peticiones Activas
+                </span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/25">Usuario</span>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800/60">
+                    <span class="text-xs text-slate-400 font-semibold">Total Registradas</span>
+                    <span class="text-white font-extrabold text-sm" th:text="${solicitudList != null ? solicitudList.size() : '0'}">0</span>
                 </div>
+                <div>
+                    <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                        <span>Estado de Trámite</span>
+                        <span class="text-emerald-400 font-bold">100%</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-emerald-500 rounded-full" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                <div class="flex-1 w-full">
-                    <h3 class="text-xl font-bold text-blue-700 mb-2" th:text="${sol.medicamento.nombre}">Medicamento
-                    </h3>
+        <!-- Tarjetas de Seguridad -->
+        <div class="mx-1 grid grid-cols-2 gap-2">
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-shield-check text-blue-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Seguimiento</p>
+                <p class="text-xs font-extrabold text-white">En Línea</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-database text-emerald-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Estado DB</p>
+                <p class="text-xs font-extrabold text-white">Óptimo</p>
+            </div>
+        </div>
 
-                    <p class="text-gray-700 mb-1">
-                        <span class="font-semibold">Cantidad:</span>
-                        <span th:text="${sol.cantidad}"></span>
-                    </p>
+        <!-- Imagen Contextual Institucional -->
+        <div class="mx-1 rounded-2xl overflow-hidden relative border border-slate-800/80 h-36 group shadow-lg">
+            <img src="/Imagenes/Umedicamentos.jpg"
+                 alt="Mis Solicitudes Medistock"
+                 class="w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-700 filter brightness-75" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex flex-col justify-end p-3">
+                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-0.5">Gestión de Solicitudes</p>
+                <p class="text-xs text-slate-200 font-semibold leading-tight">Consulta el estado de tus medicamentos.</p>
+            </div>
+        </div>
+    </div>
 
-                    <p class="text-gray-700 mb-1">
-                        <span class="font-semibold">Farmacia:</span>
-                        <span th:text="${sol.medicamento.farmacia.nombre}"></span>
-                    </p>
+    <!-- Pie de Barra con Perfil Activo -->
+    <div class="pt-4 border-t border-slate-800/80">
+        <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center font-extrabold text-xs shadow-md">
+                US
+            </div>
+            <div class="overflow-hidden flex-1">
+                <p class="text-xs font-bold text-white truncate">Afiliado EPS</p>
+                <p class="text-[10px] text-emerald-400 font-semibold truncate flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sesión Segura
+                </p>
+            </div>
+        </div>
+    </div>
+</aside>
 
-                    <p class="text-gray-700 mb-1">
-                        <span class="font-semibold">Fecha:</span>
-                        <span th:text="${#temporals.format(sol.fechaSolicitud, 'dd/MM/yyyy HH:mm')}"></span>
-                    </p>
+<!-- CONTENIDO PRINCIPAL -->
+<main class="flex-1 min-h-screen flex flex-col p-4 md:p-10 z-10 overflow-y-auto">
+    <div class="w-full max-w-7xl mx-auto flex flex-col gap-8 animate-fade-in">
 
-                    <div class="mt-2">
-                        <th:block th:switch="${sol.estado}">
-                            <span th:case="${T(com.example.demo.Model.EstadoSolicitud).EN_PROCESO}"
-                                class="px-3 py-1 rounded-full bg-yellow-200 text-yellow-800 text-sm font-medium">
-                                En Proceso
-                            </span>
-                            <span th:case="${T(com.example.demo.Model.EstadoSolicitud).ACEPTADA}"
-                                class="px-3 py-1 rounded-full bg-green-200 text-green-800 text-sm font-medium">
-                                Aceptada
-                            </span>
-                            <span th:case="${T(com.example.demo.Model.EstadoSolicitud).RECHAZADA}"
-                                class="px-3 py-1 rounded-full bg-red-200 text-red-800 text-sm font-medium">
-                                Rechazada
-                            </span>
-                        </th:block>
+        <!-- Encabezado Superior -->
+        <div class="glass-panel rounded-3xl p-6 md:p-8 border border-slate-800 relative overflow-hidden flex flex-col gap-6">
+            <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+                <div class="flex items-center gap-5">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 flex-shrink-0">
+                        <i class="ph ph-clipboard-text text-3xl"></i>
+                    </div>
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider mb-1">
+                            <i class="ph ph-list-checks"></i> Historial Personal
+                        </div>
+                        <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Mis Solicitudes</h1>
+                        <p class="text-slate-400 text-sm sm:text-base mt-1">Supervisa el estado y evolución de tus peticiones de medicamentos ante la red médica.</p>
                     </div>
                 </div>
 
+                <a th:href="@{/usuario/farmacias}"
+                   class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold transition-all duration-300 text-xs uppercase tracking-wider border border-slate-700 shadow-sm">
+                    <i class="ph ph-arrow-left text-base"></i>
+                    <span>Volver a Farmacias</span>
+                </a>
+            </div>
+
+            <!-- Barra de Búsqueda y Filtro por Estado -->
+            <form th:action="@{/usuario/solicitudes}" method="get"
+                  class="flex flex-col md:flex-row gap-4 relative z-10 pt-4 border-t border-slate-800 items-center justify-between">
+                <div class="relative flex-1 w-full">
+                    <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                    <input type="text" name="keyword" placeholder="Buscar medicamento..." th:value="${keyword}"
+                           class="w-full input-field pl-12 pr-4 py-3.5 rounded-2xl text-sm" />
+                </div>
+
+                <!-- Filtro por Estado -->
+                <div class="relative w-full md:w-auto">
+                    <select name="estado" class="w-full md:w-auto input-field px-4 pr-10 py-3.5 rounded-2xl text-sm appearance-none cursor-pointer">
+                        <option value="" class="bg-slate-900 text-slate-400">-- Todos los Estados --</option>
+                        <option value="EN_PROCESO" th:selected="${estado == 'EN_PROCESO'}" class="bg-slate-900 text-amber-400 font-bold">En Proceso</option>
+                        <option value="ACEPTADA" th:selected="${estado == 'ACEPTADA'}" class="bg-slate-900 text-emerald-400 font-bold">Aceptada</option>
+                        <option value="RECHAZADA" th:selected="${estado == 'RECHAZADA'}" class="bg-slate-900 text-rose-400 font-bold">Rechazada</option>
+                    </select>
+                    <i class="ph ph-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"></i>
+                </div>
+
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <button type="submit"
+                            class="flex-1 md:flex-none px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-md">
+                        <span>Filtrar</span>
+                    </button>
+
+                    <a th:if="${(keyword != null and !keyword.isEmpty()) or (estado != null and !estado.isEmpty())}" th:href="@{/usuario/solicitudes}"
+                       class="px-5 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-wider border border-slate-700 transition-all flex items-center justify-center gap-2" title="Mostrar Todo">
+                        <i class="ph ph-x text-lg"></i>
+                        <span>Limpiar</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Alertas Dinámicas -->
+        <div th:if="${msg}" class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-bold flex items-center gap-3 shadow-lg backdrop-blur-md">
+            <i class="ph ph-check-circle text-xl flex-shrink-0 text-emerald-400"></i>
+            <span th:text="${msg}"></span>
+        </div>
+        <div th:if="${error}" class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm font-bold flex items-center gap-3 shadow-lg backdrop-blur-md">
+            <i class="ph ph-warning-circle text-xl flex-shrink-0 text-rose-400"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- Lista de Solicitudes Vacia -->
+        <div th:if="${#lists.isEmpty(solicitudList)}" class="glass-panel rounded-3xl p-12 text-center text-slate-400 flex flex-col items-center justify-center gap-3 border border-slate-800">
+            <div class="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-3xl mb-1 shadow-inner">
+                <i class="ph ph-file-dashed"></i>
+            </div>
+            <p class="text-base font-semibold text-slate-300">No se encontraron solicitudes registradas.</p>
+        </div>
+
+        <!-- Lista de Solicitudes -->
+        <div th:unless="${#lists.isEmpty(solicitudList)}" class="flex flex-col gap-4">
+            <div th:each="sol : ${solicitudList}"
+                 class="glass-card rounded-3xl p-6 md:p-7 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+
+                <!-- Icono y Detalles -->
+                <div class="flex items-center gap-5 w-full md:w-auto">
+                    <div class="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-3xl flex-shrink-0 shadow-inner">
+                        <i class="ph ph-clipboard-text"></i>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <h3 class="font-extrabold text-xl text-white tracking-tight" th:text="${sol.medicamento.nombre}">Medicamento</h3>
+                        <p class="text-slate-400 text-xs sm:text-sm flex flex-wrap gap-x-6 gap-y-1 font-semibold">
+                            <span><strong class="text-slate-300">Cantidad:</strong> <span class="text-cyan-400" th:text="${sol.cantidad}"></span></span>
+                            <span><strong class="text-slate-300">Farmacia:</strong> <span class="text-slate-200" th:text="${sol.medicamento.farmacia.nombre}"></span></span>
+                        </p>
+                        <p class="text-slate-500 text-xs flex items-center gap-1.5 mt-0.5 font-medium">
+                            <i class="ph ph-clock text-slate-400"></i>
+                            <span th:text="${#temporals.format(sol.fechasolicitud, 'dd/MM/yyyy HH:mm')}"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Estado -->
+                <div class="flex items-center justify-end w-full md:w-auto border-t md:border-t-0 pt-4 md:pt-0 border-slate-800">
+                    <th:block th:switch="${sol.estado}">
+                        <span th:case="${T(org.db.medistock.model.Solicitud.EstadoSolicitud).EN_PROCESO}"
+                              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-extrabold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/25 shadow-sm">
+                            <i class="ph ph-hourglass text-sm"></i> En Proceso
+                        </span>
+                        <span th:case="${T(org.db.medistock.model.Solicitud.EstadoSolicitud).ACEPTADA}"
+                              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 shadow-sm">
+                            <i class="ph ph-check-circle text-sm"></i> Aceptada
+                        </span>
+                        <span th:case="${T(org.db.medistock.model.Solicitud.EstadoSolicitud).RECHAZADA}"
+                              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-extrabold uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/25 shadow-sm">
+                            <i class="ph ph-x-circle text-sm"></i> Rechazada
+                        </span>
+                    </th:block>
+                </div>
             </div>
         </div>
 
-       <div class="flex justify-center items-center gap-3 mt-8" th:if="${totalPages > 1}">
-    
-    <a th:if="${currentPage > 1}"
-       th:href="@{/usuario/solicitudes(page=${currentPage - 2}, estado=${estado}, keyword=${keyword})}"
-       class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition">
-        ← Anterior
-    </a>
+        <!-- Paginación -->
+        <div class="flex justify-center items-center gap-3 pt-2" th:if="${totalPages > 1}">
+            <a th:if="${currentPage > 1}" th:href="@{/usuario/solicitudes(page=${currentPage - 1}, keyword=${keyword}, estado=${estado})}"
+               class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-blue-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                &laquo; Anterior
+            </a>
 
-    <span class="px-4 py-2 bg-white/20 text-white rounded-lg shadow">
-        Página <span th:text="${currentPage}"></span> de <span th:text="${totalPages}"></span>
-    </span>
+            <span class="px-4 py-2.5 text-xs text-slate-300 font-bold uppercase tracking-wider bg-slate-900/60 rounded-xl border border-slate-800">
+                Página <span class="text-white" th:text="${currentPage}"></span> de <span class="text-white" th:text="${totalPages}"></span>
+            </span>
 
-    <a th:if="${currentPage < totalPages}"
-       th:href="@{/usuario/solicitudes(page=${currentPage}, estado=${estado}, keyword=${keyword})}"
-       class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition">
-        Siguiente →
-    </a>
+            <a th:if="${currentPage < totalPages}" th:href="@{/usuario/solicitudes(page=${currentPage + 1}, keyword=${keyword}, estado=${estado})}"
+               class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-blue-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                Siguiente &raquo;
+            </a>
+        </div>
 
-</div>
-
-        <div class="flex justify-center mt-6">
-            <a href="/usuario/dashboard"
-                class="inline-flex items-center gap-3 bg-white/30 hover:bg-white/50 text-blue-900 font-bold px-8 py-4 rounded-full shadow-lg transition transform hover:scale-105">
-                <i class="ph ph-arrow-left text-2xl"></i> Volver al Dashboard
+        <!-- Retorno al Dashboard -->
+        <div class="flex justify-center pt-2">
+            <a th:href="@{/usuario/dashboard}"
+               class="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold transition-all duration-300 text-xs uppercase tracking-wider border border-slate-700 shadow-sm">
+                <i class="ph ph-arrow-left text-base"></i>
+                <span>Volver al Dashboard</span>
             </a>
         </div>
 
     </div>
-    <div th:replace="~{fragments/chatbot-widget :: chatbot}"></div>
-</body>
+</main>
 
+<!-- Script para asegurar que al entrar siempre comience desde el inicio de la página -->
+<script>
+    window.addEventListener("load", () => {
+        window.scrollTo(0, 0);
+        const mainContainer = document.querySelector("main");
+        if (mainContainer) {
+            mainContainer.scrollTop = 0;
+        }
+    });
+</script>
+
+</body>
 </html>

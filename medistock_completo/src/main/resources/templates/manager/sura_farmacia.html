@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Farmacias Sura | Medistock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* slate-950 */
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        .input-field {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: #0284c7; /* sky-600 */
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+            outline: none;
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.75) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.8), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-6px);
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 30px 60px -12px rgba(56, 189, 248, 0.2);
+        }
+
+        .glass-card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* Tech grid background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex bg-grid relative overflow-x-hidden">
+
+<!-- Iluminación ambiental de fondo (Tonos sky/azul para Sura) -->
+<div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-sky-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+<div class="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+<!-- BARRA LATERAL REDISEÑADA (Especializada para Red Sura con estadísticas) -->
+<aside class="hidden lg:flex w-80 bg-slate-900/95 backdrop-blur-2xl border-r border-slate-800/80 flex-col justify-between p-6 z-30 sticky top-0 h-screen shadow-2xl overflow-y-auto">
+    <div class="space-y-6">
+        <!-- Logo y Entidad -->
+        <div class="flex items-center gap-3 px-2">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/30">
+                <i class="ph ph-hospital text-2xl"></i>
+            </div>
+            <div>
+                <span class="text-lg font-extrabold tracking-tight text-white block leading-none">MEDISTOCK</span>
+                <span class="text-[10px] text-sky-400 font-bold uppercase tracking-wider">Red Sura</span>
+            </div>
+        </div>
+
+        <!-- Menú de Navegación Limpio -->
+        <div class="space-y-1.5 px-1">
+            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-3 block mb-1">Navegación</span>
+            <a href="/manager/eps/select" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium text-xs transition-colors">
+                <i class="ph ph-arrow-left text-lg text-sky-400"></i>
+                <span>Volver a EPS</span>
+            </a>
+            <a href="/manager/dashboard" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium text-xs transition-colors">
+                <i class="ph ph-squares-four text-lg text-blue-400"></i>
+                <span>Panel Ejecutivo</span>
+            </a>
+        </div>
+
+        <!-- Divisor sutil -->
+        <div class="h-px bg-slate-800 my-2"></div>
+
+        <!-- Estadística en Vivo de Farmacias Sura -->
+        <div class="mx-1 p-4 rounded-2xl bg-gradient-to-br from-slate-950/90 to-slate-900/90 border border-slate-800 relative overflow-hidden shadow-inner">
+            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-sky-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <i class="ph ph-chart-line-up text-sky-400 text-base"></i> Red Sura
+                </span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">Activa</span>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800/60">
+                    <span class="text-xs text-slate-400 font-semibold">Farmacias Aliadas</span>
+                    <span class="text-white font-extrabold text-sm" th:text="${farmacias != null ? farmacias.size() : '0'}">0</span>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                        <span>Cobertura Nacional</span>
+                        <span class="text-sky-400 font-bold">100%</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-sky-500 rounded-full" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjetas de Seguridad -->
+        <div class="mx-1 grid grid-cols-2 gap-2">
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-shield-check text-sky-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Convenio</p>
+                <p class="text-xs font-extrabold text-white">Oficial</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-database text-emerald-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Estado DB</p>
+                <p class="text-xs font-extrabold text-white">Óptimo</p>
+            </div>
+        </div>
+
+        <!-- Imagen Contextual Institucional -->
+        <div class="mx-1 rounded-2xl overflow-hidden relative border border-slate-800/80 h-36 group shadow-lg">
+            <img src="/Imagenes/Hospital.jpg"
+                 alt="Farmacias Sura Medistock"
+                 class="w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-700 filter brightness-75" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex flex-col justify-end p-3">
+                <p class="text-[10px] text-sky-400 font-bold uppercase tracking-wider mb-0.5">Red de Farmacias</p>
+                <p class="text-xs text-slate-200 font-semibold leading-tight">Aliados autorizados Sura.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de Barra con Perfil Activo -->
+    <div class="pt-4 border-t border-slate-800/80">
+        <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-white flex items-center justify-center font-extrabold text-xs shadow-md">
+                MG
+            </div>
+            <div class="overflow-hidden flex-1">
+                <p class="text-xs font-bold text-white truncate">Manager Principal</p>
+                <p class="text-[10px] text-emerald-400 font-semibold truncate flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sesión Segura
+                </p>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- CONTENIDO PRINCIPAL -->
+<main class="flex-1 min-h-screen flex flex-col p-4 md:p-10 z-10 overflow-y-auto">
+    <div class="w-full max-w-7xl mx-auto flex flex-col gap-8 animate-fade-in">
+
+        <!-- Cabecera Superior -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 glass-panel rounded-3xl p-6 md:p-8 border border-slate-800">
+            <div class="flex items-center gap-5">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/30 flex-shrink-0">
+                    <i class="ph ph-hospital text-3xl"></i>
+                </div>
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-bold uppercase tracking-wider mb-1">
+                        <i class="ph ph-buildings"></i> EPS Sura
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Farmacias de Sura</h1>
+                    <p class="text-slate-400 text-sm sm:text-base mt-1">Consulta farmacias, convenios y beneficios especiales disponibles con Sura.</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white font-bold transition-all duration-300 text-xs shadow-lg shadow-rose-900/20 group">
+                        <i class="ph ph-sign-out text-lg transition-transform group-hover:-translate-x-1"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Formulario de Búsqueda -->
+        <div class="glass-panel rounded-3xl p-6 border border-slate-800">
+            <form th:action="@{/manager/sura_farmcia}" method="get" class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="relative flex-1 w-full">
+                    <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                    <input type="text" name="keyword" th:value="${keyword}" placeholder="Buscar farmacia por nombre..."
+                           class="w-full input-field pl-12 pr-4 py-3.5 rounded-2xl text-sm" />
+                </div>
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <button type="submit"
+                            class="flex-1 md:flex-none px-6 py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-md">
+                        <span>Buscar</span>
+                    </button>
+                    <a th:href="@{/manager/sura_farmcia}"
+                       class="flex-1 md:flex-none px-6 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-wider border border-slate-700 transition-all duration-300 flex items-center justify-center gap-2">
+                        <i class="ph ph-list text-base"></i>
+                        <span>Todos</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Cuadrícula de Farmacias -->
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" th:if="${!#lists.isEmpty(farmacias)}">
+            <div th:each="f : ${farmacias}"
+                 class="glass-card rounded-3xl p-7 flex flex-col justify-between gap-6 group">
+
+                <div class="flex items-start gap-4">
+                    <div class="w-14 h-14 shrink-0 flex items-center justify-center rounded-2xl bg-sky-500/10 text-sky-400 border border-sky-500/20 group-hover:scale-110 transition-transform shadow-inner">
+                        <i class="ph ph-hospital text-2xl"></i>
+                    </div>
+
+                    <div class="flex flex-col gap-1 overflow-hidden">
+                        <h3 class="text-white font-extrabold text-lg truncate" th:text="${f.nombre}">Farmacia</h3>
+                        <p class="flex items-center gap-1.5 text-slate-400 text-xs">
+                            <i class="ph ph-map-pin text-sm text-sky-400 shrink-0"></i>
+                            <span class="truncate" th:text="${f.direccion != null ? f.direccion : 'Dirección no registrada'}">Dirección no registrada</span>
+                        </p>
+                    </div>
+                </div>
+
+                <a th:href="@{'/manager/farmacias/' + ${f.id} + '/medicamentos'}"
+                   class="w-full py-3.5 px-4 rounded-xl bg-slate-800 hover:bg-sky-600 text-slate-200 hover:text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 border border-slate-700 hover:border-sky-500 flex items-center justify-center gap-2 shadow-sm">
+                    <span>Ver Medicamentos</span>
+                    <i class="ph ph-arrow-right text-base opacity-70 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Estado Vacío -->
+        <div th:if="${#lists.isEmpty(farmacias)}"
+             class="glass-panel rounded-3xl p-12 text-center text-slate-400 flex flex-col items-center justify-center gap-3 border border-slate-800">
+            <i class="ph ph-folder-open text-5xl text-slate-600 mb-1"></i>
+            <p class="text-base font-semibold text-slate-300">No hay farmacias registradas para Sura en este momento.</p>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex justify-center items-center gap-3 pt-2" th:if="${totalPages > 1}">
+            <a th:if="${currentPage > 0}"
+               th:href="@{/manager/sura_farmcia(page=${currentPage-1}, keyword=${keyword})}"
+               class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-sky-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                &laquo; Anterior
+            </a>
+
+            <span class="px-4 py-2.5 text-xs text-slate-400 font-bold uppercase tracking-wider">
+                Página <span class="text-white" th:text="${currentPage + 1}">1</span> de <span class="text-white" th:text="${totalPages}">1</span>
+            </span>
+
+            <a th:if="${currentPage + 1 < totalPages}"
+               th:href="@{/manager/sura_farmcia(page=${currentPage+1}, keyword=${keyword})}"
+               class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-sky-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                Siguiente &raquo;
+            </a>
+        </div>
+
+    </div>
+</main>
+
+<!-- Script para asegurar que al entrar siempre comience desde el inicio de la página -->
+<script>
+    window.addEventListener("load", () => {
+        window.scrollTo(0, 0);
+        const mainContainer = document.querySelector("main");
+        if (mainContainer) {
+            mainContainer.scrollTop = 0;
+        }
+    });
+</script>
+
+</body>
+</html>

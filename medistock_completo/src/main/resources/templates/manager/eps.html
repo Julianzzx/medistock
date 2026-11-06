@@ -1,256 +1,390 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de EPS | Medistock</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <style>
-    table {
-      table-layout: auto;
-      width: 100%;
-    }
-
-    thead th {
-      white-space: nowrap;
-    }
-
-    td.acciones {
-      white-space: nowrap;
-    }
-
-    tbody td {
-      word-break: break-word;
-    }
-  </style>
-    <link rel="icon" type="image/png" href="/Imagenes/Logo.png"/>
-</head>
-
-<body
-  class="bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 min-h-screen flex justify-center items-start py-10">
-
-    <!-- ══ HEADER STICKY MEDISTOCK ══════════════════════════════════════ -->
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Gestión de EPS | Medistock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { margin-top: 62px !important; }
-        #ms-header {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            width: 100vw !important;
-            z-index: 99999 !important;
-            background: linear-gradient(90deg, rgba(30,27,100,0.82) 0%, rgba(14,116,144,0.70) 100%);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.18);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.22);
-            box-sizing: border-box;
-            padding: 10px 28px;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* slate-950 */
         }
-        #ms-header-inner {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         }
-        #ms-header .ms-accent-line {
-            width: 3px; height: 32px; border-radius: 9999px;
-            background: linear-gradient(180deg,#67e8f9,#818cf8);
-            flex-shrink: 0;
+
+        .input-field {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            color: #f8fafc;
+            transition: all 0.3s ease;
         }
-        #ms-header .ms-logo-link {
-            display: flex; align-items: center;
-            gap: 12px; text-decoration: none;
+
+        .input-field:focus {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: #10b981; /* emerald-500 */
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+            outline: none;
         }
-        #ms-header .ms-logo-wrap {
-            position: relative; flex-shrink: 0;
+
+        .glass-section {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.2) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
         }
-        #ms-header .ms-logo-glow {
-            position: absolute; inset: 0;
-            background: rgba(103,232,249,0.25);
-            filter: blur(10px); border-radius: 9999px;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        #ms-header .ms-logo-img {
-            position: relative; height: 38px; width: auto;
-            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
-            transition: transform 0.3s ease;
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
-        #ms-header .ms-logo-img:hover { transform: scale(1.1); }
-        #ms-header .ms-brand { line-height: 1; }
-        #ms-header .ms-brand-name {
-            color: white; font-weight: 900; font-size: 1rem;
-            letter-spacing: 0.08em; font-family: Inter, sans-serif;
-            text-shadow: 0 1px 8px rgba(0,0,0,0.25);
+
+        /* Tech grid background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
         }
-        #ms-header .ms-brand-name span { color: #67e8f9; }
-        #ms-header .ms-brand-sub {
-            color: rgba(255,255,255,0.45); font-size: 0.62rem;
-            font-weight: 500; letter-spacing: 0.12em;
-            text-transform: uppercase; margin-top: 2px;
-        }
-        #ms-header .ms-sep {
-            flex: 1; height: 1px;
-            background: linear-gradient(90deg, rgba(255,255,255,0.12), transparent);
-            margin-left: 8px;
-        }
-        #ms-header .ms-status {
-            display: flex; align-items: center;
-            gap: 6px; flex-shrink: 0;
-        }
-        #ms-header .ms-dot {
-            width: 7px; height: 7px; border-radius: 9999px;
-            background: #34d399;
-            box-shadow: 0 0 8px rgba(52,211,153,0.8);
-            animation: ms-pulse 2s infinite;
-        }
-        #ms-header .ms-status-txt {
-            color: rgba(255,255,255,0.45); font-size: 0.68rem;
-            font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
-        }
-        @keyframes ms-pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
     </style>
-    <header id="ms-header">
-        <div id="ms-header-inner">
-            <div class="ms-accent-line"></div>
-            <a href="/" class="ms-logo-link">
-                <div class="ms-logo-wrap">
-                    <div class="ms-logo-glow"></div>
-                    <img src="/Imagenes/Logo.png" alt="MEDISTOCK" class="ms-logo-img"/>
-                </div>
-                <div class="ms-brand">
-                    <div class="ms-brand-name">MEDI<span>STOCK</span></div>
-                    <div class="ms-brand-sub">Gestión Inteligente</div>
-                </div>
-            </a>
-            <div class="ms-sep"></div>
-            <div class="ms-status">
-                <div class="ms-dot"></div>
-                <span class="ms-status-txt">Sistema activo</span>
+</head>
+<body class="text-slate-100 min-h-screen flex bg-grid relative overflow-x-hidden">
+
+<!-- Iluminación ambiental de fondo (Tonos esmeralda/verde institucional para EPS) -->
+<div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-emerald-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+<div class="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-teal-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+<!-- BARRA LATERAL REDISEÑADA (Especializada para Gestión de EPS con estadísticas) -->
+<aside class="hidden lg:flex w-80 bg-slate-900/95 backdrop-blur-2xl border-r border-slate-800/80 flex-col justify-between p-6 z-30 sticky top-0 h-screen shadow-2xl overflow-y-auto">
+    <div class="space-y-6">
+        <!-- Logo y Entidad -->
+        <div class="flex items-center gap-3 px-2">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+                <i class="ph ph-buildings text-2xl"></i>
+            </div>
+            <div>
+                <span class="text-lg font-extrabold tracking-tight text-white block leading-none">MEDISTOCK</span>
+                <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Red de Salud EPS</span>
             </div>
         </div>
-    </header>
-    <!-- ══ FIN HEADER ═══════════════════════════════════════════════════ -->
 
-<div class="w-full max-w-7xl bg-white/20 backdrop-blur-lg rounded-3xl shadow-2xl grid md:grid-cols-3 overflow-hidden">
-
-    <div class="col-span-2 p-10 flex flex-col gap-8">
-
-      <div class="flex justify-between items-center">
-        <a href="/manager/dashboard"
-          class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-xl shadow-md flex items-center gap-2 transition hover:scale-105">
-          <i class="ph ph-arrow-left"></i> Volver al panel
-        </a>
-        <h2 class="text-3xl font-extrabold text-white drop-shadow-md text-center flex-1">
-          <span th:text="${eps.id != null ? 'Editar EPS' : 'Registrar EPS'}"></span>
-        </h2>
-      </div>
-
-      <form th:action="@{${eps.id} != null ? '/manager/eps/editar/' + ${eps.id} : '/manager/eps/crear'}" method="post"
-        class="grid gap-6 bg-white/30 p-6 rounded-2xl shadow-inner">
-
-        <div>
-          <label class="text-white font-semibold">Nombre:</label>
-          <input type="text" name="nombre" required th:value="${eps.nombre}"
-            class="w-full p-3 rounded-xl border border-gray-300 focus:border-indigo-500 focus:outline-none shadow-inner" />
+        <!-- Menú de Navegación Limpio -->
+        <div class="space-y-1.5 px-1">
+            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-3 block mb-1">Navegación</span>
+            <a href="/manager/dashboard" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium text-xs transition-colors">
+                <i class="ph ph-squares-four text-lg text-blue-400"></i>
+                <span>Panel Ejecutivo</span>
+            </a>
+            <a href="/manager/eps" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-xs shadow-lg shadow-emerald-600/20 transition-all">
+                <i class="ph ph-buildings text-lg"></i>
+                <span>Gestión de EPS</span>
+            </a>
         </div>
 
-        <div>
-          <label class="text-white font-semibold">Descripción:</label>
-          <textarea name="descripcion" rows="3" th:text="${eps.descripcion}"
-            class="w-full p-3 rounded-xl border border-gray-300 focus:border-indigo-500 focus:outline-none shadow-inner"></textarea>
+        <!-- Divisor sutil -->
+        <div class="h-px bg-slate-800 my-2"></div>
+
+        <!-- Estadística en Vivo de EPS Registradas -->
+        <div class="mx-1 p-4 rounded-2xl bg-gradient-to-br from-slate-950/90 to-slate-900/90 border border-slate-800 relative overflow-hidden shadow-inner">
+            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <i class="ph ph-chart-line-up text-emerald-400 text-base"></i> Estadísticas EPS
+                </span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Nacional</span>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800/60">
+                    <span class="text-xs text-slate-400 font-semibold">Total EPS Activas</span>
+                    <span class="text-white font-extrabold text-sm" th:text="${epsList != null ? epsList.size() : '0'}">0</span>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                        <span>Disponibilidad de Red</span>
+                        <span class="text-emerald-400 font-bold">100%</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-emerald-500 rounded-full" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="flex justify-center">
-          <button type="submit"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-md transform transition hover:scale-105 flex items-center gap-2">
-            <i class="ph ph-floppy-disk text-xl"></i>
-            <span th:text="${eps.id != null ? 'Actualizar' : 'Guardar'}">Guardar</span>
-          </button>
+        <!-- Tarjetas de Seguridad -->
+        <div class="mx-1 grid grid-cols-2 gap-2">
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-shield-check text-emerald-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Convenios</p>
+                <p class="text-xs font-extrabold text-white">Vigentes</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-database text-teal-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Estado DB</p>
+                <p class="text-xs font-extrabold text-white">Óptimo</p>
+            </div>
         </div>
-      </form>
 
-      <form th:action="@{/manager/eps}" method="get" class="flex flex-col md:flex-row gap-3">
-        <input type="text" name="keyword" placeholder="Buscar por nombre..." th:value="${param.keyword}"
-          class="flex-1 p-3 rounded-xl border border-gray-300 focus:border-indigo-500 focus:outline-none shadow-inner" />
-        <button type="submit"
-          class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition transform hover:scale-105 flex items-center gap-2">
-          <i class="ph ph-magnifying-glass text-xl"></i> Buscar
-        </button>
-        <a th:href="@{/manager/eps}"
-          class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition hover:scale-105 flex items-center gap-2">
-          <i class="ph ph-list"></i> Mostrar todos
-        </a>
-      </form>
-
-      <h3 class="text-white font-bold text-2xl text-center">EPS Registradas</h3>
-      <div class="rounded-xl shadow-md w-full overflow-x-auto">
-        <table class="w-full bg-white/80 rounded-xl text-lg">
-          <thead class="bg-indigo-600 text-white text-lg">
-            <tr>
-              <th class="px-4 py-3 text-left"><i class="ph ph-building"></i> Nombre</th>
-              <th class="px-4 py-3 text-left"><i class="ph ph-text-align-left"></i> Descripción</th>
-              <th class="px-4 py-3 text-left"><i class="ph ph-gear"></i> Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="e, iterStat : ${epsList}" th:if="${iterStat.index < 5}"
-              class="hover:bg-indigo-100 transition text-lg border-b border-gray-200">
-              <td class="px-4 py-3" th:text="${e.nombre}"></td>
-              <td class="px-4 py-3" th:text="${e.descripcion}"></td>
-              <td class="px-4 py-3 flex gap-4 items-center acciones">
-                <a th:href="@{'/manager/eps/editar/' + ${e.id}}"
-                  class="p-2 rounded-full bg-indigo-100 hover:bg-indigo-200 text-indigo-700 hover:text-indigo-900 transition transform hover:scale-110 shadow-md"
-                  title="Editar">
-                  <i class="ph ph-pencil text-2xl"></i>
-                </a>
-                <a th:href="@{'/manager/eps/eliminar/' + ${e.id}}"
-                  class="p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-700 hover:text-red-900 transition transform hover:scale-110 shadow-md"
-                  title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar esta EPS?');">
-                  <i class="ph ph-trash text-2xl"></i>
-                </a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="flex justify-center items-center gap-2 mt-4">
-        <a th:if="${currentPage > 1}" th:href="@{/manager/eps(page=${currentPage - 1}, keyword=${param.keyword})}"
-          class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-          &laquo; Anterior
-        </a>
-        <span th:text="'Página ' + ${currentPage} + ' de ' + ${totalPages}" class="px-4 py-2 text-white"></span>
-        <a th:if="${currentPage < totalPages}"
-          th:href="@{/manager/eps(page=${currentPage + 1}, keyword=${param.keyword})}"
-          class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-          Siguiente &raquo;
-        </a>
-      </div>
+        <!-- Imagen Contextual Institucional -->
+        <div class="mx-1 rounded-2xl overflow-hidden relative border border-slate-800/80 h-36 group shadow-lg">
+            <img src="/Imagenes/Umedicamentos.jpg"
+                 alt="Gestión de EPS Medistock"
+                 class="w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-700 filter brightness-75" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex flex-col justify-end p-3">
+                <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider mb-0.5">Red de Salud</p>
+                <p class="text-xs text-slate-200 font-semibold leading-tight">Promotoras e instituciones afiliadas.</p>
+            </div>
+        </div>
     </div>
 
-    <div class="hidden md:block relative overflow-hidden">
-      <img src="/Imagenes/Umedicamentos.jpg" alt="Imagen ilustrativa EPS"
-        class="w-full h-full object-cover filter brightness-90 transition-transform duration-500 hover:scale-105" />
+    <!-- Pie de Barra con Perfil Activo -->
+    <div class="pt-4 border-t border-slate-800/80">
+        <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center font-extrabold text-xs shadow-md">
+                MG
+            </div>
+            <div class="overflow-hidden flex-1">
+                <p class="text-xs font-bold text-white truncate">Manager Principal</p>
+                <p class="text-[10px] text-emerald-400 font-semibold truncate flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sesión Segura
+                </p>
+            </div>
+        </div>
     </div>
-  </div>
+</aside>
 
-  <script>
+<!-- CONTENIDO PRINCIPAL -->
+<main class="flex-1 min-h-screen flex flex-col p-4 md:p-10 z-10 overflow-y-auto">
+    <div class="w-full max-w-7xl mx-auto flex flex-col gap-8 animate-fade-in">
 
-    window.addEventListener("beforeunload", () => {
-      sessionStorage.setItem("scrollPos", window.scrollY);
-    });
+        <!-- Cabecera Superior -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 glass-panel rounded-3xl p-6 md:p-8 border border-slate-800">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
+                    <i class="ph ph-buildings"></i> Red Promotora de Salud
+                </div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight" th:text="${eps.id != null ? 'Editar EPS' : 'Gestión de EPS'}">Gestión de EPS</h1>
+                <p class="text-slate-400 text-sm mt-1">Administra la red de promotoras de salud y vincula las farmacias y usuarios correspondientes.</p>
+            </div>
+
+            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white font-bold transition-all duration-300 text-xs shadow-lg shadow-rose-900/20 group">
+                        <i class="ph ph-sign-out text-lg transition-transform group-hover:-translate-x-1"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Alerta de Error -->
+        <div th:if="${error}"
+             class="bg-rose-500/10 border border-rose-500/30 text-rose-300 p-4 rounded-2xl font-medium text-center flex items-center justify-center gap-2 backdrop-blur-md">
+            <i class="ph ph-warning-circle text-xl text-rose-400"></i>
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <!-- FORMULARIO DIVIDIDO POR SECCIONES -->
+        <div class="glass-panel rounded-3xl p-6 md:p-8 border border-slate-800 relative overflow-hidden">
+            <div class="absolute -right-20 -top-20 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                    <i class="ph ph-hospital text-xl"></i>
+                </div>
+                <h3 class="text-white font-extrabold text-xl" th:text="${eps.id != null ? 'Actualizar Información de EPS' : 'Formulario de Nueva EPS'}">Formulario</h3>
+            </div>
+
+            <form th:action="@{${eps.id != null} ? '/manager/eps/editar/' + ${eps.id} : '/manager/eps/crear'}"
+                  th:object="${eps}" method="post"
+                  class="space-y-8">
+
+                <!-- BLOQUE 1: Información Institucional -->
+                <div class="glass-section rounded-2xl p-6 sm:p-8">
+                    <div class="flex items-center gap-3 mb-6 border-b border-slate-700/50 pb-4">
+                        <i class="ph ph-buildings text-2xl text-emerald-400"></i>
+                        <h4 class="text-lg font-bold text-white">Información Institucional</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div class="flex flex-col gap-2">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Nombre de la EPS</label>
+                            <input type="text" th:field="*{nombre}" required placeholder="Ej. Sanitas EPS"
+                                   class="w-full input-field px-4 py-3 rounded-xl text-sm" />
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">NIT</label>
+                            <div class="relative">
+                                <i class="ph ph-identification-card absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                                <input type="text" th:field="*{nit}" required placeholder="Ej. 900123456-1"
+                                       class="w-full input-field pl-10 pr-4 py-3 rounded-xl text-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 2: Contacto y Localización -->
+                <div class="glass-section rounded-2xl p-6 sm:p-8">
+                    <div class="flex items-center gap-3 mb-6 border-b border-slate-700/50 pb-4">
+                        <i class="ph ph-map-pin-line text-2xl text-teal-400"></i>
+                        <h4 class="text-lg font-bold text-white">Contacto y Localización</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div class="flex flex-col gap-2">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Teléfono de Atención</label>
+                            <div class="relative">
+                                <i class="ph ph-phone absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                                <input type="text" th:field="*{telefono}" placeholder="Ej. 6013214567"
+                                       class="w-full input-field pl-10 pr-4 py-3 rounded-xl text-sm" />
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Correo Electrónico</label>
+                            <div class="relative">
+                                <i class="ph ph-envelope-simple absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                                <input type="email" th:field="*{email}" placeholder="Ej. contacto@eps.com"
+                                       class="w-full input-field pl-10 pr-4 py-3 rounded-xl text-sm" />
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2 sm:col-span-2">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Dirección Sede Principal</label>
+                            <div class="relative">
+                                <i class="ph ph-map-pin absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                                <input type="text" th:field="*{direccion}" placeholder="Ej. Av. Principal # 45 - 20"
+                                       class="w-full input-field pl-10 pr-4 py-3 rounded-xl text-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón Guardar -->
+                <div class="pt-2">
+                    <button type="submit"
+                            class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-extrabold py-4 px-6 rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.3)] transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 text-base tracking-wide group">
+                        <i class="ph ph-floppy-disk text-xl"></i>
+                        <span th:text="${eps.id != null ? 'Actualizar EPS' : 'Guardar Nueva EPS'}">Guardar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Barra de Búsqueda y Filtros -->
+        <div class="glass-panel rounded-3xl p-6 border border-slate-800">
+            <form th:action="@{/manager/eps}" method="get" class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="relative flex-1 w-full">
+                    <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+                    <input type="text" name="keyword" placeholder="Buscar por nombre de EPS..." th:value="${keyword}"
+                           class="w-full input-field pl-12 pr-4 py-3.5 rounded-2xl text-sm" />
+                </div>
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <button type="submit"
+                            class="flex-1 md:flex-none px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-md">
+                        <span>Buscar</span>
+                    </button>
+                    <a th:href="@{/manager/eps}"
+                       class="flex-1 md:flex-none px-6 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-wider border border-slate-700 transition-all duration-300 flex items-center justify-center gap-2">
+                        <i class="ph ph-list text-base"></i>
+                        <span>Todos</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Lista de EPS Registradas (Tabla Moderna) -->
+        <div class="glass-panel rounded-3xl p-6 md:p-8 border border-slate-800 flex flex-col gap-6">
+            <div class="flex items-center justify-between">
+                <h3 class="text-white font-extrabold text-xl flex items-center gap-2.5">
+                    <i class="ph ph-buildings text-emerald-400 text-2xl"></i> Entidades EPS Registradas
+                </h3>
+            </div>
+
+            <div class="rounded-2xl border border-slate-800 overflow-x-auto bg-slate-950/50 shadow-inner">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[11px] font-extrabold border-b border-slate-800">
+                    <tr>
+                        <th class="px-6 py-4"><i class="ph ph-buildings mr-1"></i> Nombre</th>
+                        <th class="px-6 py-4"><i class="ph ph-identification-card mr-1"></i> NIT</th>
+                        <th class="px-6 py-4"><i class="ph ph-phone mr-1"></i> Teléfono</th>
+                        <th class="px-6 py-4"><i class="ph ph-map-pin mr-1"></i> Dirección</th>
+                        <th class="px-6 py-4 text-center"><i class="ph ph-gear mr-1"></i> Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 text-slate-200 font-medium">
+                    <tr th:each="e : ${epsList}" class="hover:bg-slate-900/40 transition-colors">
+                        <td class="px-6 py-4 font-bold text-white" th:text="${e.nombre != null ? e.nombre : 'N/A'}"></td>
+                        <td class="px-6 py-4 text-slate-300" th:text="${e.nit != null ? e.nit : 'N/A'}"></td>
+                        <td class="px-6 py-4 text-slate-400" th:text="${e.telefono != null ? e.telefono : 'N/A'}"></td>
+                        <td class="px-6 py-4 text-slate-300" th:text="${e.direccion != null ? e.direccion : 'N/A'}"></td>
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex justify-center items-center gap-2">
+                                <a th:href="@{'/manager/eps/editar/' + ${e.id}(keyword=${keyword}, page=${currentPage})}"
+                                   class="p-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-600 text-emerald-300 hover:text-white transition-all duration-200 border border-emerald-500/20 shadow-sm"
+                                   title="Editar">
+                                    <i class="ph ph-pencil text-lg"></i>
+                                </a>
+                                <a th:href="@{'/manager/eps/eliminar/' + ${e.id}}"
+                                   class="p-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-300 hover:text-white transition-all duration-200 border border-rose-500/20 shadow-sm"
+                                   title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar esta EPS?');">
+                                    <i class="ph ph-trash text-lg"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${epsList == null or epsList.empty}">
+                        <td colspan="5" class="px-6 py-12 text-center text-slate-400">No se encontraron entidades EPS registradas.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            <div class="flex justify-center items-center gap-3 pt-2" th:if="${totalPages > 1}">
+                <a th:if="${currentPage > 1}" th:href="@{/manager/eps(page=${currentPage - 1}, keyword=${keyword})}"
+                   class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                    &laquo; Anterior
+                </a>
+                <span th:text="'Página ' + ${currentPage} + ' de ' + ${totalPages}" class="px-4 py-2.5 text-xs text-slate-400 font-bold uppercase tracking-wider"></span>
+                <a th:if="${currentPage < totalPages}" th:href="@{/manager/eps(page=${currentPage + 1}, keyword=${keyword})}"
+                   class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                    Siguiente &raquo;
+                </a>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- Script para asegurar que al entrar siempre comience desde el inicio de la página -->
+<script>
     window.addEventListener("load", () => {
-      const scrollPos = sessionStorage.getItem("scrollPos");
-      if (scrollPos) {
-        window.scrollTo(0, parseInt(scrollPos));
-      }
+        window.scrollTo(0, 0);
+        const mainContainer = document.querySelector("main");
+        if (mainContainer) {
+            mainContainer.scrollTop = 0;
+        }
     });
-  </script>
+</script>
 
 </body>
-
 </html>

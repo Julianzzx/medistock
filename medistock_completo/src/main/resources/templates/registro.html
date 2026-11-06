@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro Institucional | Medistock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* slate-950 */
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .input-field {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: #06b6d4; /* cyan-500 */
+            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1);
+            outline: none;
+        }
+
+        .glass-section {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.2) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Tech grid background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        }
+    </style>
+</head>
+
+<body class="text-slate-200 antialiased selection:bg-cyan-500 selection:text-white h-screen flex overflow-hidden">
+
+<!-- LADO IZQUIERDO: Branding & Contexto (Fijo) -->
+<div class="hidden lg:flex lg:w-5/12 relative flex-col justify-between p-12 overflow-hidden bg-slate-900 border-r border-slate-800/60">
+
+    <!-- Imagen de fondo con overlays -->
+    <img src="https://images.unsplash.com/photo-1555633514-abcee6ab92e1?q=80&w=1000&auto=format&fit=crop"
+         alt="Laboratorio Médico"
+         class="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-luminosity" />
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-900/40 to-cyan-900/20 mix-blend-overlay"></div>
+
+    <!-- Orbes de luz -->
+    <div class="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-[100px]"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-cyan-500/20 rounded-full blur-[100px]"></div>
+
+    <!-- Contenido Superior -->
+    <div class="relative z-10 flex items-center justify-between">
+        <a th:href="@{/}" class="inline-flex items-center gap-3 group">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform">
+                <i class="ph ph-capsule text-3xl"></i>
+            </div>
+            <span class="text-2xl font-extrabold tracking-tight text-white">MEDISTOCK</span>
+        </a>
+
+        <!-- Botón Volver al inicio (Escritorio) -->
+        <a th:href="@{/}" class="inline-flex items-center gap-2 bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-white px-4 py-2 rounded-xl text-xs font-semibold border border-slate-700/60 backdrop-blur-md transition-all">
+            <i class="ph ph-arrow-left text-sm"></i> Volver al inicio
+        </a>
+    </div>
+
+    <!-- Contenido Central -->
+    <div class="relative z-10 my-auto pt-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-6">
+            <i class="ph ph-fingerprint text-base"></i> Acceso Seguro
+        </div>
+
+        <h1 class="text-5xl font-extrabold text-white leading-[1.1] mb-6 tracking-tight">
+            Tu salud,<br />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">nuestra prioridad.</span>
+        </h1>
+
+        <p class="text-lg text-slate-400 leading-relaxed max-w-md mb-10">
+            Al crear tu cuenta en Medistock, te integras a la red farmacéutica más avanzada. Reserva tus medicamentos, consulta stock en tiempo real y optimiza tus tiempos.
+        </p>
+
+        <div class="space-y-5">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-slate-800/80 border border-slate-700 flex items-center justify-center text-cyan-400">
+                    <i class="ph ph-shield-check text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm">Privacidad Médica</h4>
+                    <p class="text-slate-500 text-xs">Tus datos están encriptados y protegidos.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-slate-800/80 border border-slate-700 flex items-center justify-center text-blue-400">
+                    <i class="ph ph-clock-countdown text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm">Disponibilidad 24/7</h4>
+                    <p class="text-slate-500 text-xs">Consulta inventarios a cualquier hora del día.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido Inferior -->
+    <div class="relative z-10 flex items-center justify-between text-xs text-slate-500 font-medium">
+        <p>© 2026 Medistock Network.</p>
+        <a href="mailto:soporte@medistock.com" class="hover:text-white transition-colors">Necesito ayuda</a>
+    </div>
+</div>
+
+<!-- LADO DERECHO: Formulario (Scrollable) -->
+<div class="w-full lg:w-7/12 h-full overflow-y-auto bg-slate-950 relative">
+    <div class="absolute inset-0 bg-grid pointer-events-none"></div>
+
+    <div class="min-h-full flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-20 xl:px-32 relative z-10">
+
+        <!-- Header Móvil & Volver -->
+        <div class="flex items-center justify-between mb-12">
+            <div class="lg:hidden flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white">
+                    <i class="ph ph-capsule text-xl"></i>
+                </div>
+                <span class="font-bold text-white tracking-tight">MEDISTOCK</span>
+            </div>
+
+            <!-- Botón Volver al inicio (Móvil) / Link de Login -->
+            <div class="flex items-center gap-4 ml-auto">
+                <a th:href="@{/}" class="lg:hidden inline-flex items-center gap-1 text-xs text-slate-400 hover:text-white font-medium">
+                    <i class="ph ph-arrow-left"></i> Inicio
+                </a>
+                <a th:href="@{/login}" class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-cyan-400 font-medium transition-colors">
+                    Ya tengo cuenta <i class="ph ph-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="mb-10">
+            <h2 class="text-3xl font-extrabold text-white tracking-tight mb-2">Crear Cuenta</h2>
+            <p class="text-slate-400 text-sm">Llena la información a continuación para configurar tu perfil de usuario.</p>
+        </div>
+
+        <!-- Alerta de Error -->
+        <div th:if="${mensajeError}" class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm font-medium mb-8 flex items-start gap-3 animate-fadeIn">
+            <i class="ph ph-warning-circle text-lg flex-shrink-0 mt-0.5"></i>
+            <p th:text="${mensajeError}"></p>
+        </div>
+
+        <!-- FORMULARIO -->
+        <form th:action="@{/registro}" method="post" class="space-y-8">
+
+            <!-- BLOQUE 1: Identidad -->
+            <div class="glass-section rounded-2xl p-6 sm:p-8">
+                <div class="flex items-center gap-3 mb-6 border-b border-slate-700/50 pb-4">
+                    <i class="ph ph-identification-badge text-2xl text-cyan-400"></i>
+                    <h3 class="text-lg font-bold text-white">Información Personal</h3>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="sm:col-span-1">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Nombres</label>
+                        <input type="text" name="nombre" required placeholder="Ej. Carlos Arturo"
+                               class="w-full input-field px-4 py-3 rounded-xl text-sm" />
+                    </div>
+                    <div class="sm:col-span-1">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Apellidos</label>
+                        <input type="text" name="apellido" required placeholder="Ej. Pérez Gómez"
+                               class="w-full input-field px-4 py-3 rounded-xl text-sm" />
+                    </div>
+                    <div class="sm:col-span-1">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">N° Documento</label>
+                        <div class="relative">
+                            <i class="ph ph-hash absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                            <input type="text" name="identificacion" required placeholder="1234567890"
+                                   class="w-full input-field pl-10 pr-4 py-3 rounded-xl text-sm" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 sm:col-span-1">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Edad</label>
+                            <input type="number" name="edad" min="0" placeholder="Años"
+                                   class="w-full input-field px-4 py-3 rounded-xl text-sm" />
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Género</label>
+                            <div class="relative">
+                                <select name="genero" class="w-full input-field px-4 py-3 rounded-xl text-sm appearance-none cursor-pointer">
+                                    <option value="No especificado">N/A</option>
+                                    <option value="Femenino">F</option>
+                                    <option value="Masculino">M</option>
+                                </select>
+                                <i class="ph ph-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOQUE 2: Contacto -->
+            <div class="glass-section rounded-2xl p-6 sm:p-8">
+                <div class="flex items-center gap-3 mb-6 border-b border-slate-700/50 pb-4">
+                    <i class="ph ph-map-pin-line text-2xl text-blue-400"></i>
+                    <h3 class="text-lg font-bold text-white">Ubicación y Contacto</h3>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="sm:col-span-2">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Dirección de Residencia</label>
+                        <div class="relative">
+                            <i class="ph ph-map-pin absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                            <input type="text" name="direccion" placeholder="Calle, Carrera, N°..."
+                                   class="w-full input-field pl-10 pr-4 py-3 rounded-xl text-sm" />
+                        </div>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Teléfono Celular</label>
+                        <div class="relative">
+                            <i class="ph ph-device-mobile absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                            <input type="tel" name="telefono" placeholder="+57 300 000 0000"
+                                   class="w-full input-field pl-10 pr-4 py-3 rounded-xl text-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOQUE 3: Perfil Médico -->
+            <div class="glass-section rounded-2xl p-6 sm:p-8">
+                <div class="flex items-center gap-3 mb-6 border-b border-slate-700/50 pb-4">
+                    <i class="ph ph-heartbeat text-2xl text-emerald-400"></i>
+                    <h3 class="text-lg font-bold text-white">Perfil Médico Institucional</h3>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="sm:col-span-1">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Red Médica (EPS)</label>
+                        <div class="relative">
+                            <i class="ph ph-buildings absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"></i>
+                            <select name="eps.id" required class="w-full input-field pl-10 pr-10 py-3 rounded-xl text-sm appearance-none cursor-pointer">
+                                <option value="" disabled selected>Seleccione su EPS...</option>
+                                <option th:each="e : ${epsList}" th:value="${e.id}" th:text="${e.nombre}"></option>
+                            </select>
+                            <i class="ph ph-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"></i>
+                        </div>
+                    </div>
+                    <div class="sm:col-span-1">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Tipo de Régimen</label>
+                        <div class="relative">
+                            <select name="regimen" class="w-full input-field px-4 pr-10 py-3 rounded-xl text-sm appearance-none cursor-pointer">
+                                <option value="No especificado">No especificado</option>
+                                <option value="Contributivo">Contributivo</option>
+                                <option value="Subsidiado">Subsidiado</option>
+                            </select>
+                            <i class="ph ph-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOQUE 4: Accesos -->
+            <div class="glass-section rounded-2xl p-6 sm:p-8">
+                <div class="flex items-center gap-3 mb-6 border-b border-slate-700/50 pb-4">
+                    <i class="ph ph-key text-2xl text-amber-400"></i>
+                    <h3 class="text-lg font-bold text-white">Credenciales de Acceso</h3>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="sm:col-span-1">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Correo Electrónico</label>
+                        <div class="relative">
+                            <i class="ph ph-envelope-simple absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                            <input type="email" name="email" required placeholder="correo@ejemplo.com"
+                                   class="w-full input-field pl-10 pr-4 py-3 rounded-xl text-sm" />
+                        </div>
+                    </div>
+                    <div class="sm:col-span-1">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Contraseña</label>
+                        <div class="relative">
+                            <i class="ph ph-lock-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                            <input type="password" name="password" required placeholder="••••••••"
+                                   class="w-full input-field pl-10 pr-4 py-3 rounded-xl text-sm" />
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-2">Mínimo 8 caracteres, números y símbolos.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hidden Rol -->
+            <input type="hidden" name="rol" value="USER" />
+
+            <!-- Submit Button -->
+            <div class="pt-6">
+                <button type="submit"
+                        class="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-extrabold py-4 px-6 rounded-xl shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all hover:-translate-y-1 flex items-center justify-center gap-2 text-base tracking-wide group">
+                    Finalizar e Ingresar
+                    <i class="ph ph-arrow-right text-xl group-hover:translate-x-1 transition-transform"></i>
+                </button>
+                <p class="text-center text-xs text-slate-500 mt-4">
+                    Al registrarte, aceptas nuestros <a href="#" class="text-cyan-400 hover:underline">Términos de Servicio</a> y <a href="#" class="text-cyan-400 hover:underline">Política de Privacidad</a>.
+                </p>
+            </div>
+        </form>
+
+    </div>
+</div>
+</div>
+
+</body>
+</html>

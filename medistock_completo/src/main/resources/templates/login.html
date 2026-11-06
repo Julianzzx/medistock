@@ -4,249 +4,437 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login | Medistock</title>
+    <title>Acceso al Sistema | Medistock</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="icon" type="image/png" href="/Imagenes/Logo.png"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* slate-950 */
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .input-field {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: #06b6d4; /* cyan-500 */
+            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1);
+            outline: none;
+        }
+
+        .glass-section {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.2) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* Tech grid background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        }
+    </style>
 </head>
 
-<body
-    class="bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 min-h-screen flex items-center justify-center p-6">
+<body class="text-slate-200 antialiased selection:bg-cyan-500 selection:text-white h-screen flex overflow-hidden">
 
-    <div
-        class="w-full max-w-5xl bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden grid md:grid-cols-2">
+<!-- LADO IZQUIERDO: Branding & Contexto (Fijo, idéntico al registro para mantener identidad visual) -->
+<div class="hidden lg:flex lg:w-5/12 relative flex-col justify-between p-12 overflow-hidden bg-slate-900 border-r border-slate-800/60">
 
-        <div class="hidden md:block relative overflow-hidden">
-            <img src="/Imagenes/logo2.jpeg" alt="Login"
-                class="w-full h-full object-cover filter brightness-90 transition-transform duration-500 hover:scale-105 hover:brightness-100 hover:contrast-105 hover:saturate-125" />
-        </div>
+    <!-- Imagen de fondo con overlays -->
+    <img src="https://images.unsplash.com/photo-1555633514-abcee6ab92e1?q=80&w=1000&auto=format&fit=crop"
+         alt="Laboratorio Médico"
+         class="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-luminosity" />
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-900/40 to-cyan-900/20 mix-blend-overlay"></div>
 
-        <div class="p-10 flex flex-col gap-6">
+    <!-- Orbes de luz -->
+    <div class="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-[100px]"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-cyan-500/20 rounded-full blur-[100px]"></div>
 
-            <div th:if="${param.correoCambiado}" id="correoCambiadoMessage"
-                class="p-3 rounded-xl bg-green-500 text-white text-center font-bold shadow-md animate-bounce transition-all duration-700 mb-2">
-                <i class="ph ph-envelope text-xl"></i> ¡Correo actualizado correctamente! Por favor inicia sesión
-                nuevamente.
+    <!-- Contenido Superior -->
+    <div class="relative z-10 flex items-center justify-between">
+        <a th:href="@{/}" class="inline-flex items-center gap-3 group">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform">
+                <i class="ph ph-capsule text-3xl"></i>
             </div>
+            <span class="text-2xl font-extrabold tracking-tight text-white">MEDISTOCK</span>
+        </a>
 
-            <div th:if="${param.logout}" id="logoutMessage"
-                class="p-3 rounded-xl bg-green-500 text-white text-center font-bold shadow-md animate-bounce transition-all duration-700 mb-2">
-                <i class="ph ph-check-circle text-xl"></i> Has cerrado sesión correctamente.
-            </div>
-
-            <h2
-                class="text-3xl font-extrabold text-center text-white drop-shadow mb-6 flex items-center justify-center gap-2">
-                <i class="ph ph-lock text-4xl"></i> Iniciar Sesión
-            </h2>
-
-            <form th:action="@{/login}" method="post" class="space-y-6">
-
-                <div>
-                    <label for="tipo" class="block text-sm font-semibold text-white mb-2">
-                        <i class="ph ph-users-three mr-1"></i> Tipo de usuario:
-                    </label>
-                    <select id="tipo"
-                        class="w-full p-3 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-400 transition text-gray-800">
-                        <option value="user">Usuario</option>
-                        <option value="manager">Manager</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
-
-                <div id="userFields">
-                    <div>
-                        <label for="userEmail" class="block text-sm font-semibold text-white mb-2">
-                            <i class="ph ph-envelope-simple mr-1"></i> Correo electrónico:
-                        </label>
-                        <input type="email" id="userEmail" name="username" placeholder="usuario@ejemplo.com"
-                            class="w-full p-3 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-400 transition text-gray-800"
-                            required />
-                    </div>
-                    <div>
-                        <label for="userId" class="block text-sm font-semibold text-white mb-2">
-                            <i class="ph ph-identification-badge mr-1"></i> Identificación:
-                        </label>
-                        <input type="password" id="userId" name="password" placeholder="Tu identificación"
-                            class="w-full p-3 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-400 transition text-gray-800"
-                            required />
-                    </div>
-                </div>
-
-                <div id="managerFields" style="display:none;">
-                    <div>
-                        <label for="managerId" class="block text-sm font-semibold text-white mb-2">
-                            <i class="ph ph-user-circle-gear mr-1"></i> Identificación manager:
-                        </label>
-                        <input type="text" id="managerId" placeholder="ID manager"
-                            class="w-full p-3 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-400 transition text-gray-800" />
-                    </div>
-                    <div>
-                        <label for="managerCode" class="block text-sm font-semibold text-white mb-2">
-                            <i class="ph ph-key mr-1"></i> Código de empleado:
-                        </label>
-                        <input type="password" id="managerCode" placeholder="Código de empleado"
-                            class="w-full p-3 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-400 transition text-gray-800" />
-                    </div>
-                </div>
-
-                <div id="adminFields" style="display:none;">
-                    <div>
-                        <label for="adminUser" class="block text-sm font-semibold text-white mb-2">
-                            <i class="ph ph-user-circle mr-1"></i> Nombre de usuario Admin:
-                        </label>
-                        <input type="text" id="adminUser" placeholder="Nombre de usuario"
-                            class="w-full p-3 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-400 transition text-gray-800" />
-                    </div>
-                    <div>
-                        <label for="adminPass" class="block text-sm font-semibold text-white mb-2">
-                            <i class="ph ph-key mr-1"></i> Contraseña:
-                        </label>
-                        <input type="password" id="adminPass" placeholder="Contraseña"
-                            class="w-full p-3 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-400 transition text-gray-800" />
-                    </div>
-                </div>
-
-                <button type="submit"
-                    class="w-full bg-white text-indigo-600 py-3 px-4 rounded-full font-semibold shadow-md hover:bg-indigo-100 transform hover:scale-105 transition duration-300 flex items-center justify-center gap-2">
-                    <i class="ph ph-sign-in text-xl"></i> Ingresar
-                </button>
-
-                <div class="flex gap-4 mt-4">
-                    <button type="button" onclick="window.location.href='/oauth2/authorization/google'"
-                        class="flex-1 bg-white text-red-600 py-3 px-4 rounded-full font-semibold shadow-md hover:bg-red-100 transform hover:scale-105 transition duration-300 flex items-center justify-center gap-2">
-                        <svg class="w-6 h-6" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="#4285F4"
-                                d="M533.5 278.4c0-17.7-1.6-34.7-4.6-51.2H272v96.9h146.9c-6.3 34-25.1 62.8-53.6 82.1v68h86.5c50.6-46.6 79.7-115.3 79.7-195.8z" />
-                            <path fill="#34A853"
-                                d="M272 544.3c72.6 0 133.6-23.9 178.1-64.7l-86.5-68c-24 16.1-54.7 25.5-91.6 25.5-70.4 0-130-47.5-151.5-111.3h-89.7v69.9c44.3 88 135.1 149.6 241.2 149.6z" />
-                            <path fill="#FBBC04"
-                                d="M120.5 324.1c-10.6-31.7-10.6-65.9 0-97.6v-69.9H30.8c-39.3 77.8-39.3 169.4 0 247.2l89.7-69.7z" />
-                            <path fill="#EA4335"
-                                d="M272 107.7c38.7 0 73.4 13.3 100.7 39.6l75.3-75.3C400.9 24.7 342.7 0 272 0 165.9 0 75.1 61.6 30.8 149.6l89.7 69.9c21.5-63.8 81.1-111.8 151.5-111.8z" />
-                        </svg>
-                        Google
-                    </button>
-
-                    <button type="button" onclick="window.location.href='/oauth2/authorization/github'"
-                        class="flex-1 bg-black text-white py-3 px-4 rounded-full font-semibold shadow-md hover:bg-gray-800 transform hover:scale-105 transition duration-300 flex items-center justify-center gap-2">
-                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.26.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.334-1.756-1.334-1.756-1.09-.745.082-.729.082-.729 1.205.084 1.838 1.238 1.838 1.238 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.605-2.665-.305-5.467-1.332-5.467-5.932 0-1.31.468-2.38 1.236-3.22-.124-.303-.536-1.523.117-3.176 0 0 1.008-.322 3.3 1.23.957-.266 1.983-.398 3.003-.403 1.02.005 2.047.137 3.006.403 2.29-1.552 3.296-1.23 3.296-1.23.655 1.653.243 2.873.12 3.176.77.84 1.234 1.91 1.234 3.22 0 4.61-2.807 5.624-5.48 5.922.43.37.823 1.102.823 2.222 0 1.606-.015 2.903-.015 3.293 0 .32.216.694.825.576C20.565 21.796 24 17.296 24 12c0-6.63-5.37-12-12-12z" />
-                        </svg>
-                        GitHub
-                    </button>
-                </div>
-
-                <a th:href="@{/index}"
-                    class="block text-center mt-3 bg-indigo-600 text-white font-bold py-3 px-5 rounded-xl shadow-lg hover:bg-indigo-700 transition duration-300 transform hover:scale-105">
-                    <i class="ph ph-arrow-left"></i> Volver a la página de inicio
-                </a>
-
-                <div th:if="${param.error}" class="mt-3 text-red-600 text-center font-medium">
-                    <i class="ph ph-warning-circle"></i> Credenciales inválidas. Intenta de nuevo.
-                </div>
-            </form>
-        </div>
-
+        <!-- Botón Volver al inicio (Escritorio) -->
+        <a th:href="@{/}" class="inline-flex items-center gap-2 bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-white px-4 py-2 rounded-xl text-xs font-semibold border border-slate-700/60 backdrop-blur-md transition-all">
+            <i class="ph ph-arrow-left text-sm"></i> Volver al inicio
+        </a>
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const tipoSelect = document.getElementById('tipo');
-            const userFields = document.getElementById('userFields');
-            const managerFields = document.getElementById('managerFields');
-            const adminFields = document.getElementById('adminFields');
-            const userEmail = document.getElementById('userEmail');
-            const userId = document.getElementById('userId');
-            const managerId = document.getElementById('managerId');
-            const managerCode = document.getElementById('managerCode');
-            const adminUser = document.getElementById('adminUser');
-            const adminPass = document.getElementById('adminPass');
+    <!-- Contenido Central -->
+    <div class="relative z-10 my-auto pt-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-6">
+            <i class="ph ph-shield-check text-base"></i> Portal Institucional
+        </div>
 
-            function updateFields() {
-                if (tipoSelect.value === 'manager') {
-                    userFields.style.display = 'none';
-                    managerFields.style.display = 'block';
-                    adminFields.style.display = 'none';
+        <h1 class="text-5xl font-extrabold text-white leading-[1.1] mb-6 tracking-tight">
+            Control de red<br />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">farmacéutica segura.</span>
+        </h1>
 
-                    userEmail.removeAttribute('name');
-                    userId.removeAttribute('name');
-                    managerId.setAttribute('name', 'username');
-                    managerCode.setAttribute('name', 'password');
-                    adminUser.removeAttribute('name');
-                    adminPass.removeAttribute('name');
+        <p class="text-lg text-slate-400 leading-relaxed max-w-md mb-10">
+            Accede a tu panel administrativo o de usuario para supervisar inventarios, procesar solicitudes de reabastecimiento y gestionar tu EPS.
+        </p>
 
-                    managerId.required = true;
-                    managerCode.required = true;
-                    userEmail.required = false;
-                    userId.required = false;
-                    adminUser.required = false;
-                    adminPass.required = false;
+        <div class="space-y-5">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-slate-800/80 border border-slate-700 flex items-center justify-center text-cyan-400">
+                    <i class="ph ph-user-gear text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm">Multirrol Integrado</h4>
+                    <p class="text-slate-500 text-xs">Acceso específico para usuarios, managers y administradores.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-slate-800/80 border border-slate-700 flex items-center justify-center text-blue-400">
+                    <i class="ph ph-lightning text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm">Gestión en tiempo real</h4>
+                    <p class="text-slate-500 text-xs">Respuesta inmediata en cada sucursal médica.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                } else if (tipoSelect.value === 'admin') {
-                    userFields.style.display = 'none';
-                    managerFields.style.display = 'none';
-                    adminFields.style.display = 'block';
+    <!-- Contenido Inferior -->
+    <div class="relative z-10 flex items-center justify-between text-xs text-slate-500 font-medium">
+        <p>© 2026 Medistock Network.</p>
+        <a href="mailto:soporte@medistock.com" class="hover:text-white transition-colors">Soporte Técnico</a>
+    </div>
+</div>
 
-                    userEmail.removeAttribute('name');
-                    userId.removeAttribute('name');
-                    managerId.removeAttribute('name');
-                    managerCode.removeAttribute('name');
-                    adminUser.setAttribute('name', 'username');
-                    adminPass.setAttribute('name', 'password');
+<!-- LADO DERECHO: Formulario de Login (Scrollable / Centrado) -->
+<div class="w-full lg:w-7/12 h-full overflow-y-auto bg-slate-950 relative">
+    <div class="absolute inset-0 bg-grid pointer-events-none"></div>
 
-                    adminUser.required = true;
-                    adminPass.required = true;
-                    userEmail.required = false;
-                    userId.required = false;
-                    managerId.required = false;
-                    managerCode.required = false;
+    <div class="min-h-full flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-20 xl:px-28 relative z-10">
 
-                } else {
-                    userFields.style.display = 'block';
-                    managerFields.style.display = 'none';
-                    adminFields.style.display = 'none';
+        <!-- Header Móvil & Volver -->
+        <div class="flex items-center justify-between mb-8">
+            <div class="lg:hidden flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white">
+                    <i class="ph ph-capsule text-xl"></i>
+                </div>
+                <span class="font-bold text-white tracking-tight">MEDISTOCK</span>
+            </div>
 
-                    managerId.removeAttribute('name');
-                    managerCode.removeAttribute('name');
-                    adminUser.removeAttribute('name');
-                    adminPass.removeAttribute('name');
-                    userEmail.setAttribute('name', 'username');
-                    userId.setAttribute('name', 'password');
+            <div class="flex items-center gap-4 ml-auto">
+                <a th:href="@{/}" class="lg:hidden inline-flex items-center gap-1 text-xs text-slate-400 hover:text-white font-medium">
+                    <i class="ph ph-arrow-left"></i> Inicio
+                </a>
+                <a th:href="@{/registro}" class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-cyan-400 font-medium transition-colors">
+                    ¿No tienes cuenta? <span class="text-cyan-400 font-bold underline">Regístrate</span>
+                </a>
+            </div>
+        </div>
 
-                    userEmail.required = true;
-                    userId.required = true;
-                    managerId.required = false;
-                    managerCode.required = false;
-                    adminUser.required = false;
-                    adminPass.required = false;
-                }
+        <!-- Alertas Dinámicas -->
+        <div th:if="${param.correoCambiado}" id="correoCambiadoMessage"
+             class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium shadow-lg mb-6 flex items-center gap-3 animate-fadeIn">
+            <i class="ph ph-envelope text-lg flex-shrink-0"></i>
+            <span>¡Correo actualizado correctamente! Por favor inicia sesión nuevamente.</span>
+        </div>
+
+        <div th:if="${param.passwordCambiado}" id="passwordCambiadoMessage"
+             class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium shadow-lg mb-6 flex items-center gap-3 animate-fadeIn">
+            <i class="ph ph-lock-key text-lg flex-shrink-0"></i>
+            <span>¡Contraseña actualizada correctamente! Por favor inicia sesión nuevamente.</span>
+        </div>
+
+        <div th:if="${param.logout}" id="logoutMessage"
+             class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium shadow-lg mb-6 flex items-center gap-3 animate-fadeIn">
+            <i class="ph ph-check-circle text-lg flex-shrink-0"></i>
+            <span>Has cerrado sesión correctamente.</span>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-3xl font-extrabold text-white tracking-tight mb-2">Iniciar Sesión</h2>
+            <p class="text-slate-400 text-sm">Selecciona tu rol e ingresa tus credenciales institucionales.</p>
+        </div>
+
+        <!-- Formulario de Autenticación -->
+        <form th:action="@{/login}" method="post" class="space-y-6">
+
+            <!-- Bloque Principal de Ingreso con diseño Glass Section -->
+            <div class="glass-section rounded-2xl p-6 sm:p-8 space-y-6">
+
+                <!-- Selector de Tipo de Usuario -->
+                <div>
+                    <label for="tipo" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                        <i class="ph ph-users-three mr-1 text-cyan-400"></i> Tipo de usuario
+                    </label>
+                    <div class="relative">
+                        <select id="tipo"
+                                class="w-full input-field px-4 py-3.5 rounded-xl text-sm appearance-none cursor-pointer">
+                            <option value="user" class="bg-slate-900 text-white">Usuario</option>
+                            <option value="manager" class="bg-slate-900 text-white">Admin</option>
+                            <option value="admin" class="bg-slate-900 text-white">Manager</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
+                            <i class="ph ph-caret-down text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campos para Usuario -->
+                <div id="userFields" class="space-y-5">
+                    <div>
+                        <label for="userEmail" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                            <i class="ph ph-envelope-simple mr-1 text-cyan-400"></i> Correo Electrónico
+                        </label>
+                        <div class="relative">
+                            <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-base"></i>
+                            <input type="email" id="userEmail" name="username" placeholder="usuario@ejemplo.com"
+                                   class="w-full input-field pl-11 pr-4 py-3.5 rounded-xl text-sm"
+                                   required />
+                        </div>
+                    </div>
+                    <div>
+                        <label for="userId" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                            <i class="ph ph-lock-key mr-1 text-cyan-400"></i> Contraseña
+                        </label>
+                        <div class="relative">
+                            <i class="ph ph-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-base"></i>
+                            <input type="password" id="userId" name="password" placeholder="••••••••"
+                                   class="w-full input-field pl-11 pr-4 py-3.5 rounded-xl text-sm"
+                                   required />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campos para Manager -->
+                <div id="managerFields" style="display:none;" class="space-y-5">
+                    <div>
+                        <label for="managerId" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                            <i class="ph ph-user-circle-gear mr-1 text-cyan-400"></i> Usuario Admin
+                        </label>
+                        <div class="relative">
+                            <i class="ph ph-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-base"></i>
+                            <input type="text" id="managerId" placeholder="Nombre de usuario"
+                                   class="w-full input-field pl-11 pr-4 py-3.5 rounded-xl text-sm" />
+                        </div>
+                    </div>
+                    <div>
+                        <label for="managerCode" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                            <i class="ph ph-lock-key mr-1 text-cyan-400"></i> Contraseña
+                        </label>
+                        <div class="relative">
+                            <i class="ph ph-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-base"></i>
+                            <input type="password" id="managerCode" placeholder="••••••••"
+                                   class="w-full input-field pl-11 pr-4 py-3.5 rounded-xl text-sm" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campos para Admin -->
+                <div id="adminFields" style="display:none;" class="space-y-5">
+                    <div>
+                        <label for="adminUser" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                            <i class="ph ph-user-circle mr-1 text-cyan-400"></i> Usuario Manager
+                        </label>
+                        <div class="relative">
+                            <i class="ph ph-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-base"></i>
+                            <input type="text" id="adminUser" placeholder="Nombre de usuario"
+                                   class="w-full input-field pl-11 pr-4 py-3.5 rounded-xl text-sm" />
+                        </div>
+                    </div>
+                    <div>
+                        <label for="adminPass" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                            <i class="ph ph-lock-key mr-1 text-cyan-400"></i> Contraseña
+                        </label>
+                        <div class="relative">
+                            <i class="ph ph-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-base"></i>
+                            <input type="password" id="adminPass" placeholder="••••••••"
+                                   class="w-full input-field pl-11 pr-4 py-3.5 rounded-xl text-sm" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón Principal de Ingreso -->
+                <button type="submit"
+                        class="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-extrabold py-4 px-6 rounded-xl shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all hover:-translate-y-1 flex items-center justify-center gap-2 text-base tracking-wide group">
+                    <i class="ph ph-sign-in text-xl"></i> Ingresar al Sistema
+                </button>
+
+            </div>
+
+            <!-- Separador -->
+            <div class="relative flex py-1 items-center">
+                <div class="flex-grow border-t border-slate-800"></div>
+                <span class="flex-shrink mx-4 text-slate-500 text-[10px] font-bold uppercase tracking-widest">O continúa con</span>
+                <div class="flex-grow border-t border-slate-800"></div>
+            </div>
+
+            <!-- Botones OAuth2 (Google / GitHub) -->
+            <div class="grid grid-cols-2 gap-3">
+                <button type="button" onclick="window.location.href='/oauth2/authorization/google'"
+                        class="glass-section hover:bg-slate-800/80 text-slate-200 py-3.5 px-4 rounded-xl font-medium transition duration-200 flex items-center justify-center gap-2.5 text-xs">
+                    <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#4285F4" d="M533.5 278.4c0-17.7-1.6-34.7-4.6-51.2H272v96.9h146.9c-6.3 34-25.1 62.8-53.6 82.1v68h86.5c50.6-46.6 79.7-115.3 79.7-195.8z" />
+                        <path fill="#34A853" d="M272 544.3c72.6 0 133.6-23.9 178.1-64.7l-86.5-68c-24 16.1-54.7 25.5-91.6 25.5-70.4 0-130-47.5-151.5-111.3h-89.7v69.9c44.3 88 135.1 149.6 241.2 149.6z" />
+                        <path fill="#FBBC04" d="M120.5 324.1c-10.6-31.7-10.6-65.9 0-97.6v-69.9H30.8c-39.3 77.8-39.3 169.4 0 247.2l89.7-69.7z" />
+                        <path fill="#EA4335" d="M272 107.7c38.7 0 73.4 13.3 100.7 39.6l75.3-75.3C400.9 24.7 342.7 0 272 0 165.9 0 75.1 61.6 30.8 149.6l89.7 69.9c21.5-63.8 81.1-111.8 151.5-111.8z" />
+                    </svg>
+                    <span>Google</span>
+                </button>
+
+                <button type="button" onclick="window.location.href='/oauth2/authorization/github'"
+                        class="glass-section hover:bg-slate-800/80 text-slate-200 py-3.5 px-4 rounded-xl font-medium transition duration-200 flex items-center justify-center gap-2.5 text-xs">
+                    <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.26.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.334-1.756-1.334-1.756-1.09-.745.082-.729.082-.729 1.205.084 1.838 1.238 1.838 1.238 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.605-2.665-.305-5.467-1.332-5.467-5.932 0-1.31.468-2.38 1.236-3.22-.124-.303-.536-1.523.117-3.176 0 0 1.008-.322 3.3 1.23.957-.266 1.983-.398 3.003-.403 1.02.005 2.047.137 3.006.403 2.29-1.552 3.296-1.23 3.296-1.23.655 1.653.243 2.873.12 3.176.77.84 1.234 1.91 1.234 3.22 0 4.61-2.807 5.624-5.48 5.922.43.37.823 1.102.823 2.222 0 1.606-.015 2.903-.015 3.293 0 .32.216.694.825.576C20.565 21.796 24 17.296 24 12c0-6.63-5.37-12-12-12z" />
+                    </svg>
+                    <span>GitHub</span>
+                </button>
+            </div>
+
+            <!-- Mensaje de Error de Credenciales -->
+            <div th:if="${param.error}" class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-center text-xs font-medium flex items-center justify-center gap-2 animate-fadeIn">
+                <i class="ph ph-warning-circle text-lg flex-shrink-0"></i> Credenciales inválidas. Por favor, verifica tus datos e intenta de nuevo.
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<!-- Script original de control de campos y animaciones totalmente intacto -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tipoSelect = document.getElementById('tipo');
+        const userFields = document.getElementById('userFields');
+        const managerFields = document.getElementById('managerFields');
+        const adminFields = document.getElementById('adminFields');
+        const userEmail = document.getElementById('userEmail');
+        const userId = document.getElementById('userId');
+        const managerId = document.getElementById('managerId');
+        const managerCode = document.getElementById('managerCode');
+        const adminUser = document.getElementById('adminUser');
+        const adminPass = document.getElementById('adminPass');
+
+        function updateFields() {
+            if (tipoSelect.value === 'manager') {
+                userFields.style.display = 'none';
+                managerFields.style.display = 'block';
+                adminFields.style.display = 'none';
+
+                userEmail.removeAttribute('name');
+                userId.removeAttribute('name');
+                managerId.setAttribute('name', 'username');
+                managerCode.setAttribute('name', 'password');
+                adminUser.removeAttribute('name');
+                adminPass.removeAttribute('name');
+
+                managerId.required = true;
+                managerCode.required = true;
+                userEmail.required = false;
+                userId.required = false;
+                adminUser.required = false;
+                adminPass.required = false;
+
+            } else if (tipoSelect.value === 'admin') {
+                userFields.style.display = 'none';
+                managerFields.style.display = 'none';
+                adminFields.style.display = 'block';
+
+                userEmail.removeAttribute('name');
+                userId.removeAttribute('name');
+                managerId.removeAttribute('name');
+                managerCode.removeAttribute('name');
+                adminUser.setAttribute('name', 'username');
+                adminPass.setAttribute('name', 'password');
+
+                adminUser.required = true;
+                adminPass.required = true;
+                userEmail.required = false;
+                userId.required = false;
+                managerId.required = false;
+                managerCode.required = false;
+
+            } else {
+                userFields.style.display = 'block';
+                managerFields.style.display = 'none';
+                adminFields.style.display = 'none';
+
+                managerId.removeAttribute('name');
+                managerCode.removeAttribute('name');
+                adminUser.removeAttribute('name');
+                adminPass.removeAttribute('name');
+                userEmail.setAttribute('name', 'username');
+                userId.setAttribute('name', 'password');
+
+                userEmail.required = true;
+                userId.required = true;
+                managerId.required = false;
+                managerCode.required = false;
+                adminUser.required = false;
+                adminPass.required = false;
             }
+        }
 
-            updateFields();
-            tipoSelect.addEventListener('change', updateFields);
+        updateFields();
+        tipoSelect.addEventListener('change', updateFields);
 
-            const logoutMessage = document.getElementById("logoutMessage");
-            if (logoutMessage) {
-                setTimeout(() => {
-                    logoutMessage.style.transition = "all 0.7s ease";
-                    logoutMessage.style.opacity = 0;
-                    logoutMessage.style.transform = "translateY(-20px)";
-                    setTimeout(() => logoutMessage.style.display = "none", 700);
-                }, 1500);
-            }
+        const logoutMessage = document.getElementById("logoutMessage");
+        if (logoutMessage) {
+            setTimeout(() => {
+                logoutMessage.style.transition = "all 0.7s ease";
+                logoutMessage.style.opacity = 0;
+                logoutMessage.style.transform = "translateY(-20px)";
+                setTimeout(() => logoutMessage.style.display = "none", 700);
+            }, 1500);
+        }
 
-            const correoMsg = document.getElementById("correoCambiadoMessage");
-            if (correoMsg) {
-                setTimeout(() => {
-                    correoMsg.style.transition = "all 0.7s ease";
-                    correoMsg.style.opacity = 0;
-                    correoMsg.style.transform = "translateY(-20px)";
-                    setTimeout(() => correoMsg.style.display = "none", 700);
-                }, 3000);
-            }
-        });
-    </script>
+        const correoMsg = document.getElementById("correoCambiadoMessage");
+        if (correoMsg) {
+            setTimeout(() => {
+                correoMsg.style.transition = "all 0.7s ease";
+                correoMsg.style.opacity = 0;
+                correoMsg.style.transform = "translateY(-20px)";
+                setTimeout(() => correoMsg.style.display = "none", 700);
+            }, 3000);
+        }
+
+        const passwordMsg = document.getElementById("passwordCambiadoMessage");
+        if (passwordMsg) {
+            setTimeout(() => {
+                passwordMsg.style.transition = "all 0.7s ease";
+                passwordMsg.style.opacity = 0;
+                passwordMsg.style.transform = "translateY(-20px)";
+                setTimeout(() => passwordMsg.style.display = "none", 700);
+            }, 3000);
+        }
+    });
+</script>
 </body>
 
 </html>

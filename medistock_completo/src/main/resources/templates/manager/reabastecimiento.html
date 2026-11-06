@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Solicitudes de Reabastecimiento | Medistock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* slate-950 */
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        .glass-section {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.2) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* Tech grid background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex bg-grid relative overflow-x-hidden">
+
+<!-- Iluminación ambiental de fondo (Tonos amber/emerald para reabastecimiento) -->
+<div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-amber-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+<div class="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+<!-- BARRA LATERAL REDISEÑADA (Especializada para Reabastecimiento con estadísticas en vivo) -->
+<aside class="hidden lg:flex w-80 bg-slate-900/95 backdrop-blur-2xl border-r border-slate-800/80 flex-col justify-between p-6 z-30 sticky top-0 h-screen shadow-2xl overflow-y-auto">
+    <div class="space-y-6">
+        <!-- Logo y Entidad -->
+        <div class="flex items-center gap-3 px-2">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/30">
+                <i class="ph ph-arrows-clockwise text-2xl"></i>
+            </div>
+            <div>
+                <span class="text-lg font-extrabold tracking-tight text-white block leading-none">MEDISTOCK</span>
+                <span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Control de Stock</span>
+            </div>
+        </div>
+
+        <!-- Menú de Navegación Limpio -->
+        <div class="space-y-1.5 px-1">
+            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-3 block mb-1">Navegación</span>
+            <a href="/manager/dashboard" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium text-xs transition-colors">
+                <i class="ph ph-squares-four text-lg text-blue-400"></i>
+                <span>Panel Ejecutivo</span>
+            </a>
+            <a href="/manager/reabastecimientos" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-amber-600 to-emerald-600 text-white font-bold text-xs shadow-lg shadow-amber-600/20 transition-all">
+                <i class="ph ph-clock-countdown text-lg"></i>
+                <span>Reabastecimientos</span>
+            </a>
+        </div>
+
+        <!-- Divisor sutil -->
+        <div class="h-px bg-slate-800 my-2"></div>
+
+        <!-- Estadística en Vivo de Solicitudes -->
+        <div class="mx-1 p-4 rounded-2xl bg-gradient-to-br from-slate-950/90 to-slate-900/90 border border-slate-800 relative overflow-hidden shadow-inner">
+            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <i class="ph ph-chart-line-up text-amber-400 text-base"></i> Flujo de Solicitudes
+                </span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">En Cola</span>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800/60">
+                    <span class="text-xs text-slate-400 font-semibold">Pendientes Revisión</span>
+                    <span class="text-amber-400 font-extrabold text-sm" th:text="${pendientesPage != null ? pendientesPage.totalElements : '0'}">0</span>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                        <span>Eficiencia de Respuesta</span>
+                        <span class="text-emerald-400 font-bold">100%</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        <div class="h-full bg-emerald-500 rounded-full" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjetas de Seguridad y Red -->
+        <div class="mx-1 grid grid-cols-2 gap-2">
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-shield-check text-amber-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Validación</p>
+                <p class="text-xs font-extrabold text-white">Automática</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                <i class="ph ph-database text-emerald-400 text-lg mb-1"></i>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Estado DB</p>
+                <p class="text-xs font-extrabold text-white">Óptimo</p>
+            </div>
+        </div>
+
+        <!-- Imagen Contextual Institucional -->
+        <div class="mx-1 rounded-2xl overflow-hidden relative border border-slate-800/80 h-36 group shadow-lg">
+            <img src="/Imagenes/GMedicamentos.png"
+                 alt="Reabastecimiento Medistock"
+                 class="w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-700 filter brightness-75" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex flex-col justify-end p-3">
+                <p class="text-[10px] text-amber-400 font-bold uppercase tracking-wider mb-0.5">Control de Stock</p>
+                <p class="text-xs text-slate-200 font-semibold leading-tight">Gestión de abastecimiento farmacéutico.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de Barra con Perfil Activo -->
+    <div class="pt-4 border-t border-slate-800/80">
+        <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-slate-950/60 border border-slate-800">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-emerald-600 text-white flex items-center justify-center font-extrabold text-xs shadow-md">
+                MG
+            </div>
+            <div class="overflow-hidden flex-1">
+                <p class="text-xs font-bold text-white truncate">Manager Principal</p>
+                <p class="text-[10px] text-emerald-400 font-semibold truncate flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sesión Segura
+                </p>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- CONTENIDO PRINCIPAL -->
+<main class="flex-1 min-h-screen flex flex-col p-4 md:p-10 z-10 overflow-y-auto">
+    <div class="w-full max-w-7xl mx-auto flex flex-col gap-8 animate-fade-in">
+
+        <!-- Cabecera Superior -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 glass-panel rounded-3xl p-6 md:p-8 border border-slate-800">
+            <div class="flex items-center gap-5">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/30 flex-shrink-0">
+                    <i class="ph ph-arrows-clockwise text-3xl"></i>
+                </div>
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
+                        <i class="ph ph-clock-countdown"></i> Inventario y Suministro
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Solicitudes de Reabastecimiento</h1>
+                    <p class="text-slate-400 text-sm sm:text-base mt-1">Supervisa, acepta o rechaza las peticiones de abastecimiento de medicamentos para las farmacias.</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white font-bold transition-all duration-300 text-xs shadow-lg shadow-rose-900/20 group">
+                        <i class="ph ph-sign-out text-lg transition-transform group-hover:-translate-x-1"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- SECCIÓN: PENDIENTES (EN_PROCESO) -->
+        <div id="pendientes" class="glass-panel rounded-3xl p-6 md:p-8 border border-slate-800 flex flex-col gap-6">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
+                <h3 class="text-white font-extrabold text-xl flex items-center gap-2.5">
+                    <i class="ph ph-clock-countdown text-amber-400 text-2xl"></i> Pendientes de Revisión
+                </h3>
+            </div>
+
+            <div th:if="${#lists.isEmpty(solicitudesPendientes)}"
+                 class="p-8 rounded-2xl bg-slate-950/40 border border-slate-800 text-center text-slate-400 italic text-sm">
+                No hay solicitudes pendientes en este momento.
+            </div>
+
+            <div th:unless="${#lists.isEmpty(solicitudesPendientes)}" class="flex flex-col gap-4">
+                <div class="rounded-2xl border border-slate-800 overflow-x-auto bg-slate-950/50 shadow-inner">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[11px] font-extrabold border-b border-slate-800">
+                        <tr>
+                            <th class="px-6 py-4">Medicamento</th>
+                            <th class="px-6 py-4 text-center">Cantidad</th>
+                            <th class="px-6 py-4 text-center">Farmacia</th>
+                            <th class="px-6 py-4 text-center">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60 text-slate-200 font-medium">
+                        <tr th:each="sol : ${solicitudesPendientes}" class="hover:bg-slate-900/40 transition-colors">
+                            <td class="px-6 py-4 font-bold text-white" th:text="${sol.medicamento != null ? sol.medicamento.nombre : 'N/A'}"></td>
+                            <td class="px-6 py-4 text-center font-extrabold text-cyan-400" th:text="${sol.cantidad}"></td>
+                            <td class="px-6 py-4 text-center text-slate-300" th:text="${sol.medicamento != null and sol.medicamento.farmacia != null ? sol.medicamento.farmacia.nombre : 'N/A'}"></td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex justify-center items-center gap-2">
+                                    <a th:href="@{/manager/reabastecimientos/aceptar/{id}(id=${sol.id})}"
+                                       class="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-600 text-emerald-300 hover:text-white font-bold text-xs uppercase tracking-wider transition border border-emerald-500/20 flex items-center gap-1.5 shadow-sm"
+                                       title="Aceptar">
+                                        <i class="ph ph-check text-base"></i> Aceptar
+                                    </a>
+                                    <a th:href="@{/manager/reabastecimientos/rechazar/{id}(id=${sol.id})}"
+                                       class="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-300 hover:text-white font-bold text-xs uppercase tracking-wider transition border border-rose-500/20 flex items-center gap-1.5 shadow-sm"
+                                       title="Rechazar">
+                                        <i class="ph ph-x text-base"></i> Rechazar
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginador Pendientes -->
+                <div class="flex justify-center items-center gap-3 pt-2" th:if="${pendientesPage.totalPages > 1}">
+                    <a th:if="${pendientesPage.hasPrevious()}"
+                       th:href="@{/manager/reabastecimientos(pagePendientes=${pendientesPage.number - 1}, pageAceptadas=${aceptadasPage.number}, pageRechazadas=${rechazadasPage.number}, #fragment='pendientes')}"
+                       class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-amber-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                        &laquo; Anterior
+                    </a>
+                    <span class="px-4 py-2.5 text-xs text-slate-400 font-bold uppercase tracking-wider">
+                        Página <span class="text-white" th:text="${pendientesPage.number + 1}"></span> de <span class="text-white" th:text="${pendientesPage.totalPages}"></span>
+                    </span>
+                    <a th:if="${pendientesPage.hasNext()}"
+                       th:href="@{/manager/reabastecimientos(pagePendientes=${pendientesPage.number + 1}, pageAceptadas=${aceptadasPage.number}, pageRechazadas=${rechazadasPage.number}, #fragment='pendientes')}"
+                       class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-amber-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                        Siguiente &raquo;
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN: ACEPTADAS -->
+        <div id="aceptadas" class="glass-panel rounded-3xl p-6 md:p-8 border border-slate-800 flex flex-col gap-6">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
+                <h3 class="text-white font-extrabold text-xl flex items-center gap-2.5">
+                    <i class="ph ph-check-circle text-emerald-400 text-2xl"></i> Solicitudes Aceptadas
+                </h3>
+            </div>
+
+            <div th:if="${#lists.isEmpty(solicitudesAceptadas)}"
+                 class="p-8 rounded-2xl bg-slate-950/40 border border-slate-800 text-center text-slate-400 italic text-sm">
+                No hay solicitudes aceptadas registradas.
+            </div>
+
+            <div th:unless="${#lists.isEmpty(solicitudesAceptadas)}" class="flex flex-col gap-4">
+                <div class="rounded-2xl border border-slate-800 overflow-x-auto bg-slate-950/50 shadow-inner">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[11px] font-extrabold border-b border-slate-800">
+                        <tr>
+                            <th class="px-6 py-4">Medicamento</th>
+                            <th class="px-6 py-4 text-center">Cantidad</th>
+                            <th class="px-6 py-4 text-center">Farmacia</th>
+                            <th class="px-6 py-4 text-center">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60 text-slate-200 font-medium">
+                        <tr th:each="sol : ${solicitudesAceptadas}" class="hover:bg-slate-900/40 transition-colors">
+                            <td class="px-6 py-4 font-bold text-white" th:text="${sol.medicamento != null ? sol.medicamento.nombre : 'N/A'}"></td>
+                            <td class="px-6 py-4 text-center font-extrabold text-emerald-400" th:text="${sol.cantidad}"></td>
+                            <td class="px-6 py-4 text-center text-slate-300" th:text="${sol.medicamento != null and sol.medicamento.farmacia != null ? sol.medicamento.farmacia.nombre : 'N/A'}"></td>
+                            <td class="px-6 py-4 text-center">
+                                <a th:href="@{/manager/reabastecimientos/eliminar/{id}(id=${sol.id})}"
+                                   class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-300 hover:text-white font-bold text-xs uppercase tracking-wider transition border border-rose-500/20 shadow-sm"
+                                   title="Eliminar">
+                                    <i class="ph ph-trash text-base"></i> Eliminar
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginador Aceptadas -->
+                <div class="flex justify-center items-center gap-3 pt-2" th:if="${aceptadasPage.totalPages > 1}">
+                    <a th:if="${aceptadasPage.hasPrevious()}"
+                       th:href="@{/manager/reabastecimientos(pagePendientes=${pendientesPage.number}, pageAceptadas=${aceptadasPage.number - 1}, pageRechazadas=${rechazadasPage.number}, #fragment='aceptadas')}"
+                       class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                        &laquo; Anterior
+                    </a>
+                    <span class="px-4 py-2.5 text-xs text-slate-400 font-bold uppercase tracking-wider">
+                        Página <span class="text-white" th:text="${aceptadasPage.number + 1}"></span> de <span class="text-white" th:text="${aceptadasPage.totalPages}"></span>
+                    </span>
+                    <a th:if="${aceptadasPage.hasNext()}"
+                       th:href="@{/manager/reabastecimientos(pagePendientes=${pendientesPage.number}, pageAceptadas=${aceptadasPage.number + 1}, pageRechazadas=${rechazadasPage.number}, #fragment='aceptadas')}"
+                       class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                        Siguiente &raquo;
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN: RECHAZADAS -->
+        <div id="rechazadas" class="glass-panel rounded-3xl p-6 md:p-8 border border-slate-800 flex flex-col gap-6">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
+                <h3 class="text-white font-extrabold text-xl flex items-center gap-2.5">
+                    <i class="ph ph-x-circle text-rose-400 text-2xl"></i> Solicitudes Rechazadas
+                </h3>
+            </div>
+
+            <div th:if="${#lists.isEmpty(solicitudesRechazadas)}"
+                 class="p-8 rounded-2xl bg-slate-950/40 border border-slate-800 text-center text-slate-400 italic text-sm">
+                No hay solicitudes rechazadas registradas.
+            </div>
+
+            <div th:unless="${#lists.isEmpty(solicitudesRechazadas)}" class="flex flex-col gap-4">
+                <div class="rounded-2xl border border-slate-800 overflow-x-auto bg-slate-950/50 shadow-inner">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[11px] font-extrabold border-b border-slate-800">
+                        <tr>
+                            <th class="px-6 py-4">Medicamento</th>
+                            <th class="px-6 py-4 text-center">Cantidad</th>
+                            <th class="px-6 py-4 text-center">Farmacia</th>
+                            <th class="px-6 py-4 text-center">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60 text-slate-200 font-medium">
+                        <tr th:each="sol : ${solicitudesRechazadas}" class="hover:bg-slate-900/40 transition-colors">
+                            <td class="px-6 py-4 font-bold text-white" th:text="${sol.medicamento != null ? sol.medicamento.nombre : 'N/A'}"></td>
+                            <td class="px-6 py-4 text-center font-extrabold text-rose-400" th:text="${sol.cantidad}"></td>
+                            <td class="px-6 py-4 text-center text-slate-300" th:text="${sol.medicamento != null and sol.medicamento.farmacia != null ? sol.medicamento.farmacia.nombre : 'N/A'}"></td>
+                            <td class="px-6 py-4 text-center">
+                                <a th:href="@{/manager/reabastecimientos/eliminar/{id}(id=${sol.id})}"
+                                   class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-300 hover:text-white font-bold text-xs uppercase tracking-wider transition border border-rose-500/20 shadow-sm"
+                                   title="Eliminar">
+                                    <i class="ph ph-trash text-base"></i> Eliminar
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginador Rechazadas -->
+                <div class="flex justify-center items-center gap-3 pt-2" th:if="${rechazadasPage.totalPages > 1}">
+                    <a th:if="${rechazadasPage.hasPrevious()}"
+                       th:href="@{/manager/reabastecimientos(pagePendientes=${pendientesPage.number}, pageAceptadas=${aceptadasPage.number}, pageRechazadas=${rechazadasPage.number - 1}, #fragment='rechazadas')}"
+                       class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-rose-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                        &laquo; Anterior
+                    </a>
+                    <span class="px-4 py-2.5 text-xs text-slate-400 font-bold uppercase tracking-wider">
+                        Página <span class="text-white" th:text="${rechazadasPage.number + 1}"></span> de <span class="text-white" th:text="${rechazadasPage.totalPages}"></span>
+                    </span>
+                    <a th:if="${rechazadasPage.hasNext()}"
+                       th:href="@{/manager/reabastecimientos(pagePendientes=${pendientesPage.number}, pageAceptadas=${aceptadasPage.number}, pageRechazadas=${rechazadasPage.number + 1}, #fragment='rechazadas')}"
+                       class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-rose-600 text-slate-300 hover:text-white border border-slate-800 transition text-xs font-bold uppercase tracking-wider">
+                        Siguiente &raquo;
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- Script para asegurar que al entrar siempre comience desde el inicio de la página -->
+<script>
+    window.addEventListener("load", () => {
+        window.scrollTo(0, 0);
+        const mainContainer = document.querySelector("main");
+        if (mainContainer) {
+            mainContainer.scrollTop = 0;
+        }
+    });
+</script>
+
+</body>
+</html>
