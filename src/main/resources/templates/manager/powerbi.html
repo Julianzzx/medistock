@@ -1,22 +1,37 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Analítica | Medistock</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #020617;
         }
 
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
 
         .glass-panel {
             background: rgba(15, 23, 42, 0.8);
@@ -27,8 +42,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .animate-fade-in {
@@ -38,497 +60,575 @@
         .bg-grid {
             background-size: 40px 40px;
             background-image: linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
         }
     </style>
 </head>
+
 <body class="text-slate-100 min-h-screen flex bg-grid relative overflow-x-hidden">
 
-<!-- Iluminación ambiental de fondo -->
-<div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-amber-600/15 rounded-full blur-[140px] pointer-events-none"></div>
-<div class="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none"></div>
-
-<!-- BARRA LATERAL -->
-<aside class="hidden lg:flex w-80 bg-slate-900/95 backdrop-blur-2xl border-r border-slate-800/80 flex-col justify-between p-6 z-30 sticky top-0 h-screen shadow-2xl overflow-y-auto">
-    <div class="space-y-6">
-        <div class="flex items-center gap-3 px-2">
-            <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/30">
-                <i class="ph ph-chart-bar text-2xl"></i>
-            </div>
-            <div>
-                <span class="text-lg font-extrabold tracking-tight text-white block leading-none">MEDISTOCK</span>
-                <span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Business Intelligence</span>
-            </div>
-        </div>
-
-        <div class="space-y-1.5 px-1">
-            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-3 block mb-1">Navegación</span>
-            <a href="/manager/dashboard" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium text-xs transition-colors">
-                <i class="ph ph-squares-four text-lg text-blue-400"></i>
-                <span>Panel Ejecutivo</span>
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-amber-600 to-indigo-600 text-white font-bold text-xs shadow-lg shadow-amber-600/20 transition-all">
-                <i class="ph ph-chart-bar text-lg"></i>
-                <span>PANEL EJECUTIVO</span>
-            </a>
-        </div>
-
-        <div class="h-px bg-slate-800 my-2"></div>
-
-        <!-- Estado del Reporte y Motor de Optimización -->
-        <div class="mx-1 p-4 rounded-2xl bg-gradient-to-br from-slate-950/90 to-slate-900/90 border border-slate-800 relative overflow-hidden shadow-inner">
-            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none"></div>
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                    <i class="ph ph-chart-line-up text-amber-400 text-base"></i> Estado del Reporte
-                </span>
-                <span th:class="${opt != null and opt.status == 'Optimal'} ? 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20'"
-                      th:text="${opt != null and opt.status == 'Optimal'} ? 'Óptimo' : 'Revisión'">Óptimo</span>
-            </div>
-            <div class="space-y-3">
-                <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800/60">
-                    <span class="text-xs text-slate-400 font-semibold">Motor de Datos</span>
-                    <span class="text-white font-extrabold text-sm">Power BI + ILP</span>
-                </div>
-                <div>
-                    <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
-                        <span>Sincronización OLAP</span>
-                        <span class="text-emerald-400 font-bold">100%</span>
-                    </div>
-                    <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
-                        <div class="h-full bg-emerald-500 rounded-full" style="width: 100%;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="mx-1 grid grid-cols-2 gap-2">
-            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
-                <i class="ph ph-shield-check text-amber-400 text-lg mb-1"></i>
-                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Acceso</p>
-                <p class="text-xs font-extrabold text-white">Seguro</p>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
-                <i class="ph ph-database text-emerald-400 text-lg mb-1"></i>
-                <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Modelo</p>
-                <p class="text-xs font-extrabold text-white">Star Schema</p>
-            </div>
-        </div>
-
-        <div class="mx-1 rounded-2xl overflow-hidden relative border border-slate-800/80 h-36 group shadow-lg">
-            <img src="/Imagenes/Umedicamentos.jpg"
-                 alt="Analítica Power BI Medistock"
-                 class="w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-700 filter brightness-75" />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex flex-col justify-end p-3">
-                <p class="text-[10px] text-amber-400 font-bold uppercase tracking-wider mb-0.5">Business Intelligence</p>
-                <p class="text-xs text-slate-200 font-semibold leading-tight">Métricas y analítica avanzada.</p>
-            </div>
-        </div>
+    <!-- Iluminación ambiental de fondo -->
+    <div
+        class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-amber-600/15 rounded-full blur-[140px] pointer-events-none">
+    </div>
+    <div
+        class="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none">
     </div>
 
-    <div class="pt-4 border-t border-slate-800/80">
-        <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-slate-950/60 border border-slate-800">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 text-white flex items-center justify-center font-extrabold text-xs shadow-md">
-                MG
-            </div>
-            <div class="overflow-hidden flex-1">
-                <p class="text-xs font-bold text-white truncate">Manager Principal</p>
-                <p class="text-[10px] text-emerald-400 font-semibold truncate flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sesión Segura
-                </p>
-            </div>
-        </div>
-    </div>
-</aside>
-
-<!-- CONTENIDO PRINCIPAL -->
-<main class="flex-1 min-h-screen flex flex-col p-4 md:p-10 z-10 overflow-y-auto">
-    <div class="w-full max-w-7xl mx-auto flex flex-col gap-8 animate-fade-in">
-
-        <!-- Cabecera Superior -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 glass-panel rounded-3xl p-6 md:p-8 border border-slate-800">
-            <div class="flex items-center gap-5">
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/30 flex-shrink-0">
-                    <i class="ph ph-chart-bar text-3xl"></i>
+    <!-- BARRA LATERAL -->
+    <aside
+        class="hidden lg:flex w-80 bg-slate-900/95 backdrop-blur-2xl border-r border-slate-800/80 flex-col justify-between p-6 z-30 sticky top-0 h-screen shadow-2xl overflow-y-auto">
+        <div class="space-y-6">
+            <div class="flex items-center gap-3 px-2">
+                <div
+                    class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/30">
+                    <i class="ph ph-chart-bar text-2xl"></i>
                 </div>
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
-                        <i class="ph ph-chart-line-up"></i> Analítica Service
-                    </div>
-                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Analítica</h1>
-                    <p class="text-slate-400 text-sm sm:text-base mt-1">Visualización interactiva del sistema hospitalario y farmacéutico.</p>
+                    <span class="text-lg font-extrabold tracking-tight text-white block leading-none">MEDISTOCK</span>
+                    <span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Business
+                        Intelligence</span>
                 </div>
             </div>
 
-            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit"
+            <div class="space-y-1.5 px-1">
+                <span
+                    class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-3 block mb-1">Navegación</span>
+                <a href="/manager/dashboard"
+                    class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-400 hover:text-white hover:bg-slate-800/60 font-medium text-xs transition-colors">
+                    <i class="ph ph-squares-four text-lg text-blue-400"></i>
+                    <span>Panel Ejecutivo</span>
+                </a>
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-amber-600 to-indigo-600 text-white font-bold text-xs shadow-lg shadow-amber-600/20 transition-all">
+                    <i class="ph ph-chart-bar text-lg"></i>
+                    <span>PANEL EJECUTIVO</span>
+                </a>
+            </div>
+
+            <div class="h-px bg-slate-800 my-2"></div>
+
+            <!-- Estado del Reporte y Motor de Optimización -->
+            <div
+                class="mx-1 p-4 rounded-2xl bg-gradient-to-br from-slate-950/90 to-slate-900/90 border border-slate-800 relative overflow-hidden shadow-inner">
+                <div
+                    class="absolute -right-6 -bottom-6 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none">
+                </div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                        <i class="ph ph-chart-line-up text-amber-400 text-base"></i> Estado del Reporte
+                    </span>
+                    <span
+                        th:class="${opt != null and opt.status == 'Optimal'} ? 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20'"
+                        th:text="${opt != null and opt.status == 'Optimal'} ? 'Óptimo' : 'Revisión'">Óptimo</span>
+                </div>
+                <div class="space-y-3">
+                    <div
+                        class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800/60">
+                        <span class="text-xs text-slate-400 font-semibold">Motor de Datos</span>
+                        <span class="text-white font-extrabold text-sm">Power BI + ILP</span>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                            <span>Sincronización OLAP</span>
+                            <span class="text-emerald-400 font-bold">100%</span>
+                        </div>
+                        <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                            <div class="h-full bg-emerald-500 rounded-full" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mx-1 grid grid-cols-2 gap-2">
+                <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                    <i class="ph ph-shield-check text-amber-400 text-lg mb-1"></i>
+                    <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Acceso</p>
+                    <p class="text-xs font-extrabold text-white">Seguro</p>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-center">
+                    <i class="ph ph-database text-emerald-400 text-lg mb-1"></i>
+                    <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Modelo</p>
+                    <p class="text-xs font-extrabold text-white">Star Schema</p>
+                </div>
+            </div>
+
+            <div class="mx-1 rounded-2xl overflow-hidden relative border border-slate-800/80 h-36 group shadow-lg">
+                <img src="/Imagenes/Umedicamentos.jpg" alt="Analítica Power BI Medistock"
+                    class="w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-700 filter brightness-75" />
+                <div
+                    class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex flex-col justify-end p-3">
+                    <p class="text-[10px] text-amber-400 font-bold uppercase tracking-wider mb-0.5">Business
+                        Intelligence</p>
+                    <p class="text-xs text-slate-200 font-semibold leading-tight">Métricas y analítica avanzada.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-800/80">
+            <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-slate-950/60 border border-slate-800">
+                <div
+                    class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 text-white flex items-center justify-center font-extrabold text-xs shadow-md">
+                    MG
+                </div>
+                <div class="overflow-hidden flex-1">
+                    <p class="text-xs font-bold text-white truncate">Manager Principal</p>
+                    <p class="text-[10px] text-emerald-400 font-semibold truncate flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sesión Segura
+                    </p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-1 min-h-screen flex flex-col p-4 md:p-10 z-10 overflow-y-auto">
+        <div class="w-full max-w-7xl mx-auto flex flex-col gap-8 animate-fade-in">
+
+            <!-- Cabecera Superior -->
+            <div
+                class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 glass-panel rounded-3xl p-6 md:p-8 border border-slate-800">
+                <div class="flex items-center gap-5">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/30 flex-shrink-0">
+                        <i class="ph ph-chart-bar text-3xl"></i>
+                    </div>
+                    <div>
+                        <div
+                            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
+                            <i class="ph ph-chart-line-up"></i> Analítica Service
+                        </div>
+                        <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Analítica</h1>
+                        <p class="text-slate-400 text-sm sm:text-base mt-1">Visualización interactiva del sistema
+                            hospitalario y farmacéutico.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit"
                             class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white font-bold transition-all duration-300 text-xs shadow-lg shadow-rose-900/20 group">
-                        <i class="ph ph-sign-out text-lg transition-transform group-hover:-translate-x-1"></i>
-                        <span>Cerrar Sesión</span>
-                    </button>
-                </form>
+                            <i class="ph ph-sign-out text-lg transition-transform group-hover:-translate-x-1"></i>
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <!-- Optimización Operativa de Recursos (modelo PLE - PuLP vía microservicio) -->
-        <div class="glass-panel rounded-3xl p-6 md:p-8 border border-slate-800 relative overflow-hidden" th:if="${opt != null}">
-            <div class="absolute -left-16 -bottom-16 w-56 h-56 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <!-- Optimización Operativa de Recursos (modelo PLE - PuLP vía microservicio) -->
+            <div class="glass-panel rounded-3xl p-6 md:p-8 border border-slate-800 relative overflow-hidden"
+                th:if="${opt != null}">
+                <div
+                    class="absolute -left-16 -bottom-16 w-56 h-56 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none">
+                </div>
 
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-6 relative">
-                <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-2">
-                        <i class="ph ph-function"></i> Modelo Matemático (PuLP / CBC)
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-6 relative">
+                    <div>
+                        <div
+                            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-2">
+                            <i class="ph ph-function"></i> Modelo Matemático (PuLP / CBC)
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-white tracking-tight">Optimización Operativa de Recursos
+                        </h2>
+                        <p class="text-slate-400 text-sm mt-1"
+                            th:text="|Datos actuales: ${opt.totalSolicitudes} solicitudes · ${opt.adminsDisponibles} admins disponibles · ${opt.capacidadPorAdmin} solicitudes por admin · Objetivo ${opt.objetivo}|">
+                            Datos actuales: 300 solicitudes · 4 admins disponibles · 100 solicitudes por admin ·
+                            Objetivo B</p>
                     </div>
-                    <h2 class="text-2xl font-extrabold text-white tracking-tight">Optimización Operativa de Recursos</h2>
-                    <p class="text-slate-400 text-sm mt-1"
-                       th:text="|Datos actuales: ${opt.totalSolicitudes} solicitudes · ${opt.adminsDisponibles} admins disponibles · ${opt.capacidadPorAdmin} solicitudes por admin · Objetivo ${opt.objetivo}|">
-                        Datos actuales: 300 solicitudes · 4 admins disponibles · 100 solicitudes por admin · Objetivo B</p>
-                </div>
-                <div class="flex flex-wrap items-center gap-2">
-                    <span th:if="${opt.fuente != null and !#strings.isEmpty(opt.fuente)}"
-                          class="text-[11px] font-bold px-3 py-1 rounded-full border bg-slate-900/90 text-slate-300 border-slate-700"
-                          th:text="${opt.fuente}">Base de Datos</span>
-                    <span class="text-[11px] font-extrabold px-3 py-1 rounded-full border uppercase tracking-wider"
-                          th:class="${opt.status == 'Optimal'} ? 'text-[11px] font-extrabold px-3 py-1 rounded-full border uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'text-[11px] font-extrabold px-3 py-1 rounded-full border uppercase tracking-wider bg-rose-500/10 text-rose-400 border-rose-500/20'"
-                          th:text="${opt.status}">Optimal</span>
-                </div>
-            </div>
-
-            <div th:if="${opt.status == 'Optimal'}" class="grid grid-cols-2 lg:grid-cols-4 gap-4 relative">
-                <div class="rounded-2xl p-5 bg-slate-950/60 border border-slate-800 text-center">
-                    <p class="text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-1">Solicitudes a Atender (X*)</p>
-                    <p class="text-3xl font-extrabold text-cyan-400" th:text="${opt.solicitudesAtendidas}">300</p>
-                </div>
-                <div class="rounded-2xl p-5 bg-slate-950/60 border border-slate-800 text-center">
-                    <p class="text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-1">Admins Asignados (Y*)</p>
-                    <p class="text-3xl font-extrabold text-emerald-400" th:text="${opt.adminsAsignados}">3</p>
-                </div>
-                <div class="rounded-2xl p-5 bg-slate-950/60 border border-slate-800 text-center">
-                    <p class="text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-1">Personal Liberado</p>
-                    <p class="text-3xl font-extrabold text-amber-400" th:text="${opt.adminsLiberados}">1</p>
-                </div>
-                <div class="rounded-2xl p-5 bg-slate-950/60 border border-slate-800 text-center">
-                    <p class="text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-1"
-                       th:text="${opt.objetivo == 'A'} ? 'Valor Objetivo Z (X)' : 'Rendimiento Neto (Z)'">Rendimiento Neto (Z)</p>
-                    <p class="text-3xl font-extrabold text-indigo-300" th:text="${#numbers.formatDecimal(opt.z, 1, 1)}">297.0</p>
-                    <p class="text-[11px] text-slate-500 mt-1"
-                       th:text="|Rendimiento neto (X − Y): ${#numbers.formatDecimal(opt.rendimientoNeto, 1, 1)}|">Rendimiento neto (X − Y): 297.0</p>
-                </div>
-            </div>
-
-            <div th:if="${opt.status == 'Optimal'}"
-                 class="mt-5 rounded-2xl p-4 bg-slate-950/50 border border-slate-800 text-sm text-slate-300 leading-relaxed relative">
-                <strong class="text-white">Conclusión ejecutiva:</strong>
-                <span th:text="${opt.recomendacion}">Asignar 3 de 4 administradores para cubrir 300 solicitudes.</span>
-                <span th:if="${opt.optimosAlternativos}"
-                      class="ml-1 inline-block text-xs font-semibold text-amber-300">(Existen soluciones óptimas alternativas).</span>
-            </div>
-
-            <div th:unless="${opt.status == 'Optimal'}"
-                 class="rounded-2xl p-4 bg-rose-500/10 border border-rose-500/30 text-sm text-rose-200 leading-relaxed relative">
-                <i class="ph ph-warning"></i>
-                <strong>No se pudo calcular la optimización.</strong>
-                <span th:text="${opt.recomendacion}"></span>
-            </div>
-
-            <div th:if="${opt.datosPorDefecto and opt.status == 'Optimal'}"
-                 class="mt-3 rounded-2xl p-3 bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200 font-semibold relative">
-                <i class="ph ph-warning"></i>
-                No hay solicitudes o administradores registrados: se usaron los valores de ejemplo del proyecto de aula (300 solicitudes, 4 admins).
-            </div>
-
-            <!-- Vértices iniciales devueltos por el servidor (si vienen poblados) -->
-            <div th:if="${opt.status == 'Optimal' and opt.vertices != null and !#lists.isEmpty(opt.vertices)}"
-                 class="mt-5 rounded-2xl border border-slate-800 bg-slate-950/40 p-4 relative overflow-x-auto">
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Vértices de la región factible</p>
-                <table class="w-full text-xs">
-                    <thead>
-                    <tr class="text-slate-400">
-                        <th class="text-left font-bold py-2 px-2 border-b border-slate-800">Vértice</th>
-                        <th class="text-right font-bold py-2 px-2 border-b border-slate-800">(X, Y)</th>
-                        <th class="text-right font-bold py-2 px-2 border-b border-slate-800">Z = X</th>
-                        <th class="text-right font-bold py-2 px-2 border-b border-slate-800">Z = X − Y</th>
-                        <th class="text-right font-bold py-2 px-2 border-b border-slate-800">Estado</th>
-                    </tr>
-                    </thead>
-                    <tbody class="text-slate-300 tabular-nums">
-                    <tr th:each="v : ${opt.vertices}"
-                        th:class="${v.optimo} ? 'bg-indigo-500/15 text-indigo-200 font-extrabold' : ''">
-                        <td class="text-left py-1.5 px-2 border-b border-slate-800/60" th:text="${v.etiqueta}">Vértice</td>
-                        <td class="text-right py-1.5 px-2 border-b border-slate-800/60"
-                            th:text="|(${#numbers.formatDecimal(v.x, 0, 'POINT', 2, 'POINT')}, ${#numbers.formatDecimal(v.y, 0, 'POINT', 2, 'POINT')})|">(0, 0)</td>
-                        <td class="text-right py-1.5 px-2 border-b border-slate-800/60"
-                            th:text="${#numbers.formatDecimal(v.zA, 1, 2)}">0.00</td>
-                        <td class="text-right py-1.5 px-2 border-b border-slate-800/60"
-                            th:text="${#numbers.formatDecimal(v.zB, 1, 2)}">0.00</td>
-                        <td class="text-right py-1.5 px-2 border-b border-slate-800/60">
-                            <span th:if="${v.optimo}">★ Óptimo</span>
-                            <span th:unless="${v.optimo}">Factible</span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Simulador del modelo: mismos parámetros, pero editables -->
-            <details id="simBox" class="group mt-6 rounded-2xl border border-slate-800 bg-slate-950/40 relative">
-                <summary class="list-none cursor-pointer select-none flex items-center justify-between gap-3 p-4 text-sm font-bold text-slate-200 hover:text-white [&::-webkit-details-marker]:hidden">
-                    <span class="flex items-center gap-2"><i class="ph ph-sliders-horizontal text-indigo-300"></i> Explorar el modelo (simulador)</span>
-                    <i class="ph ph-caret-down transition-transform group-open:rotate-180"></i>
-                </summary>
-
-                <div class="p-5 border-t border-slate-800 space-y-5">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div>
-                            <label for="simCap" class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1">Respuestas por admin</label>
-                            <input id="simCap" type="number" min="1" value="100" th:value="${opt.capacidadPorAdmin}"
-                                   class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-sm font-bold text-white outline-none focus:border-indigo-400">
-                        </div>
-                        <div>
-                            <label for="simSol" class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1">Máx. solicitudes</label>
-                            <input id="simSol" type="number" min="0" value="300" th:value="${opt.totalSolicitudes}"
-                                   class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-sm font-bold text-white outline-none focus:border-indigo-400">
-                        </div>
-                        <div>
-                            <label for="simAdm" class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1">Admins disponibles</label>
-                            <input id="simAdm" type="number" min="0" value="4" th:value="${opt.adminsDisponibles}"
-                                   class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-sm font-bold text-white outline-none focus:border-indigo-400">
-                        </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span th:if="${opt.fuente != null and !#strings.isEmpty(opt.fuente)}"
+                            class="text-[11px] font-bold px-3 py-1 rounded-full border bg-slate-900/90 text-slate-300 border-slate-700"
+                            th:text="${opt.fuente}">Base de Datos</span>
+                        <span class="text-[11px] font-extrabold px-3 py-1 rounded-full border uppercase tracking-wider"
+                            th:class="${opt.status == 'Optimal'} ? 'text-[11px] font-extrabold px-3 py-1 rounded-full border uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'text-[11px] font-extrabold px-3 py-1 rounded-full border uppercase tracking-wider bg-rose-500/10 text-rose-400 border-rose-500/20'"
+                            th:text="${opt.status}">Optimal</span>
                     </div>
+                </div>
 
-                    <div id="simSeg" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <button type="button" data-obj="A"
+                <div th:if="${opt.status == 'Optimal'}" class="grid grid-cols-2 lg:grid-cols-4 gap-4 relative">
+                    <div class="rounded-2xl p-5 bg-slate-950/60 border border-slate-800 text-center">
+                        <p class="text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-1">Solicitudes a
+                            Atender (X*)</p>
+                        <p class="text-3xl font-extrabold text-cyan-400" th:text="${opt.solicitudesAtendidas}">300</p>
+                    </div>
+                    <div class="rounded-2xl p-5 bg-slate-950/60 border border-slate-800 text-center">
+                        <p class="text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-1">Admins Asignados
+                            (Y*)</p>
+                        <p class="text-3xl font-extrabold text-emerald-400" th:text="${opt.adminsAsignados}">3</p>
+                    </div>
+                    <div class="rounded-2xl p-5 bg-slate-950/60 border border-slate-800 text-center">
+                        <p class="text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-1">Personal Liberado
+                        </p>
+                        <p class="text-3xl font-extrabold text-amber-400" th:text="${opt.adminsLiberados}">1</p>
+                    </div>
+                    <div class="rounded-2xl p-5 bg-slate-950/60 border border-slate-800 text-center">
+                        <p class="text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-1"
+                            th:text="${opt.objetivo == 'A'} ? 'Valor Objetivo Z (X)' : 'Rendimiento Neto (Z)'">
+                            Rendimiento Neto (Z)</p>
+                        <p class="text-3xl font-extrabold text-indigo-300"
+                            th:text="${#numbers.formatDecimal(opt.z, 1, 1)}">297.0</p>
+                        <p class="text-[11px] text-slate-500 mt-1"
+                            th:text="|Rendimiento neto (X − Y): ${#numbers.formatDecimal(opt.rendimientoNeto, 1, 1)}|">
+                            Rendimiento neto (X − Y): 297.0</p>
+                    </div>
+                </div>
+
+                <div th:if="${opt.status == 'Optimal'}"
+                    class="mt-5 rounded-2xl p-4 bg-slate-950/50 border border-slate-800 text-sm text-slate-300 leading-relaxed relative">
+                    <strong class="text-white">Conclusión ejecutiva:</strong>
+                    <span th:text="${opt.recomendacion}">Asignar 3 de 4 administradores para cubrir 300
+                        solicitudes.</span>
+                    <span th:if="${opt.optimosAlternativos}"
+                        class="ml-1 inline-block text-xs font-semibold text-amber-300">(Existen soluciones óptimas
+                        alternativas).</span>
+                </div>
+
+                <div th:unless="${opt.status == 'Optimal'}"
+                    class="rounded-2xl p-4 bg-rose-500/10 border border-rose-500/30 text-sm text-rose-200 leading-relaxed relative">
+                    <i class="ph ph-warning"></i>
+                    <strong>No se pudo calcular la optimización.</strong>
+                    <span th:text="${opt.recomendacion}"></span>
+                </div>
+
+                <div th:if="${opt.datosPorDefecto and opt.status == 'Optimal'}"
+                    class="mt-3 rounded-2xl p-3 bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200 font-semibold relative">
+                    <i class="ph ph-warning"></i>
+                    No hay solicitudes o administradores registrados: se usaron los valores de ejemplo del proyecto de
+                    aula (300 solicitudes, 4 admins).
+                </div>
+
+                <!-- Vértices iniciales devueltos por el servidor (si vienen poblados) -->
+                <div th:if="${opt.status == 'Optimal' and opt.vertices != null and !#lists.isEmpty(opt.vertices)}"
+                    class="mt-5 rounded-2xl border border-slate-800 bg-slate-950/40 p-4 relative overflow-x-auto">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Vértices de la región
+                        factible</p>
+                    <table class="w-full text-xs">
+                        <thead>
+                            <tr class="text-slate-400">
+                                <th class="text-left font-bold py-2 px-2 border-b border-slate-800">Vértice</th>
+                                <th class="text-right font-bold py-2 px-2 border-b border-slate-800">(X, Y)</th>
+                                <th class="text-right font-bold py-2 px-2 border-b border-slate-800">Z = X</th>
+                                <th class="text-right font-bold py-2 px-2 border-b border-slate-800">Z = X − Y</th>
+                                <th class="text-right font-bold py-2 px-2 border-b border-slate-800">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-300 tabular-nums">
+                            <tr th:each="v : ${opt.vertices}"
+                                th:class="${v.optimo} ? 'bg-indigo-500/15 text-indigo-200 font-extrabold' : ''">
+                                <td class="text-left py-1.5 px-2 border-b border-slate-800/60" th:text="${v.etiqueta}">
+                                    Vértice</td>
+                                <td class="text-right py-1.5 px-2 border-b border-slate-800/60"
+                                    th:text="|(${#numbers.formatDecimal(v.x, 0, 'POINT', 2, 'POINT')}, ${#numbers.formatDecimal(v.y, 0, 'POINT', 2, 'POINT')})|">
+                                    (0, 0)</td>
+                                <td class="text-right py-1.5 px-2 border-b border-slate-800/60"
+                                    th:text="${#numbers.formatDecimal(v.zA, 1, 2)}">0.00</td>
+                                <td class="text-right py-1.5 px-2 border-b border-slate-800/60"
+                                    th:text="${#numbers.formatDecimal(v.zB, 1, 2)}">0.00</td>
+                                <td class="text-right py-1.5 px-2 border-b border-slate-800/60">
+                                    <span th:if="${v.optimo}">★ Óptimo</span>
+                                    <span th:unless="${v.optimo}">Factible</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Simulador del modelo: mismos parámetros, pero editables -->
+                <details id="simBox" class="group mt-6 rounded-2xl border border-slate-800 bg-slate-950/40 relative">
+                    <summary
+                        class="list-none cursor-pointer select-none flex items-center justify-between gap-3 p-4 text-sm font-bold text-slate-200 hover:text-white [&::-webkit-details-marker]:hidden">
+                        <span class="flex items-center gap-2"><i class="ph ph-sliders-horizontal text-indigo-300"></i>
+                            Explorar el modelo (simulador)</span>
+                        <i class="ph ph-caret-down transition-transform group-open:rotate-180"></i>
+                    </summary>
+
+                    <div class="p-5 border-t border-slate-800 space-y-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label for="simCap"
+                                    class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1">Respuestas
+                                    por admin</label>
+                                <input id="simCap" type="number" min="1" value="100" th:value="${opt.capacidadPorAdmin}"
+                                    class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-sm font-bold text-white outline-none focus:border-indigo-400">
+                            </div>
+                            <div>
+                                <label for="simSol"
+                                    class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1">Máx.
+                                    solicitudes</label>
+                                <input id="simSol" type="number" min="0" value="300" th:value="${opt.totalSolicitudes}"
+                                    class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-sm font-bold text-white outline-none focus:border-indigo-400">
+                            </div>
+                            <div>
+                                <label for="simAdm"
+                                    class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1">Admins
+                                    disponibles</label>
+                                <input id="simAdm" type="number" min="0" value="4" th:value="${opt.adminsDisponibles}"
+                                    class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-sm font-bold text-white outline-none focus:border-indigo-400">
+                            </div>
+                        </div>
+
+                        <div id="simSeg" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button type="button" data-obj="A"
                                 th:class="${opt.objetivo == 'A'} ? 'text-left rounded-xl border px-4 py-3 text-xs font-bold leading-snug border-indigo-400 bg-indigo-500/15 text-white' : 'text-left rounded-xl border px-4 py-3 text-xs font-bold leading-snug border-slate-700 bg-slate-900 text-slate-400'">
-                            A · Maximizar volumen<br><span class="font-medium opacity-80">Z = X</span>
-                        </button>
-                        <button type="button" data-obj="B"
+                                A · Maximizar volumen<br><span class="font-medium opacity-80">Z = X</span>
+                            </button>
+                            <button type="button" data-obj="B"
                                 th:class="${opt.objetivo != 'A'} ? 'text-left rounded-xl border px-4 py-3 text-xs font-bold leading-snug border-indigo-400 bg-indigo-500/15 text-white' : 'text-left rounded-xl border px-4 py-3 text-xs font-bold leading-snug border-slate-700 bg-slate-900 text-slate-400'">
-                            B · Maximizar rendimiento neto<br><span class="font-medium opacity-80">Z = X − Y</span>
-                        </button>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <button type="button" id="simRun" class="flex-1 rounded-xl px-4 py-3 text-sm font-extrabold text-white bg-gradient-to-r from-violet-600 to-blue-600 hover:opacity-90 disabled:opacity-60 disabled:cursor-wait transition">
-                            Resolver modelo
-                        </button>
-                        <button type="button" id="simReset" class="flex-1 rounded-xl px-4 py-3 text-sm font-bold text-slate-300 bg-slate-900 border border-slate-700 hover:bg-slate-800 transition">
-                            Restablecer datos reales
-                        </button>
-                    </div>
-
-                    <div id="simErr" class="hidden rounded-xl px-4 py-3 text-sm font-semibold bg-rose-500/10 border border-rose-500/30 text-rose-300"></div>
-
-                    <div id="simOut" class="hidden space-y-5">
-                        <div class="rounded-2xl p-4 bg-indigo-500/10 border border-indigo-500/30">
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                                <div><p id="simKAdm" class="text-2xl font-extrabold text-white">–</p><p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Admins</p></div>
-                                <div><p id="simKAte" class="text-2xl font-extrabold text-white">–</p><p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Solicitudes</p></div>
-                                <div><p id="simKZ" class="text-2xl font-extrabold text-white">–</p><p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Z óptimo</p></div>
-                                <div><p id="simKLib" class="text-2xl font-extrabold text-white">–</p><p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Libres</p></div>
-                            </div>
-                            <p id="simTxt" class="mt-3 text-sm text-slate-300 leading-relaxed"></p>
+                                B · Maximizar rendimiento neto<br><span class="font-medium opacity-80">Z = X − Y</span>
+                            </button>
                         </div>
 
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
-                            <svg id="simSvg" viewBox="0 0 340 200" role="img" aria-label="Región factible"
-                                 class="w-full h-auto rounded-2xl bg-slate-950 border border-slate-800"></svg>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-xs">
-                                    <thead>
-                                    <tr class="text-slate-400">
-                                        <th class="text-left font-bold py-2 px-2 border-b border-slate-800">Vértice</th>
-                                        <th class="text-right font-bold py-2 px-2 border-b border-slate-800">(X, Y)</th>
-                                        <th class="text-right font-bold py-2 px-2 border-b border-slate-800">Z = X</th>
-                                        <th class="text-right font-bold py-2 px-2 border-b border-slate-800">Z = X − Y</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody id="simRows" class="text-slate-300 tabular-nums"></tbody>
-                                </table>
-                                <p class="mt-3 text-[11px] text-slate-500 leading-snug">
-                                    Restricciones: X ≤ capacidad × Y · X ≤ solicitudes · Y ≤ admins · X, Y ≥ 0.
-                                    El vértice marcado con ★ es el óptimo del modelo continuo; los admins se redondean hacia arriba.
-                                </p>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button type="button" id="simRun"
+                                class="flex-1 rounded-xl px-4 py-3 text-sm font-extrabold text-white bg-gradient-to-r from-violet-600 to-blue-600 hover:opacity-90 disabled:opacity-60 disabled:cursor-wait transition">
+                                Resolver modelo
+                            </button>
+                            <button type="button" id="simReset"
+                                class="flex-1 rounded-xl px-4 py-3 text-sm font-bold text-slate-300 bg-slate-900 border border-slate-700 hover:bg-slate-800 transition">
+                                Restablecer datos reales
+                            </button>
+                        </div>
+
+                        <div id="simErr"
+                            class="hidden rounded-xl px-4 py-3 text-sm font-semibold bg-rose-500/10 border border-rose-500/30 text-rose-300">
+                        </div>
+
+                        <div id="simOut" class="hidden space-y-5">
+                            <div class="rounded-2xl p-4 bg-indigo-500/10 border border-indigo-500/30">
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                                    <div>
+                                        <p id="simKAdm" class="text-2xl font-extrabold text-white">–</p>
+                                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Admins
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p id="simKAte" class="text-2xl font-extrabold text-white">–</p>
+                                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                            Solicitudes</p>
+                                    </div>
+                                    <div>
+                                        <p id="simKZ" class="text-2xl font-extrabold text-white">–</p>
+                                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Z
+                                            óptimo</p>
+                                    </div>
+                                    <div>
+                                        <p id="simKLib" class="text-2xl font-extrabold text-white">–</p>
+                                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Libres
+                                        </p>
+                                    </div>
+                                </div>
+                                <p id="simTxt" class="mt-3 text-sm text-slate-300 leading-relaxed"></p>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+                                <svg id="simSvg" viewBox="0 0 340 200" role="img" aria-label="Región factible"
+                                    class="w-full h-auto rounded-2xl bg-slate-950 border border-slate-800"></svg>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-xs">
+                                        <thead>
+                                            <tr class="text-slate-400">
+                                                <th class="text-left font-bold py-2 px-2 border-b border-slate-800">
+                                                    Vértice</th>
+                                                <th class="text-right font-bold py-2 px-2 border-b border-slate-800">(X,
+                                                    Y)</th>
+                                                <th class="text-right font-bold py-2 px-2 border-b border-slate-800">Z =
+                                                    X</th>
+                                                <th class="text-right font-bold py-2 px-2 border-b border-slate-800">Z =
+                                                    X − Y</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="simRows" class="text-slate-300 tabular-nums"></tbody>
+                                    </table>
+                                    <p class="mt-3 text-[11px] text-slate-500 leading-snug">
+                                        Restricciones: X ≤ capacidad × Y · X ≤ solicitudes · Y ≤ admins · X, Y ≥ 0.
+                                        El vértice marcado con ★ es el óptimo del modelo continuo; los admins se
+                                        redondean hacia arriba.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </details>
-        </div>
-
-        <!-- Contenedor del Reporte Power BI -->
-        <div class="glass-panel rounded-3xl p-4 md:p-6 border border-slate-800 relative overflow-hidden">
-            <div class="absolute -right-20 -top-20 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="rounded-2xl border border-slate-800 overflow-hidden bg-slate-950/80 shadow-2xl relative">
-                <iframe title="Pa-Final"
-                        src="https://app.powerbi.com/view?r=eyJrIjoiZGZkNDEzNjItYmI4ZS00MjdkLThjZWQtZDMwZTRkNGM3YmU3IiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9"
-                        class="w-full h-[600px] md:h-[750px] border-0" allowfullscreen="true">
-                </iframe>
+                </details>
             </div>
+
+            <!-- Contenedor del Reporte Power BI -->
+            <div class="glass-panel rounded-3xl p-4 md:p-6 border border-slate-800 relative overflow-hidden">
+                <div
+                    class="absolute -right-20 -top-20 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none">
+                </div>
+                <div class="rounded-2xl border border-slate-800 overflow-hidden bg-slate-950/80 shadow-2xl relative">
+                    <iframe title="Dashboard Medistock" width="1230" height="800"
+                        src="https://app.powerbi.com/view?r=eyJrIjoiZGUyMWIzNmQtZjUyNS00M2NiLWFkNzAtNDEyMDk4ZTFmYmE2IiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9"
+                        frameborder="0" allowFullScreen="true">
+                    </iframe>
+                </div>
+            </div>
+
         </div>
+    </main>
 
-    </div>
-</main>
+    <!-- Fragmento del Analista MediStock -->
+    <div th:replace="~{fragments/chatbot-manager :: chatbotManager}"></div>
 
-<!-- Fragmento del Analista MediStock -->
-<div th:replace="~{fragments/chatbot-manager :: chatbotManager}"></div>
-
-<script>
-    window.addEventListener("load", () => {
-        window.scrollTo(0, 0);
-        const mainContainer = document.querySelector("main");
-        if (mainContainer) {
-            mainContainer.scrollTop = 0;
-        }
-    });
-</script>
-
-<script id="simScript" th:inline="javascript">
-    (function () {
-        var $ = function (id) { return document.getElementById(id); };
-        var objetivo = /*[[${opt != null && opt.objetivo != null ? opt.objetivo : 'B'}]]*/ 'B';
-        var cargado = false;
-        var ultimaConsulta = 0;
-        var reales = {
-            cap: $('simCap') ? $('simCap').value : '100',
-            sol: $('simSol') ? $('simSol').value : '300',
-            adm: $('simAdm') ? $('simAdm').value : '4'
-        };
-        var ACTIVO = ['border-indigo-400', 'bg-indigo-500/15', 'text-white'];
-        var INACTIVO = ['border-slate-700', 'bg-slate-900', 'text-slate-400'];
-
-        function fmt(n) { return Number.isInteger(n) ? String(n) : Number(n).toFixed(2); }
-
-        function mostrarError(msg) {
-            var e = $('simErr');
-            e.textContent = msg;
-            e.classList.toggle('hidden', !msg);
-        }
-
-        $('simBox').addEventListener('toggle', function () {
-            if (this.open && !cargado) { resolver(); }
+    <script>
+        window.addEventListener("load", () => {
+            window.scrollTo(0, 0);
+            const mainContainer = document.querySelector("main");
+            if (mainContainer) {
+                mainContainer.scrollTop = 0;
+            }
         });
+    </script>
 
-        $('simSeg').addEventListener('click', function (e) {
-            var b = e.target.closest('button[data-obj]');
-            if (!b) { return; }
-            objetivo = b.dataset.obj;
-            this.querySelectorAll('button').forEach(function (x) {
-                var activo = x === b;
-                ACTIVO.forEach(function (c) { x.classList.toggle(c, activo); });
-                INACTIVO.forEach(function (c) { x.classList.toggle(c, !activo); });
-            });
-            resolver();
-        });
+    <script id="simScript" th:inline="javascript">
+        (function () {
+            var $ = function (id) { return document.getElementById(id); };
+            var objetivo = /*[[${opt != null && opt.objetivo != null ? opt.objetivo : 'B'}]]*/ 'B';
+            var cargado = false;
+            var ultimaConsulta = 0;
+            var reales = {
+                cap: $('simCap') ? $('simCap').value : '100',
+                sol: $('simSol') ? $('simSol').value : '300',
+                adm: $('simAdm') ? $('simAdm').value : '4'
+            };
+            var ACTIVO = ['border-indigo-400', 'bg-indigo-500/15', 'text-white'];
+            var INACTIVO = ['border-slate-700', 'bg-slate-900', 'text-slate-400'];
 
-        $('simRun').addEventListener('click', resolver);
-        ['simCap', 'simSol', 'simAdm'].forEach(function (id) {
-            $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') { resolver(); } });
-        });
-        $('simReset').addEventListener('click', function () {
-            $('simCap').value = reales.cap;
-            $('simSol').value = reales.sol;
-            $('simAdm').value = reales.adm;
-            resolver();
-        });
+            function fmt(n) { return Number.isInteger(n) ? String(n) : Number(n).toFixed(2); }
 
-        function resolver() {
-            var mia = ++ultimaConsulta;
-            var q = new URLSearchParams({
-                capacidadPorAdmin: $('simCap').value || 0,
-                maxSolicitudes: $('simSol').value || 0,
-                maxAdmins: $('simAdm').value || 0,
-                objetivo: objetivo
-            });
-            $('simRun').disabled = true;
-            fetch('/manager/optimizacion/resolver?' + q.toString(), { headers: { 'Accept': 'application/json' } })
-                .then(function (r) {
-                    return r.json().then(function (j) { return { ok: r.ok, body: j }; });
-                })
-                .then(function (res) {
-                    if (mia !== ultimaConsulta) { return; }
-                    if (!res.ok) { throw new Error(res.body.error || 'No se pudo resolver el modelo.'); }
-                    mostrarError('');
-                    pintar(res.body);
-                })
-                .catch(function (err) {
-                    if (mia === ultimaConsulta) { mostrarError(err.message || 'No se pudo resolver el modelo.'); }
-                })
-                .then(function () { if (mia === ultimaConsulta) { $('simRun').disabled = false; } });
-        }
-
-        function pintar(r) {
-            cargado = true;
-            $('simOut').classList.remove('hidden');
-            $('simKAdm').textContent = r.adminsAsignados;
-            $('simKAte').textContent = r.solicitudesAtendidas;
-            $('simKZ').textContent = fmt(r.z);
-            $('simKLib').textContent = r.adminsLiberados;
-            $('simTxt').textContent = r.recomendacion + (r.optimosAlternativos ? ' (Existen soluciones óptimas alternativas).' : '');
-
-            var rows = $('simRows');
-            rows.innerHTML = '';
-            (r.vertices || []).forEach(function (v) {
-                var tr = document.createElement('tr');
-                tr.className = v.optimo ? 'bg-indigo-500/15 text-indigo-200 font-extrabold' : '';
-                [v.etiqueta + (v.optimo ? ' ★' : ''), '(' + fmt(v.x) + ', ' + fmt(v.y) + ')', fmt(v.zA), fmt(v.zB)]
-                    .forEach(function (t, i) {
-                        var td = document.createElement('td');
-                        td.className = (i === 0 ? 'text-left' : 'text-right') + ' py-1.5 px-2 border-b border-slate-800/60';
-                        td.textContent = t;
-                        tr.appendChild(td);
-                    });
-                rows.appendChild(tr);
-            });
-            dibujar(r);
-        }
-
-        function dibujar(r) {
-            var NS = 'http://www.w3.org/2000/svg';
-            var svg = $('simSvg');
-            svg.innerHTML = '';
-            var W = 340, H = 200, L = 38, R = 14, T = 12, B = 28;
-            var verts = r.vertices || [];
-            var xs = verts.map(function (v) { return v.x; });
-            var xmax = Math.max.apply(null, xs.concat([r.totalSolicitudes || 0, 1])) * 1.08;
-            var ymax = Math.max(r.adminsDisponibles || 0, 1) * 1.15;
-            var px = function (x) { return L + (x / xmax) * (W - L - R); };
-            var py = function (y) { return H - B - (y / ymax) * (H - T - B); };
-
-            function el(tag, attrs, text) {
-                var e = document.createElementNS(NS, tag);
-                Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); });
-                if (text !== undefined) { e.textContent = text; }
-                svg.appendChild(e);
-                return e;
+            function mostrarError(msg) {
+                var e = $('simErr');
+                e.textContent = msg;
+                e.classList.toggle('hidden', !msg);
             }
 
-            el('line', { x1: L, y1: H - B, x2: W - R, y2: H - B, stroke: '#475569' });
-            el('line', { x1: L, y1: T, x2: L, y2: H - B, stroke: '#475569' });
-            el('text', { x: W - R, y: H - 8, fill: '#94a3b8', 'font-size': 9, 'text-anchor': 'end' }, 'X · solicitudes');
-            el('text', { x: 4, y: 10, fill: '#94a3b8', 'font-size': 9 }, 'Y · admins');
+            $('simBox').addEventListener('toggle', function () {
+                if (this.open && !cargado) { resolver(); }
+            });
 
-            if (verts.length > 0) {
-                var pts = verts.map(function (v) { return px(v.x) + ',' + py(v.y); }).join(' ');
-                el('polygon', { points: pts, fill: 'rgba(99,102,241,.22)', stroke: '#818cf8', 'stroke-width': 1.5 });
+            $('simSeg').addEventListener('click', function (e) {
+                var b = e.target.closest('button[data-obj]');
+                if (!b) { return; }
+                objetivo = b.dataset.obj;
+                this.querySelectorAll('button').forEach(function (x) {
+                    var activo = x === b;
+                    ACTIVO.forEach(function (c) { x.classList.toggle(c, activo); });
+                    INACTIVO.forEach(function (c) { x.classList.toggle(c, !activo); });
+                });
+                resolver();
+            });
+
+            $('simRun').addEventListener('click', resolver);
+            ['simCap', 'simSol', 'simAdm'].forEach(function (id) {
+                $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') { resolver(); } });
+            });
+            $('simReset').addEventListener('click', function () {
+                $('simCap').value = reales.cap;
+                $('simSol').value = reales.sol;
+                $('simAdm').value = reales.adm;
+                resolver();
+            });
+
+            function resolver() {
+                var mia = ++ultimaConsulta;
+                var q = new URLSearchParams({
+                    capacidadPorAdmin: $('simCap').value || 0,
+                    maxSolicitudes: $('simSol').value || 0,
+                    maxAdmins: $('simAdm').value || 0,
+                    objetivo: objetivo
+                });
+                $('simRun').disabled = true;
+                fetch('/manager/optimizacion/resolver?' + q.toString(), { headers: { 'Accept': 'application/json' } })
+                    .then(function (r) {
+                        return r.json().then(function (j) { return { ok: r.ok, body: j }; });
+                    })
+                    .then(function (res) {
+                        if (mia !== ultimaConsulta) { return; }
+                        if (!res.ok) { throw new Error(res.body.error || 'No se pudo resolver el modelo.'); }
+                        mostrarError('');
+                        pintar(res.body);
+                    })
+                    .catch(function (err) {
+                        if (mia === ultimaConsulta) { mostrarError(err.message || 'No se pudo resolver el modelo.'); }
+                    })
+                    .then(function () { if (mia === ultimaConsulta) { $('simRun').disabled = false; } });
             }
 
-            var cap = r.capacidadPorAdmin || 100;
-            var yEnd = Math.min(r.adminsDisponibles || 0, (r.totalSolicitudes || 0) / cap);
-            el('line', { x1: px(0), y1: py(0), x2: px(cap * yEnd), y2: py(yEnd), stroke: '#f59e0b', 'stroke-dasharray': '4 3' });
+            function pintar(r) {
+                cargado = true;
+                $('simOut').classList.remove('hidden');
+                $('simKAdm').textContent = r.adminsAsignados;
+                $('simKAte').textContent = r.solicitudesAtendidas;
+                $('simKZ').textContent = fmt(r.z);
+                $('simKLib').textContent = r.adminsLiberados;
+                $('simTxt').textContent = r.recomendacion + (r.optimosAlternativos ? ' (Existen soluciones óptimas alternativas).' : '');
 
-            verts.forEach(function (v) {
-                var cx = px(v.x), cy = py(v.y);
-                el('circle', { cx: cx, cy: cy, r: v.optimo ? 5.5 : 3.5, fill: v.optimo ? '#34d399' : '#c7d2fe' });
-                var anchor = cx > W - 60 ? 'end' : 'start';
-                var dx = anchor === 'end' ? -8 : 8;
-                el('text', { x: cx + dx, y: cy + (cy < 30 ? 14 : -7), fill: v.optimo ? '#6ee7b7' : '#cbd5e1',
-                    'font-size': 9.5, 'font-weight': v.optimo ? 700 : 500, 'text-anchor': anchor },
-                    v.etiqueta + ' (' + fmt(v.x) + ', ' + fmt(v.y) + ')');
-            });
-        }
-    })();
-</script>
+                var rows = $('simRows');
+                rows.innerHTML = '';
+                (r.vertices || []).forEach(function (v) {
+                    var tr = document.createElement('tr');
+                    tr.className = v.optimo ? 'bg-indigo-500/15 text-indigo-200 font-extrabold' : '';
+                    [v.etiqueta + (v.optimo ? ' ★' : ''), '(' + fmt(v.x) + ', ' + fmt(v.y) + ')', fmt(v.zA), fmt(v.zB)]
+                        .forEach(function (t, i) {
+                            var td = document.createElement('td');
+                            td.className = (i === 0 ? 'text-left' : 'text-right') + ' py-1.5 px-2 border-b border-slate-800/60';
+                            td.textContent = t;
+                            tr.appendChild(td);
+                        });
+                    rows.appendChild(tr);
+                });
+                dibujar(r);
+            }
+
+            function dibujar(r) {
+                var NS = 'http://www.w3.org/2000/svg';
+                var svg = $('simSvg');
+                svg.innerHTML = '';
+                var W = 340, H = 200, L = 38, R = 14, T = 12, B = 28;
+                var verts = r.vertices || [];
+                var xs = verts.map(function (v) { return v.x; });
+                var xmax = Math.max.apply(null, xs.concat([r.totalSolicitudes || 0, 1])) * 1.08;
+                var ymax = Math.max(r.adminsDisponibles || 0, 1) * 1.15;
+                var px = function (x) { return L + (x / xmax) * (W - L - R); };
+                var py = function (y) { return H - B - (y / ymax) * (H - T - B); };
+
+                function el(tag, attrs, text) {
+                    var e = document.createElementNS(NS, tag);
+                    Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+                    if (text !== undefined) { e.textContent = text; }
+                    svg.appendChild(e);
+                    return e;
+                }
+
+                el('line', { x1: L, y1: H - B, x2: W - R, y2: H - B, stroke: '#475569' });
+                el('line', { x1: L, y1: T, x2: L, y2: H - B, stroke: '#475569' });
+                el('text', { x: W - R, y: H - 8, fill: '#94a3b8', 'font-size': 9, 'text-anchor': 'end' }, 'X · solicitudes');
+                el('text', { x: 4, y: 10, fill: '#94a3b8', 'font-size': 9 }, 'Y · admins');
+
+                if (verts.length > 0) {
+                    var pts = verts.map(function (v) { return px(v.x) + ',' + py(v.y); }).join(' ');
+                    el('polygon', { points: pts, fill: 'rgba(99,102,241,.22)', stroke: '#818cf8', 'stroke-width': 1.5 });
+                }
+
+                var cap = r.capacidadPorAdmin || 100;
+                var yEnd = Math.min(r.adminsDisponibles || 0, (r.totalSolicitudes || 0) / cap);
+                el('line', { x1: px(0), y1: py(0), x2: px(cap * yEnd), y2: py(yEnd), stroke: '#f59e0b', 'stroke-dasharray': '4 3' });
+
+                verts.forEach(function (v) {
+                    var cx = px(v.x), cy = py(v.y);
+                    el('circle', { cx: cx, cy: cy, r: v.optimo ? 5.5 : 3.5, fill: v.optimo ? '#34d399' : '#c7d2fe' });
+                    var anchor = cx > W - 60 ? 'end' : 'start';
+                    var dx = anchor === 'end' ? -8 : 8;
+                    el('text', {
+                        x: cx + dx, y: cy + (cy < 30 ? 14 : -7), fill: v.optimo ? '#6ee7b7' : '#cbd5e1',
+                        'font-size': 9.5, 'font-weight': v.optimo ? 700 : 500, 'text-anchor': anchor
+                    },
+                        v.etiqueta + ' (' + fmt(v.x) + ', ' + fmt(v.y) + ')');
+                });
+            }
+        })();
+    </script>
 
 </body>
+
 </html>
