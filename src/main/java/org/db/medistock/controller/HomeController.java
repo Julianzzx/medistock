@@ -81,9 +81,11 @@ public class HomeController {
                         return "admin/dashboard-sura";
                     }
                 }
+            } else {
+                return "redirect:/login?error=AdminNoEncontrado";
             }
         }
-        return "admin/dashboard";
+        return "redirect:/login?error=EPSNoAsignada";
     }
 
     // Dashboard Manager

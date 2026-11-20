@@ -68,6 +68,7 @@
             <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
                 Se ha presentado un error inesperado en la ejecución del proceso. Por favor, inténtalo de nuevo más tarde.
             </p>
+            <p th:if="${errorType}" class="text-xs text-slate-500" th:text="'Tipo de excepción: ' + ${errorType}"></p>
         </div>
 
         <!-- Imagen Contextual Opcional -->

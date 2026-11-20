@@ -212,7 +212,7 @@
                 <h3 class="text-white font-extrabold text-xl" th:text="${admin.id != null ? 'Actualizar Información de Administrador' : 'Formulario de Nuevo Administrador'}">Formulario</h3>
             </div>
 
-            <form th:action="@{${admin.id != null} ? '/manager/admins/editar/' + ${admin.id} : '/manager/admins/crear'}"
+            <form th:action="${admin.id != null} ? @{/manager/admins/editar/{id}(id=${admin.id})} : @{/manager/admins/crear}"
                   th:object="${admin}" method="post"
                   class="space-y-8">
 
@@ -253,15 +253,18 @@
                         <i class="ph ph-buildings text-2xl text-indigo-400"></i>
                         <h4 class="text-lg font-bold text-white">Asignación de Red EPS</h4>
                     </div>
-
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div class="flex flex-col gap-2">
                             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">EPS Asignada</label>
                             <div class="relative">
-                                <select id="epsSelect" th:field="*{eps.id}" required
+                                <select id="epsSelect" name="epsId" required
                                         class="w-full input-field px-4 pr-10 py-3 rounded-xl text-sm appearance-none cursor-pointer">
-                                    <option value="" disabled class="bg-slate-900 text-slate-400">-- Seleccione una EPS --</option>
-                                    <option th:each="e : ${epsList}" th:value="${e.id}" th:text="${e.nombre}" class="bg-slate-900 text-white"></option>
+                                    <option value="" disabled th:selected="${admin.eps == null}" class="bg-slate-900 text-slate-400">-- Seleccione una EPS --</option>
+                                    <option th:each="e : ${epsList}"
+                                            th:value="${e.id}"
+                                            th:text="${e.nombre}"
+                                            th:selected="${admin.eps != null && admin.eps.id == e.id}"
+                                            class="bg-slate-900 text-white"></option>
                                 </select>
                                 <i class="ph ph-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"></i>
                             </div>

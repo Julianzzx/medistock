@@ -2,6 +2,8 @@ package org.db.medistock.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 
 @NoArgsConstructor
@@ -24,6 +26,7 @@ public class Admin {
 
     @ManyToOne
     @JoinColumn(name = "eps_id", nullable = false)
+    @NotFound(action = NotFoundAction.IGNORE)
     private Eps eps;
 
 }
