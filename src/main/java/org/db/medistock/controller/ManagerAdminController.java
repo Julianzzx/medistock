@@ -1,6 +1,7 @@
 package org.db.medistock.controller;
 
 import org.db.medistock.model.Admin;
+import org.db.medistock.service.OptimizacionOperativaService;
 import org.db.medistock.repository.AdminRepository;
 import org.db.medistock.repository.EpsRepository;
 import org.springframework.data.domain.Page;
@@ -18,13 +19,16 @@ public class ManagerAdminController {
     private final AdminRepository adminRepo;
     private final EpsRepository epsRepo;
     private final PasswordEncoder passwordEncoder;
+    private final OptimizacionOperativaService optimizacionOperativaService;
 
     public ManagerAdminController(AdminRepository adminRepo,
                                   EpsRepository epsRepo,
-                                  PasswordEncoder passwordEncoder) {
+                                  PasswordEncoder passwordEncoder,
+                                  OptimizacionOperativaService optimizacionOperativaService) {
         this.adminRepo = adminRepo;
         this.epsRepo = epsRepo;
         this.passwordEncoder = passwordEncoder;
+        this.optimizacionOperativaService = optimizacionOperativaService;
     }
 
     @GetMapping("/admins")
@@ -145,7 +149,8 @@ public class ManagerAdminController {
     }
 
     @GetMapping("/powerbi")
-    public String mostrarPowerBi() {
+    public String mostrarPowerBi(Model model) {
+        model.addAttribute("opt", optimizacionOperativaService.calcularOptimoOperativo());
         return "manager/powerbi";
     }
 }

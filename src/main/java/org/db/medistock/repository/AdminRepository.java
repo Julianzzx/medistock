@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface AdminRepository extends JpaRepository<Admin, Long> {
 
     Admin findByUsuario(String usuario);
-    Page<Admin> findByNombreContainingIgnoreCaseOrApellidoContainingIgnoreCaseOrUsuarioContainingIgnoreCase(String nombre, String apellido, String usuario, Pageable pageable);
+
+    Page<Admin> findByNombreContainingIgnoreCaseOrApellidoContainingIgnoreCaseOrUsuarioContainingIgnoreCase(
+            String nombre, String apellido, String usuario, Pageable pageable);
 
 }

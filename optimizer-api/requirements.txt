@@ -1,0 +1,4 @@
+fastapi>=0.110
+uvicorn>=0.29
+# PuLP 4.x eliminó el solver CBC integrado (PULP_CBC_CMD); 2.9.x lo incluye.
+pulp>=2.8,<3

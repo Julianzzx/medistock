@@ -9,8 +9,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FarmaciaRepository extends JpaRepository<Farmacia, Long> {
 
-    Page<Farmacia>findByNombreContainingIgnoreCase( String nombre, Pageable pageable);
+    Page<Farmacia> findByNombreContainingIgnoreCase(String nombre, Pageable pageable);
+
     Page<Farmacia> findByEpsId(Long epsId, Pageable pageable);
+
     Page<Farmacia> findByEpsIdAndNombreContainingIgnoreCase(Long epsId, String nombre, Pageable pageable);
+
     Page<Farmacia> findByNombreContainingIgnoreCaseAndEpsId(String keyword, Long id, Pageable pageable);
 }

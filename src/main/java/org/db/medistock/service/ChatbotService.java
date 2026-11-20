@@ -65,6 +65,24 @@ public class ChatbotService {
     }
 
     public ResultadoAccion responder(Usuario usuario, String pregunta, List<TurnoChat> historial) {
+        ResultadoAccion invalida = validarPregunta(pregunta);
+        if (invalida != null) {
+            return invalida;
+        }
+        return consultarProveedor(construirInstruccionSistema(usuario), pregunta, historial);
+    }
+
+    public ResultadoAccion responderComoAnalista(
+            String contextoModelo, String pregunta, List<TurnoChat> historial) {
+        ResultadoAccion invalida = validarPregunta(pregunta);
+        if (invalida != null) {
+            return invalida;
+        }
+        return consultarProveedor(construirInstruccionAnalista(contextoModelo), pregunta, historial);
+    }
+
+    /** Devuelve el error a mostrar, o null si la pregunta es válida y el asistente está configurado. */
+    private ResultadoAccion validarPregunta(String pregunta) {
         if (pregunta == null || pregunta.isBlank()) {
             return ResultadoAccion.error("Escribe una pregunta.");
         }
@@ -75,8 +93,11 @@ public class ChatbotService {
             return ResultadoAccion.error(
                     "El asistente todavía no está configurado. Inténtalo más tarde.");
         }
+        return null;
+    }
 
-        String systemInstruction = construirInstruccionSistema(usuario);
+    private ResultadoAccion consultarProveedor(
+            String systemInstruction, String pregunta, List<TurnoChat> historial) {
         try {
             return ResultadoAccion.exito(llamarGroq(systemInstruction, pregunta, historial));
         } catch (InterruptedException e) {
@@ -115,6 +136,44 @@ public class ChatbotService {
                 usuario.getEps() == null ? "Sin EPS asignada" : usuario.getEps().getNombre(),
                 construirContextoSolicitudes(usuario),
                 construirContextoInventario(usuario.getEps()));
+    }
+
+    private String construirInstruccionAnalista(String contextoModelo) {
+        return """
+                Eres el analista virtual de MediStock para el manager. Responde en español, en texto plano
+                (sin Markdown: nada de asteriscos, almohadillas ni tablas; para listas usa guiones), de forma
+                clara y breve. Tu trabajo es explicar el modelo de optimización de personal y sus gráficos, y
+                sugerir acciones operativas al manager.
+
+                Cómo funciona el modelo, para que lo expliques con tus palabras:
+                - X es el número de solicitudes que se responden e Y es el número de administradores asignados.
+                - Restricciones: X no puede superar la capacidad por admin multiplicada por Y; X no puede superar
+                  las solicitudes disponibles; Y no puede superar los admins disponibles; X e Y no son negativos.
+                - Objetivo A: maximizar el volumen atendido (Z = X). Objetivo B: maximizar el rendimiento neto
+                  (Z = X - Y), que penaliza tener admins ociosos. El bloque principal usa el objetivo B.
+                - El gráfico dibuja la región factible: el plano con las solicitudes en el eje horizontal y los
+                  admins en el vertical. El polígono reúne todas las combinaciones posibles y la línea naranja
+                  punteada es la capacidad (X = capacidad por Y). El óptimo siempre está en un vértice, el
+                  marcado con una estrella. Ese vértice es del modelo continuo, así que puede traer decimales
+                  de admins; en la práctica se redondea hacia arriba, y por eso los indicadores de arriba
+                  muestran la solución entera.
+                - Vértices típicos: el origen (nadie trabaja y nada se atiende), el que asigna todos los admins
+                  sin solicitudes, el que asigna todos con toda la demanda, y el óptimo, que usa solo los
+                  admins necesarios.
+
+                Reglas:
+                - Usa únicamente las cifras de los DATOS de abajo. No hagas cálculos propios ni inventes
+                  valores: los HECHOS CALCULADOS ya traen faltantes, cobertura y utilización; úsalos tal cual.
+                - Si el estado no es Optimal o la fuente indica que no hay conexión, dilo y no analices.
+                - Si datosPorDefecto es true, avisa que son valores de ejemplo y no datos reales.
+                - Distingue los DATOS REALES (base de datos) de la SIMULACIÓN (parámetros que el manager probó
+                  en pantalla) y di de cuál hablas.
+                - Las sugerencias deben salir de los hechos (admins libres, solicitudes sin responder, admins
+                  adicionales necesarios) y presentarse como recomendaciones: la decisión es del manager.
+                - Hablas solo de la operación de MediStock y de este modelo; no des consejos médicos.
+
+                %s
+                """.formatted(contextoModelo);
     }
 
     private String nombreUsuario(Usuario usuario) {

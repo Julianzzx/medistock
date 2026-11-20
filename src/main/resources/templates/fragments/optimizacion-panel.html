@@ -1,0 +1,299 @@
+<div th:fragment="panel">
+    <style>
+        .opt-fab {
+            position: fixed; right: max(1.25rem, env(safe-area-inset-right)); bottom: max(1.25rem, env(safe-area-inset-bottom));
+            z-index: 80; display: flex; align-items: center; gap: .6rem; padding: .85rem 1.15rem;
+            border: 0; border-radius: 9999px; color: #fff; cursor: pointer; font: 700 .78rem 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #7c3aed, #2563eb); box-shadow: 0 12px 35px rgba(124, 58, 237, .4);
+            transition: transform .2s ease;
+        }
+        .opt-fab:hover { transform: translateY(-2px) scale(1.03); }
+        .opt-fab i { font-size: 1.25rem; }
+        .opt-win {
+            position: fixed; right: max(1.25rem, env(safe-area-inset-right)); bottom: 5.5rem; z-index: 90;
+            display: none; flex-direction: column; width: min(27rem, calc(100vw - 1.5rem)); max-height: calc(100dvh - 7rem);
+            overflow: hidden; border: 1px solid rgba(148, 163, 184, .25); border-radius: 1.4rem; color: #e2e8f0;
+            background: rgba(2, 6, 23, .94); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, .65); font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .opt-win.open { display: flex; }
+        .opt-head {
+            display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .85rem 1rem;
+            cursor: grab; touch-action: none; user-select: none;
+            background: linear-gradient(135deg, rgba(124, 58, 237, .35), rgba(37, 99, 235, .3));
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+        }
+        .opt-head.dragging { cursor: grabbing; }
+        .opt-title { font-weight: 800; font-size: .85rem; line-height: 1.1; }
+        .opt-sub { font-size: .62rem; color: #a5b4fc; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+        .opt-iconbtn { border: 0; background: rgba(255, 255, 255, .08); color: #e2e8f0; width: 1.8rem; height: 1.8rem; border-radius: .6rem; cursor: pointer; }
+        .opt-iconbtn:hover { background: rgba(255, 255, 255, .18); }
+        .opt-body { overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .9rem; }
+        .opt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+        .opt-field label { display: block; font-size: .6rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; margin-bottom: .25rem; }
+        .opt-field input {
+            width: 100%; padding: .55rem .6rem; border-radius: .7rem; border: 1px solid #334155; background: #0f172a;
+            color: #fff; font-weight: 700; font-size: .85rem; outline: none;
+        }
+        .opt-field input:focus { border-color: #818cf8; }
+        .opt-seg { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
+        .opt-seg button {
+            padding: .55rem .5rem; border-radius: .7rem; border: 1px solid #334155; background: #0f172a; color: #94a3b8;
+            font-size: .68rem; font-weight: 700; cursor: pointer; text-align: left; line-height: 1.25;
+        }
+        .opt-seg button.active { border-color: #818cf8; background: rgba(99, 102, 241, .18); color: #fff; }
+        .opt-actions { display: flex; gap: .5rem; }
+        .opt-btn {
+            flex: 1; padding: .65rem .8rem; border-radius: .8rem; border: 0; cursor: pointer; font-weight: 800; font-size: .72rem;
+            color: #fff; background: linear-gradient(135deg, #7c3aed, #2563eb);
+        }
+        .opt-btn.ghost { background: #0f172a; border: 1px solid #334155; color: #cbd5e1; }
+        .opt-btn:disabled { opacity: .6; cursor: wait; }
+        .opt-result { border: 1px solid rgba(129, 140, 248, .35); border-radius: 1rem; padding: .9rem; background: rgba(99, 102, 241, .08); }
+        .opt-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: .4rem; text-align: center; }
+        .opt-kpi b { display: block; font-size: 1.35rem; font-weight: 800; color: #fff; line-height: 1.1; }
+        .opt-kpi span { font-size: .55rem; text-transform: uppercase; letter-spacing: .05em; color: #94a3b8; font-weight: 700; }
+        .opt-text { margin-top: .7rem; font-size: .74rem; line-height: 1.45; color: #cbd5e1; }
+        .opt-error { padding: .65rem .8rem; border-radius: .8rem; background: rgba(244, 63, 94, .12); border: 1px solid rgba(244, 63, 94, .35); color: #fda4af; font-size: .74rem; font-weight: 600; }
+        .opt-chart { width: 100%; height: auto; border-radius: .9rem; background: #0b1224; border: 1px solid #1e293b; }
+        .opt-table { width: 100%; border-collapse: collapse; font-size: .68rem; }
+        .opt-table th { text-align: right; color: #94a3b8; font-weight: 700; padding: .3rem .4rem; border-bottom: 1px solid #1e293b; }
+        .opt-table td { text-align: right; padding: .3rem .4rem; border-bottom: 1px solid #111b30; font-variant-numeric: tabular-nums; }
+        .opt-table th:first-child, .opt-table td:first-child { text-align: left; }
+        .opt-table tr.best td { color: #a5b4fc; font-weight: 800; background: rgba(99, 102, 241, .12); }
+        .opt-note { font-size: .6rem; color: #64748b; line-height: 1.4; }
+    </style>
+
+    <button type="button" class="opt-fab" id="optFab" aria-label="Abrir modelo de optimización">
+        <i class="ph ph-function"></i><span>Optimizar asignación</span>
+    </button>
+
+    <section class="opt-win" id="optWin" role="dialog" aria-label="Modelo de programación lineal">
+        <header class="opt-head" id="optHead">
+            <div>
+                <div class="opt-title">Asignación óptima de admins</div>
+                <div class="opt-sub">Programación lineal · Z = X − Y</div>
+            </div>
+            <div style="display:flex; gap:.35rem;">
+                <button type="button" class="opt-iconbtn" id="optMin" aria-label="Minimizar">–</button>
+                <button type="button" class="opt-iconbtn" id="optClose" aria-label="Cerrar">✕</button>
+            </div>
+        </header>
+
+        <div class="opt-body" id="optBody">
+            <div class="opt-grid">
+                <div class="opt-field"><label for="optCap">Resp. por admin</label><input id="optCap" type="number" min="1" value="100"></div>
+                <div class="opt-field"><label for="optSol">Máx. solicitudes</label><input id="optSol" type="number" min="0" value="300"></div>
+                <div class="opt-field"><label for="optAdm">Admins disp.</label><input id="optAdm" type="number" min="0" value="4"></div>
+            </div>
+
+            <div class="opt-seg" id="optSeg">
+                <button type="button" data-obj="A">A · Maximizar volumen<br><small>Z = X</small></button>
+                <button type="button" data-obj="B" class="active">B · Rendimiento neto<br><small>Z = X − Y</small></button>
+            </div>
+
+            <div class="opt-actions">
+                <button type="button" class="opt-btn" id="optRun">Resolver modelo</button>
+                <button type="button" class="opt-btn ghost" id="optSys">Usar datos del sistema</button>
+            </div>
+
+            <div class="opt-error" id="optErr" style="display:none;"></div>
+
+            <div id="optOut" style="display:none; flex-direction:column; gap:.9rem;">
+                <div class="opt-result">
+                    <div class="opt-kpis">
+                        <div class="opt-kpi"><b id="kAdm">–</b><span>Admins</span></div>
+                        <div class="opt-kpi"><b id="kAte">–</b><span>Solicitudes</span></div>
+                        <div class="opt-kpi"><b id="kZ">–</b><span>Z óptimo</span></div>
+                        <div class="opt-kpi"><b id="kLib">–</b><span>Libres</span></div>
+                    </div>
+                    <p class="opt-text" id="optTxt"></p>
+                </div>
+
+                <svg class="opt-chart" id="optSvg" viewBox="0 0 340 200" role="img" aria-label="Región factible"></svg>
+
+                <table class="opt-table">
+                    <thead><tr><th>Vértice</th><th>(X, Y)</th><th>Z = X</th><th>Z = X − Y</th></tr></thead>
+                    <tbody id="optRows"></tbody>
+                </table>
+                <p class="opt-note">Restricciones: X ≤ capacidad × Y · X ≤ solicitudes · Y ≤ admins · X, Y ≥ 0.
+                    “Usar datos del sistema” toma los admins registrados y las solicitudes en proceso actuales.</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        (function () {
+            var $ = function (id) { return document.getElementById(id); };
+            var win = $('optWin'), head = $('optHead'), body = $('optBody');
+            var objetivo = 'B';
+
+            function fmt(n) { return Number.isInteger(n) ? String(n) : n.toFixed(2); }
+
+            function abrir() {
+                win.classList.add('open');
+                $('optFab').style.display = 'none';
+                if (!$('optOut').dataset.loaded) { resolver(); }
+            }
+            function cerrar() { win.classList.remove('open'); $('optFab').style.display = 'flex'; }
+
+            $('optFab').addEventListener('click', abrir);
+            $('optClose').addEventListener('click', cerrar);
+            $('optMin').addEventListener('click', function () {
+                body.style.display = body.style.display === 'none' ? 'flex' : 'none';
+            });
+
+            $('optSeg').addEventListener('click', function (e) {
+                var b = e.target.closest('button[data-obj]');
+                if (!b) { return; }
+                objetivo = b.dataset.obj;
+                this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('active', x === b); });
+                resolver();
+            });
+            $('optRun').addEventListener('click', resolver);
+            ['optCap', 'optSol', 'optAdm'].forEach(function (id) {
+                $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') { resolver(); } });
+            });
+
+            $('optSys').addEventListener('click', function () {
+                fetch('/manager/optimizacion/datos-sistema', { headers: { 'Accept': 'application/json' } })
+                    .then(function (r) { if (!r.ok) { throw new Error(); } return r.json(); })
+                    .then(function (d) {
+                        $('optAdm').value = d.adminsRegistrados;
+                        $('optSol').value = d.solicitudesEnProceso;
+                        resolver();
+                    })
+                    .catch(function () { mostrarError('No se pudieron leer los datos del sistema.'); });
+            });
+
+            function mostrarError(msg) {
+                var e = $('optErr');
+                e.textContent = msg;
+                e.style.display = msg ? 'block' : 'none';
+            }
+
+            // Cada consulta lleva un número: si llegan respuestas desordenadas, solo se pinta la de la última.
+            var ultimaConsulta = 0;
+
+            function resolver() {
+                var mia = ++ultimaConsulta;
+                var q = new URLSearchParams({
+                    capacidadPorAdmin: $('optCap').value || 0,
+                    maxSolicitudes: $('optSol').value || 0,
+                    maxAdmins: $('optAdm').value || 0,
+                    objetivo: objetivo
+                });
+                $('optRun').disabled = true;
+                fetch('/manager/optimizacion/resolver?' + q.toString(), { headers: { 'Accept': 'application/json' } })
+                    .then(function (r) {
+                        return r.json().then(function (j) { return { ok: r.ok, body: j }; });
+                    })
+                    .then(function (res) {
+                        if (mia !== ultimaConsulta) { return; }
+                        if (!res.ok) { throw new Error(res.body.error || 'No se pudo resolver el modelo.'); }
+                        mostrarError('');
+                        pintar(res.body);
+                    })
+                    .catch(function (err) {
+                        if (mia === ultimaConsulta) { mostrarError(err.message || 'No se pudo resolver el modelo.'); }
+                    })
+                    .then(function () { if (mia === ultimaConsulta) { $('optRun').disabled = false; } });
+            }
+
+            function pintar(r) {
+                var out = $('optOut');
+                out.style.display = 'flex';
+                out.dataset.loaded = '1';
+                $('kAdm').textContent = r.adminsAsignados;
+                $('kAte').textContent = r.solicitudesAtendidas;
+                $('kZ').textContent = fmt(r.z);
+                $('kLib').textContent = r.adminsLiberados;
+                $('optTxt').textContent = r.recomendacion;
+
+                var rows = $('optRows');
+                rows.innerHTML = '';
+                r.vertices.forEach(function (v) {
+                    var tr = document.createElement('tr');
+                    if (v.optimo) { tr.className = 'best'; }
+                    [v.etiqueta + (v.optimo ? ' ★' : ''), '(' + fmt(v.x) + ', ' + fmt(v.y) + ')', fmt(v.zA), fmt(v.zB)]
+                        .forEach(function (t) {
+                            var td = document.createElement('td');
+                            td.textContent = t;
+                            tr.appendChild(td);
+                        });
+                    rows.appendChild(tr);
+                });
+                dibujar(r);
+            }
+
+            // Región factible en el plano (X horizontal, Y vertical)
+            function dibujar(r) {
+                var NS = 'http://www.w3.org/2000/svg';
+                var svg = $('optSvg');
+                svg.innerHTML = '';
+                var W = 340, H = 200, L = 38, R = 14, T = 12, B = 28;
+                var xs = r.vertices.map(function (v) { return v.x; });
+                var xmax = Math.max.apply(null, xs.concat([r.totalSolicitudes, 1])) * 1.08;
+                var ymax = Math.max(r.adminsDisponibles, 1) * 1.15;
+                var px = function (x) { return L + (x / xmax) * (W - L - R); };
+                var py = function (y) { return H - B - (y / ymax) * (H - T - B); };
+
+                function el(tag, attrs, text) {
+                    var e = document.createElementNS(NS, tag);
+                    Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+                    if (text !== undefined) { e.textContent = text; }
+                    svg.appendChild(e);
+                    return e;
+                }
+
+                el('line', { x1: L, y1: H - B, x2: W - R, y2: H - B, stroke: '#475569' });
+                el('line', { x1: L, y1: T, x2: L, y2: H - B, stroke: '#475569' });
+                el('text', { x: W - R, y: H - 8, fill: '#94a3b8', 'font-size': 9, 'text-anchor': 'end' }, 'X · solicitudes');
+                el('text', { x: 4, y: 10, fill: '#94a3b8', 'font-size': 9 }, 'Y · admins');
+
+                // polígono factible
+                var pts = r.vertices.map(function (v) { return px(v.x) + ',' + py(v.y); }).join(' ');
+                el('polygon', { points: pts, fill: 'rgba(99,102,241,.22)', stroke: '#818cf8', 'stroke-width': 1.5 });
+
+                // recta de capacidad X = cap * Y
+                var cap = r.capacidadPorAdmin;
+                var yEnd = Math.min(r.adminsDisponibles, xmax / cap);
+                el('line', { x1: px(0), y1: py(0), x2: px(cap * yEnd), y2: py(yEnd), stroke: '#f59e0b', 'stroke-dasharray': '4 3' });
+
+                r.vertices.forEach(function (v) {
+                    var cx = px(v.x), cy = py(v.y);
+                    el('circle', { cx: cx, cy: cy, r: v.optimo ? 5.5 : 3.5, fill: v.optimo ? '#34d399' : '#c7d2fe' });
+                    var anchor = cx > W - 60 ? 'end' : 'start';
+                    var dx = anchor === 'end' ? -8 : 8;
+                    el('text', { x: cx + dx, y: cy + (cy < 30 ? 14 : -7), fill: v.optimo ? '#6ee7b7' : '#cbd5e1',
+                        'font-size': 9.5, 'font-weight': v.optimo ? 700 : 500, 'text-anchor': anchor },
+                        v.etiqueta + ' (' + fmt(v.x) + ', ' + fmt(v.y) + ')');
+                });
+            }
+
+            // Ventana arrastrable desde la cabecera
+            var drag = null;
+            head.addEventListener('pointerdown', function (e) {
+                if (e.target.closest('button')) { return; }
+                var rect = win.getBoundingClientRect();
+                drag = { dx: e.clientX - rect.left, dy: e.clientY - rect.top };
+                win.style.left = rect.left + 'px';
+                win.style.top = rect.top + 'px';
+                win.style.right = 'auto';
+                win.style.bottom = 'auto';
+                head.classList.add('dragging');
+                head.setPointerCapture(e.pointerId);
+            });
+            head.addEventListener('pointermove', function (e) {
+                if (!drag) { return; }
+                var maxL = window.innerWidth - win.offsetWidth;
+                var maxT = window.innerHeight - 48;
+                win.style.left = Math.min(Math.max(0, e.clientX - drag.dx), Math.max(0, maxL)) + 'px';
+                win.style.top = Math.min(Math.max(0, e.clientY - drag.dy), maxT) + 'px';
+            });
+            function soltar() { drag = null; head.classList.remove('dragging'); }
+            head.addEventListener('pointerup', soltar);
+            head.addEventListener('pointercancel', soltar);
+        })();
+    </script>
+</div>
