@@ -5,6 +5,8 @@ import org.db.medistock.model.Usuario;
 import org.db.medistock.service.AdminService;
 import org.db.medistock.service.UsuarioService;
 import org.springframework.security.core.Authentication;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +16,13 @@ public class HomeController {
 
     private final AdminService adminService;
     private final UsuarioService usuarioService;
+    private final ObjectProvider<ClientRegistrationRepository> clientRegistrationRepositories;
 
-    public HomeController(AdminService adminService, UsuarioService usuarioService) {
+    public HomeController(AdminService adminService, UsuarioService usuarioService,
+                          ObjectProvider<ClientRegistrationRepository> clientRegistrationRepositories) {
         this.adminService = adminService;
         this.usuarioService = usuarioService;
+        this.clientRegistrationRepositories = clientRegistrationRepositories;
     }
 
     // Página de Inicio
@@ -30,7 +35,10 @@ public class HomeController {
     //Vista De Login
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Model model) {
+        ClientRegistrationRepository registrations = clientRegistrationRepositories.getIfAvailable();
+        model.addAttribute("googleOAuthEnabled", registrations != null && registrations.findByRegistrationId("google") != null);
+        model.addAttribute("githubOAuthEnabled", registrations != null && registrations.findByRegistrationId("github") != null);
         return "login";
     }
 

@@ -135,6 +135,7 @@ public class MedicamentoController {
         Optional<Cita> citaOpt = citaRepo.findByCodigo(codigo);
 
         if (citaOpt.isEmpty() || citaOpt.get().isCodestado()
+                || citaOpt.get().getUsuario() == null
                 || !citaOpt.get().getUsuario().getId().equals(usuario.getId())) {
 
             redirectAttributes.addFlashAttribute("error", "Código de cita inválido, ya utilizado o expirado.");

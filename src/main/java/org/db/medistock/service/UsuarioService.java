@@ -3,6 +3,8 @@ package org.db.medistock.service;
 import org.db.medistock.model.Eps;
 import org.db.medistock.model.Usuario;
 import org.db.medistock.repository.EpsRepository;
+import org.db.medistock.repository.CitaRepository;
+import org.db.medistock.repository.SolicitudRepository;
 import org.db.medistock.repository.UsuarioRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,11 +18,17 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final EpsRepository epsRepository;
     private final PasswordEncoder passwordEncoder;
+    private final SolicitudRepository solicitudRepository;
+    private final CitaRepository citaRepository;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, EpsRepository epsRepository, PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository, EpsRepository epsRepository,
+                          PasswordEncoder passwordEncoder, SolicitudRepository solicitudRepository,
+                          CitaRepository citaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.epsRepository = epsRepository;
         this.passwordEncoder = passwordEncoder;
+        this.solicitudRepository = solicitudRepository;
+        this.citaRepository = citaRepository;
     }
 
     // Buscar Usuario Por ID
@@ -102,6 +110,8 @@ public class UsuarioService {
         if (!usuarioRepository.existsById(id)) {
             return false;
         }
+        solicitudRepository.desvincularUsuario(id);
+        citaRepository.desvincularUsuario(id);
         usuarioRepository.deleteById(id);
         return true;
     }

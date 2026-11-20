@@ -129,7 +129,7 @@
 
         <!-- Imagen Contextual Institucional -->
         <div class="mx-1 rounded-2xl overflow-hidden relative border border-slate-800/80 h-36 group shadow-lg">
-            <img src="/Imagenes/GMedicamentos.png"
+            <img src="/Imagenes/analitica.jpg"
                  alt="Reabastecimiento Medistock"
                  class="w-full h-full object-cover opacity-35 group-hover:scale-105 transition-transform duration-700 filter brightness-75" />
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex flex-col justify-end p-3">
@@ -273,7 +273,6 @@
                             <th class="px-6 py-4">Medicamento</th>
                             <th class="px-6 py-4 text-center">Cantidad</th>
                             <th class="px-6 py-4 text-center">Farmacia</th>
-                            <th class="px-6 py-4 text-center">Acciones</th>
                         </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800/60 text-slate-200 font-medium">
@@ -281,13 +280,6 @@
                             <td class="px-6 py-4 font-bold text-white" th:text="${sol.medicamento != null ? sol.medicamento.nombre : 'N/A'}"></td>
                             <td class="px-6 py-4 text-center font-extrabold text-emerald-400" th:text="${sol.cantidad}"></td>
                             <td class="px-6 py-4 text-center text-slate-300" th:text="${sol.medicamento != null and sol.medicamento.farmacia != null ? sol.medicamento.farmacia.nombre : 'N/A'}"></td>
-                            <td class="px-6 py-4 text-center">
-                                <a th:href="@{/manager/reabastecimientos/eliminar/{id}(id=${sol.id})}"
-                                   class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-300 hover:text-white font-bold text-xs uppercase tracking-wider transition border border-rose-500/20 shadow-sm"
-                                   title="Eliminar">
-                                    <i class="ph ph-trash text-base"></i> Eliminar
-                                </a>
-                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -333,7 +325,6 @@
                             <th class="px-6 py-4">Medicamento</th>
                             <th class="px-6 py-4 text-center">Cantidad</th>
                             <th class="px-6 py-4 text-center">Farmacia</th>
-                            <th class="px-6 py-4 text-center">Acciones</th>
                         </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800/60 text-slate-200 font-medium">
@@ -341,13 +332,6 @@
                             <td class="px-6 py-4 font-bold text-white" th:text="${sol.medicamento != null ? sol.medicamento.nombre : 'N/A'}"></td>
                             <td class="px-6 py-4 text-center font-extrabold text-rose-400" th:text="${sol.cantidad}"></td>
                             <td class="px-6 py-4 text-center text-slate-300" th:text="${sol.medicamento != null and sol.medicamento.farmacia != null ? sol.medicamento.farmacia.nombre : 'N/A'}"></td>
-                            <td class="px-6 py-4 text-center">
-                                <a th:href="@{/manager/reabastecimientos/eliminar/{id}(id=${sol.id})}"
-                                   class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-300 hover:text-white font-bold text-xs uppercase tracking-wider transition border border-rose-500/20 shadow-sm"
-                                   title="Eliminar">
-                                    <i class="ph ph-trash text-base"></i> Eliminar
-                                </a>
-                            </td>
                         </tr>
                         </tbody>
                     </table>

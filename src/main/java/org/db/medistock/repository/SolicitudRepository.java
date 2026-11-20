@@ -6,13 +6,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository
 public interface SolicitudRepository extends JpaRepository<Solicitud, Long> {
+
+        @Modifying(flushAutomatically = true, clearAutomatically = true)
+        @Transactional
+        @Query("UPDATE Solicitud s SET s.usuario = null WHERE s.usuario.id = :usuarioId")
+        int desvincularUsuario(@Param("usuarioId") Long usuarioId);
 
         long countByMedicamento_Farmacia_Id(Long farmaciaId);
 
